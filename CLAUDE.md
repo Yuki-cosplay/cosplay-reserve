@@ -16,7 +16,12 @@
 
 ## プロジェクトの状態
 
-**実装前の段階。** 現在このリポジトリには `SPEC.md`（設計仕様書全体）と環境構築物（`.venv/`、`.gitignore`）しか存在しません。`src/`、`configs/`、`experiments/`、`tests/` はまだ作成されていません — これらはSPEC.md §27で計画されているレイアウトであり、まだ実体はありません。本格的な実装に入る前に、SPEC.md §32に従い、要求されている設計レビュー（技術的リスク、Capability Reproduction Loopの最小モデル案、Agent/World stateスキーマ、イベントシステム、LLM/コードの責務分離、Milestone 1の計画+テスト計画、コスト制御設計、未決事項）を作成し、承認を得てから大規模実装に着手すること。
+**設計完了・実装未着手。** 現在このリポジトリには `SPEC.md`（v0.2、正典）、`docs/REVIEW.md`（§32 設計レビュー、審議完了）、`docs/DESIGN_M1.md`（Milestone 1 詳細設計、v0.2 同期済み）と環境構築物（`.venv/`、`.gitignore`）が存在します。`src/`、`configs/`、`experiments/`、`tests/` はまだ作成されていません。
+
+- **SPEC.md §32 が要求する設計レビューは完了済みです。** 再作成しないでください（`docs/REVIEW.md`）。【要承認】3件は決着し、SPEC.md は v0.2 へ改訂されました（§33 改訂履歴）。
+- **Milestone 1 の実装前提はすべて確定しています**（`docs/DESIGN_M1.md` §17: D6 技能減衰=採用 / D7 参入退出=なし・N=40固定 / D8 money=M1の因果モデル外 / D11 蓄積期間=52・104・156週のconfig切替、既定156 / D12 蓄積相のLLM=使わない / D13 材料補充=inventory_cap方式）。M1 実装をブロックする未決事項はありません。
+- 実装に着手する際は `docs/DESIGN_M1.md` §16 の実装順序（S1〜S15）に従うこと。
+- **`docs/REVIEW.md` 本文には SPEC v0.1 時点の旧条件名（Culture / Skill-Matched Random / Isolated / B1 / B2）が審議の記録として残っています。** 実装に持ち込まないこと。現行の条件定義は SPEC §19 と `docs/DESIGN_M1.md` が正典です。
 
 ## SPEC.md が正典である
 
@@ -49,7 +54,9 @@ Windowsネイティブ環境、Python 3.12の仮想環境が `.venv/` にあり�
 - **LLMは意図を決め、コードが実現可能性を判定する**（§13）。資源計算、在庫、所持金、時間、生産量、材料消費、技能値、設備制約、物流、品質判定、市場清算、ネットワーク更新、Metrics、転化判定は、すべて**決定論的なコード**が担当し、LLM出力に委ねてはいけません。LLMが担当するのは局所的な意思決定、情報解釈、コミュニケーション、新用途の提案、協力判断、学習対象の選択のみです。
 - **Actionに「答え」をハードコードしない**（§12）。`make_ppe` や `make_mask` のようなActionは禁止で、一般化されたAction（`make`、`modify`、`share`、`help`、`trade`、`propose` 等）のみを使用します。Agentへ「PPEを作れ」「マスクを作れ」「医療を助けろ」と指示してはいけません — Phase 1のPPEへの転化は指令ではなく創発として起きる必要があります（§8）。
 - **Information Locality、神の視点の禁止**（§14）。Agentが見えるのは、自分自身、自分のmemory、接続されたAgentから届いたメッセージ、観測可能な市場情報、自ら取得した情報のみで、世界全体の状態を見せてはいけません。
-- **Required Itemは抽象化された仕様であり、名称ではない**（§18）。需要は `RequiredItem`（flexible_material、filtration_requirement、shape_requirement、durability、sterility_requirement、production_complexity、unit_demand）としてモデル化し、「PPE」という具体名で扱わないこと — これによりPhase 2への一般化が可能になります。
+- **Required Itemは抽象化された仕様であり、名称ではない**（§18）。需要は `RequiredItem` を**属性ベクトル `attr_0` 〜 `attr_6`** としてモデル化し、「PPE」という具体名で扱わないこと — これによりPhase 2への一般化が可能になります。
+  - **属性に意味を持つ名前を付けないこと。** コード・config・ログ・出力ファイル・プロンプトには `attr_0` 〜 `attr_6` しか出現させません。技能・材料・設備・制作対象も同様に `skill_N` / `mat_N` / `asset_N` / `proj_N` の中立コード表記を使います（`docs/DESIGN_M1.md` §3.0）。
+  - **意味の対応表は研究者向けドキュメント（SPEC.md §18）にのみ存在します。** `attr_0` 〜 `attr_6` は §18 の列挙順に対応します。対応表をこのファイル・コード・プロンプトへ複製しないでください — 複製した時点で、既知知識のリーク経路と「答え」の埋め込み経路になります。
 - **未証明の主張を事実として扱わない**（§6）。次のことをモデルの前提として実装してはいけません: コスプレコミュニティが他の趣味コミュニティより強い、コスプレイヤーが他人より利他的である、コスプレイヤーの災害対応能力が高い、コスプレネットワークが必ずより密である、コスプレイヤーが有事に必ず供給活動を行う。これらは検証対象の仮説であり、モデルの前提ではありません。
 - **Anti-Goals**（§30）: コスプレイヤーを英雄として描かない、利他的だと決めつけない、PPE制作を命令しない、結果に合わせて後からパラメータを恣意的に調整しない、LLMの文章だけを「創発」の証拠として扱わない、Agent数の多さを成果にしない、Milestone 1が終わる前にPhase 2・UI・マイクロサービス化・巨大なAgent frameworkに手を出さない。
 - **モデル内実験から現実への直接推論をしない**（§19）: A/B/C/D の比較は**仮説的モデル内部でのfactorial experiment**です。この結果から現実のコスプレ文化について直接因果主張してはいけません。特に A/C の structured topology は現実のネットワークの再現ではなく、検討用の仮説的構成です。
@@ -73,7 +80,7 @@ Windowsネイティブ環境、Python 3.12の仮想環境が `.venv/` にあり�
 ## 計画中のリポジトリ構成（SPEC.md §27、まだ未作成）
 
 ```
-configs/        world_culture.yaml, world_random.yaml, world_isolated.yaml
+configs/        base.yaml, condition_a.yaml 〜 condition_d.yaml
 src/agents/     agent.py, decision.py, memory.py
 src/world/      world.py, economy.py, production.py, logistics.py
 src/culture/    learning.py, network.py, capability.py
@@ -85,3 +92,7 @@ tests/
 ```
 
 これは出発点として改善してよいものであり、厳格な規定ではありません — ただし過剰な作り込み（重厚なframework、時期尚早なマイクロサービス化など）は避けてください（§30）。
+
+条件別 YAML の差分は `topology` と `peer_learning_enabled` の**2キーのみ**です（`docs/DESIGN_M1.md` §14.2）。学習率・減衰率・Agent数・材料補充・効用重み・step数を条件ごとに変えてはいけません。
+
+M1 で実際に作成するモジュール構成は `docs/DESIGN_M1.md` §2 が正典です（`src/world/resources.py`、`src/agents/observation.py` 等が追加されています）。

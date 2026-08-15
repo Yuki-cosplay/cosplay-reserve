@@ -251,6 +251,18 @@ class Intent:
     target_skill_id: str | None = None
     target_method_id: str | None = None
     reason: str = ""              # 研究者向けの記録。世界状態には影響しない
+
+class RejectionReason(str, Enum):
+    """Validator が Intent を却下した理由（決定 V6）。
+    rejected_intents に記録し、Metrics で分布を集計する（§10.1）。
+    却下が特定の理由に偏っている場合、それ自体が
+    『何がボトルネックになっているか』の知見になる。"""
+    TIME_BUDGET_EXCEEDED  = "time_budget_exceeded"    # 時間予算超過
+    INSUFFICIENT_MATERIAL = "insufficient_material"   # 材料不足
+    MISSING_ASSET         = "missing_asset"           # 必要設備の未保有
+    TARGET_NOT_NEIGHBOR   = "target_not_neighbor"     # 対象Agentが近傍にない
+    UNKNOWN_PROJECT       = "unknown_project"         # 対象Projectが存在しない
+    METHOD_NOT_OWNED      = "method_not_owned"        # 対象Methodを保有していない
 ```
 
 **`Intent` に数量を入れてはならない。** 「材料を3個使って2個作る」と Agent（M2 以降は LLM）が宣言できてしまうと、実現可能性の判定が LLM 側へ漏れる。Agent が言えるのは「`proj_2` を作りたい」までで、何個の材料を消費し何時間かかるかは Project 定義と config が決める。
@@ -413,7 +425,9 @@ class Observation:
 | `time_budget` | 全Agent同一（決定 X2-7） |
 | `trust_fixed` | 全Agent同一（M1 では固定値） |
 
-この8項目が §15.1 要件4 の検証対象である（決定 W3）。**`participation_level` は含まれない** — 次項のとおり、意図的に差を付けた唯一の項目であるため。
+このうち **`skills` / `assets` / `materials` / `sharing_tendency` / `imitation_tendency` / `helping_norm` の6項目**が §15.1 要件4（同一分布）の検証対象である（決定 W3・V4）。`time_budget` と `trust_fixed` は全Agent共通のスカラーなので**要件7（全Agent同値）**で検証する。
+
+**`participation_level` はいずれにも含まれない** — 次項のとおり、意図的に差を付けた唯一の項目であるため。
 
 `money` は M1 に存在しない（決定 D8）。**Agent 初期状態にも config にも復活させない。**
 
@@ -593,15 +607,22 @@ def validate(agent, intents: list[Intent], cfg) -> list[Intent]:
     remaining, accepted = agent.time_budget, []
     for intent in intents[:cfg.time.max_actions_per_step]:
         cost = cfg.action_time_cost[intent.action.value]
-        if cost > remaining or not is_feasible(agent, intent, cfg):
-            agent.rejected_intents.append((intent, reason_code))
+        if cost > remaining:
+            agent.rejected_intents.append(
+                (intent, RejectionReason.TIME_BUDGET_EXCEEDED))
             break                      # 予算超過以降はすべて却下
+        reason = infeasible_reason(agent, intent, cfg)   # None なら実行可能
+        if reason is not None:
+            agent.rejected_intents.append((intent, reason))
+            continue                   # 実行不能な Intent は飛ばし、次を評価する
         remaining -= cost
         accepted.append(intent)
     return accepted
 ```
 
-`is_feasible()` が判定するもの: 材料の充足、必要設備の保有、対象 Agent が近傍にいるか、対象 Method を保有しているか。**Agent（M2 以降は LLM）はこれらを宣言できない。**
+`infeasible_reason()` は `RejectionReason` または `None` を返す。判定するもの: 材料の充足（`INSUFFICIENT_MATERIAL`）、必要設備の保有（`MISSING_ASSET`、`_owns()` を使う）、対象 Agent が近傍にいるか（`TARGET_NOT_NEIGHBOR`）、対象 Project の存在（`UNKNOWN_PROJECT`）、対象 Method の保有（`METHOD_NOT_OWNED`）。**Agent（M2 以降は LLM）はこれらを宣言できない。**
+
+**時間超過は `break`、実行不能は `continue`** である点に注意。時間が尽きたら以降はすべて却下されるが、材料不足で作れない Project の次に「練習する」という Intent があれば、それは実行できる。
 
 ---
 
@@ -612,7 +633,7 @@ def validate(agent, intents: list[Intent], cfg) -> list[Intent]:
 ```python
 def success_probability(agent, project, methods) -> float:
     skill = agent.skills[project.primary_skill]
-    asset_bonus = cfg.asset_bonus if has_required_asset(agent, project) else 0.0
+    asset_bonus = cfg.asset_bonus if has_required_asset(agent, project, cfg) else 0.0
 
     # scaffolding: 該当Methodを持っていると実効難度が下がる ← ループの閉じ目
     reduction = max((m.difficulty_reduction for m in methods
@@ -710,7 +731,49 @@ def judge_maker_stage(agent, cfg) -> MakerStage:
     return MakerStage.CONSUMER
 ```
 
-**仮置き**: `maker_skill=0.45`, `maker_projects=3`, `adv_skill=0.70`, `adv_breadth=3`, `adv_assets=3`, `adv_projects=10`, `breadth_threshold=0.35`
+**仮置き**: `maker_skill=0.45`, `maker_projects=3`, `adv_skill=0.70`, `adv_breadth=3`, **`adv_assets=2`**, `adv_projects=10`, `breadth_threshold=0.35`
+
+#### 設備は M1 では不変である（決定 U1）
+
+**`Agent.assets` は M1 の run 中いっさい変化しない。** 設備を増やすアクションは存在しない（`observe` / `ask` / `practice` / `make` / `share` / `idle` のいずれも設備を変えない）。
+
+**設備獲得を M1 に実装しない理由**: 獲得手段（購入または贈与）を入れると `money` の復活が必要になり、**決定 D8（money を M1 の因果モデルから外す）を覆すことになる**。
+
+帰結として、**`asset_distribution` は M1 では記録しない**（定数列になるため、毎 step 記録する意味がない。§10.1 から削除済み）。M3 で設備獲得が導入された時点で記録を復活させる。
+
+#### `adv_assets` を 3 から 2 へ変更（決定 U1）
+
+設備が M1 で不変であるため、`adv_assets: 3` は初期保有確率（`asset_0`=0.35 / `asset_1`=0.15 / `asset_2`=0.70 / `asset_3`=0.25）から **約11%の Agent にしか満たされない**。しかも **その11%は4条件で完全に同一**である（T5 により初期状態は一致するため）。
+
+結果として **Advanced Maker 人口の上限が条件によらず固定され、Advanced 層で条件効果を観測する余地が構造的に消える**。`adv_assets: 2` であれば、設備は制約として機能しつつ**天井にはならない**。
+
+> **これは結果を見ての調整ではない。** 実験開始前に、**設計上の天井効果を回避するための事前決定**である。
+>
+> §14.4 と同じ位置づけであり、「**構造的な観測不能性の除去**」と「**仮説に有利な方向へのパラメータ調整**」は別物として扱う。前者は観測装置の較正、後者は結果の捏造である。
+>
+> **実験開始後にこの値を変更してはならない。**
+
+#### `has_required_asset()` の定義（決定 U2）
+
+```python
+def has_required_asset(agent, project, cfg) -> bool:
+    """必要設備を保有しているかを判定する。
+    【決定 U2】count_assets()（下記）と同一の規則を使う。
+    isinstance ではなく config の type 宣言を参照する。"""
+    if project.required_asset is None:
+        return True
+    return _owns(agent, project.required_asset, cfg)
+
+def _owns(agent, asset_id: str, cfg) -> bool:
+    """保有判定の唯一の実装。count_assets() と has_required_asset() の
+    両方がこれを呼ぶ。2箇所で判定が食い違わないようにするため。"""
+    v = agent.assets[asset_id]
+    if cfg.agent_init.assets[asset_id].type == "bernoulli":
+        return v is True
+    return v >= 1                     # categorical: 0 は未保有
+```
+
+**判定を `_owns()` の1箇所に集約する。** `count_assets()` と `has_required_asset()` が別々に型分岐を持つと、片方だけ修正されて数え方と要求判定がずれる。
 
 #### 判定規則の根拠（決定 Z1）— 潜在技能ではなく行動で判定する
 
@@ -752,16 +815,13 @@ Metrics を読むときは、`customizer 以上の人数` を**累積的な経�
 def count_assets(agent, cfg) -> int:
     """保有している設備の【種類数】を返す。
     categorical 型（0-3 の離散値）は 1 以上であれば 1 種類として数える。
-    【決定 W2】isinstance による型分岐をしない。config の type 宣言を参照する。
-    isinstance に頼ると、config で型を変えたときに意味が静かに変わる。"""
-    return sum(1 for aid, v in agent.assets.items()
-               if (v is True if cfg.agent_init.assets[aid].type == "bernoulli"
-                   else v >= 1))
+    【決定 W2・U2】isinstance による型分岐をしない。_owns() に集約する。"""
+    return sum(1 for aid in agent.assets if _owns(agent, aid, cfg))
 ```
 
-したがって `advanced_assets: 3` は「**3種類の設備を保有している**」を意味する。tools を 3 本持っていても、それは1種類である。
+したがって `advanced_assets: 2` は「**2種類の設備を保有している**」を意味する。tools を 3 本持っていても、それは1種類である。
 
-**tools の水準そのものは `asset_distribution`（§10.1）へ別途記録する。** 「設備の種類の広さ」と「1種類の充実度」は別の概念であり、混同すると Advanced Maker の判定が「多様な設備を持つ人」から「特定の設備を大量に持つ人」へずれる。SPEC §4 の Advanced Maker 定義（「複数技能、高度造形、CAD、3Dプリント、電子工作等を**組み合わせられる**」）は前者を指している。
+**tools の水準そのものは `metadata.json` の初期状態として記録する**（決定 U1 により M1 では不変のため、毎 step の Metrics には含めない）。「設備の種類の広さ」と「1種類の充実度」は別の概念であり、混同すると Advanced Maker の判定が「多様な設備を持つ人」から「特定の設備を大量に持つ人」へずれる。SPEC §4 の Advanced Maker 定義（「複数技能、高度造形、CAD、3Dプリント、電子工作等を**組み合わせられる**」）は前者を指している。
 
 ### 6.5 Method の生成と共有
 
@@ -984,7 +1044,7 @@ SPEC §22 のうち M1 で算出可能なもの、および v0.2 同期で追加
 | `maker_count` | maker_stage が MAKER 以上の Agent 数 | 毎step |
 | `maker_stage_distribution` | 各段階の人数 | 毎step |
 | `skill_distribution` | 技能別の平均・中央値・分散・分位点 | 毎step |
-| `asset_distribution` | 設備保有数の分布 | 毎step |
+| ~~`asset_distribution`~~ | **M1 では記録しない**（決定 U1: 設備は run 中不変で定数列になるため）。初期状態は `metadata.json` に保存。M3 で設備獲得が入った時点で復活させる | — |
 | `network_density` | `nx.density(g)` | 毎step |
 | `skill_reachability` | 「必要技能を持つAgentに何ホップで到達できるか」の平均 | 10step毎 |
 | `resource_reachability` | 同上（材料・設備） | 10step毎 |
@@ -996,6 +1056,7 @@ SPEC §22 のうち M1 で算出可能なもの、および v0.2 同期で追加
 | **`skill_gain_per_time`** | Σ(技能獲得量) / Σ(消費時間)。Agent平均と分布 | 毎step |
 | **`method_self_discovery_per_time`** | 自己発見 Method 数 / `make` に投入した時間 | 毎step |
 | **`method_peer_acquisition_per_time`** | peer 由来受容 Method 数 / (`observe`+`ask`+`share`) に投入した時間 | 毎step |
+| **`rejection_reason_distribution`** | `RejectionReason` 別の却下件数（決定 V6） | 毎step |
 
 ### 10.2 追加4指標の意図
 
@@ -1005,6 +1066,7 @@ SPEC §22 のうち M1 で算出可能なもの、および v0.2 同期で追加
 - `skill_gain_per_time` — 投入時間あたりの学習効率。H2「Latent Capability がより速く成長するか」の速度の分母を明示する
 - `method_self_discovery_per_time` — 自力での知識生成レート。C/D でもこれは動く。**A/B の優位が単なる自己発見の増加なのか、peer 経路なのかを切り分ける**
 - `method_peer_acquisition_per_time` — peer 経路そのもののレート。C/D では定義上 0 であり、§8.4 の manipulation check を兼ねる
+- `rejection_reason_distribution` — **何がボトルネックになっているか**を直接示す。却下が `INSUFFICIENT_MATERIAL` に偏っていれば材料補充が制約要因であり、`MISSING_ASSET` に偏っていれば設備が制約要因である。条件間で偏りが違えば、それ自体が「条件が Agent の詰まり方を変えた」という知見になる
 
 ### 10.2.1 集計母集団の併記（決定 X3）
 
@@ -1273,13 +1335,14 @@ network:
   swap_multiplier: 10           # rewired の double_edge_swap 回数 = 10 × エッジ数
 
 agent_init:                     # 決定 X2。participant / non-participant で同一（§3.4.1）
-  skills:                       # 6技能ごとに個別指定（同一値でも明示的に並べる）
-    skill_0: {dist: beta, a: 1.5, b: 8.0}
-    skill_1: {dist: beta, a: 1.5, b: 8.0}
-    skill_2: {dist: beta, a: 1.2, b: 9.0}
-    skill_3: {dist: beta, a: 1.2, b: 9.0}
-    skill_4: {dist: beta, a: 1.0, b: 10.0}
-    skill_5: {dist: beta, a: 1.5, b: 8.0}
+  skills:                       # 決定 V2: キー名は type: に統一（assets/traits と同じ）
+                                # §14.2.4: 6技能すべて同一分布。技能に優劣を作らない
+    skill_0: {type: beta, a: 1.5, b: 8.0}
+    skill_1: {type: beta, a: 1.5, b: 8.0}
+    skill_2: {type: beta, a: 1.5, b: 8.0}
+    skill_3: {type: beta, a: 1.5, b: 8.0}
+    skill_4: {type: beta, a: 1.5, b: 8.0}
+    skill_5: {type: beta, a: 1.5, b: 8.0}
   assets:                       # 決定 W2: type を明示宣言する。
                                 # count_assets() は isinstance ではなく
                                 # この type 宣言を参照する
@@ -1288,17 +1351,15 @@ agent_init:                     # 決定 X2。participant / non-participant で�
     asset_2: {type: categorical, values: [0, 1, 2, 3],
               probs: [0.30, 0.40, 0.20, 0.10]}
     asset_3: {type: bernoulli,   p: 0.25}
-  traits:
-    participation_level:        # participant のみこの分布から生成
-      dist: beta                # non-participant は §3.4.2 により ≒ 0
-      a: 2.0
-      b: 3.0
-    nonparticipant_participation_level: 0.0
-    sharing_tendency:    {dist: beta, a: 2.5, b: 2.5}
-    imitation_tendency:  {dist: beta, a: 2.5, b: 2.5}
-    helping_norm:        {dist: beta, a: 2.5, b: 2.5}
-  trust_fixed: 0.5              # M1 では固定値。更新式は実装しない
-  time_budget: 3.0              # 決定 X2-7: 全Agent同一
+  traits:                       # 決定 V3: 固定値も {type: constant} 形式に揃える。
+                                # 分布指定 dict と素のスカラーを兄弟にしない
+    participation_level:              {type: beta,     a: 2.0, b: 3.0}   # participant のみ
+    nonparticipant_participation_level: {type: constant, value: 0.0}     # §3.4.2
+    sharing_tendency:                 {type: beta,     a: 2.5, b: 2.5}
+    imitation_tendency:               {type: beta,     a: 2.5, b: 2.5}
+    helping_norm:                     {type: beta,     a: 2.5, b: 2.5}
+    trust_fixed:                      {type: constant, value: 0.5}       # 更新式は実装しない
+    time_budget:                      {type: constant, value: 3.0}       # 決定 X2-7
 
 materials:                      # 決定 D13。条件別 YAML で上書き禁止
   initial:                      # 決定 Y1: すべて material ID ごとの dict
@@ -1325,7 +1386,8 @@ stage_thresholds:
   maker_projects: 3
   advanced_skill: 0.70
   advanced_breadth: 3
-  advanced_assets: 3
+  advanced_assets: 2            # 決定 U1: 3 では初期設備で天井ができるため 2 へ。
+                                # 実験開始後に変更してはならない
   advanced_projects: 10
   breadth_threshold: 0.35
 
@@ -1355,51 +1417,52 @@ time:
 
 ```yaml
 projects:                       # 6件を明示的に列挙する。分布から生成しない
+                                # 難度・技能番号・設備・材料点数は互いに無相関に配置する（下記）
   - project_id: proj_0
-    primary_skill: skill_0
-    base_difficulty: 0.20
-    required_asset: null
-    material_cost: {mat_0: 2.0}
+    primary_skill: skill_2
+    base_difficulty: 0.25       # 低難度だが材料3種（単調性を崩す）
+    required_asset: asset_1
+    material_cost: {mat_0: 1.0, mat_2: 1.0, mat_4: 2.0}
     target_profile: {attr_0: 0.0, attr_1: 0.0, attr_2: 0.0, attr_3: 0.0,
                      attr_4: 0.0, attr_5: 0.0, attr_6: 0.0}
 
   - project_id: proj_1
     primary_skill: skill_1
-    base_difficulty: 0.35
+    base_difficulty: 0.70       # 高難度だが設備不要・材料1種（単調性を崩す）
     required_asset: null
-    material_cost: {mat_1: 2.0, mat_2: 1.0}
+    material_cost: {mat_3: 2.0}
     target_profile: {attr_0: 0.0, attr_1: 0.0, attr_2: 0.0, attr_3: 0.0,
                      attr_4: 0.0, attr_5: 0.0, attr_6: 0.0}
 
   - project_id: proj_2
-    primary_skill: skill_2
-    base_difficulty: 0.45
-    required_asset: asset_0
-    material_cost: {mat_0: 1.0, mat_3: 2.0}
+    primary_skill: skill_0
+    base_difficulty: 0.40
+    required_asset: null
+    material_cost: {mat_1: 1.0, mat_4: 1.0}
     target_profile: {attr_0: 0.0, attr_1: 0.0, attr_2: 0.0, attr_3: 0.0,
                      attr_4: 0.0, attr_5: 0.0, attr_6: 0.0}
 
   - project_id: proj_3
     primary_skill: skill_3
-    base_difficulty: 0.55
+    base_difficulty: 0.80
     required_asset: asset_2
-    material_cost: {mat_2: 2.0, mat_4: 1.0}
+    material_cost: {mat_0: 2.0, mat_1: 1.0}
     target_profile: {attr_0: 0.0, attr_1: 0.0, attr_2: 0.0, attr_3: 0.0,
                      attr_4: 0.0, attr_5: 0.0, attr_6: 0.0}
 
   - project_id: proj_4
-    primary_skill: skill_4
-    base_difficulty: 0.70
-    required_asset: asset_1
-    material_cost: {mat_3: 1.0, mat_4: 2.0}
+    primary_skill: skill_5
+    base_difficulty: 0.30
+    required_asset: asset_0
+    material_cost: {mat_2: 2.0}
     target_profile: {attr_0: 0.0, attr_1: 0.0, attr_2: 0.0, attr_3: 0.0,
                      attr_4: 0.0, attr_5: 0.0, attr_6: 0.0}
 
   - project_id: proj_5
-    primary_skill: skill_5
-    base_difficulty: 0.80
+    primary_skill: skill_4
+    base_difficulty: 0.55
     required_asset: asset_3
-    material_cost: {mat_0: 1.0, mat_1: 1.0, mat_4: 2.0}
+    material_cost: {mat_1: 2.0, mat_2: 1.0, mat_3: 1.0}
     target_profile: {attr_0: 0.0, attr_1: 0.0, attr_2: 0.0, attr_3: 0.0,
                      attr_4: 0.0, attr_5: 0.0, attr_6: 0.0}
 ```
@@ -1422,18 +1485,31 @@ projects:                       # 6件を明示的に列挙する。分布から
 
 #### 14.2.3 カタログの設計要件（config を書く際に満たすこと）
 
-| # | 要件 |
-|---|---|
-| 1 | **6件の `primary_skill` が互いに異なり、6技能すべてを1件ずつカバーする** |
-| 2 | **`base_difficulty` に幅がある**（易しいものから難しいものまで） |
-| 3 | **`required_asset` が `null` のものと必要なものが混在する** |
-| 4 | **`material_cost` が件ごとに異なる材料構成を持つ** |
+| # | 要件 | 種別 |
+|---|---|---|
+| 1 | **6件の `primary_skill` が互いに異なり、6技能すべてを1件ずつカバーする** | 網羅性 |
+| 2 | **`base_difficulty` に幅がある**（易しいものから難しいものまで） | 網羅性 |
+| 3 | **`required_asset` が `null` のものと必要なものが混在する** | 網羅性 |
+| 4 | **`material_cost` が件ごとに異なる材料構成を持つ** | 網羅性 |
+| **5** | **`base_difficulty` の順序と `material_cost` の点数の順序を一致させない**（難度が低いが材料点数が多いもの、難度が高いが材料が少ないものを含める） | **無相関性** |
+| **6** | **`required_asset` の有無を難度と無相関にする**（難度の高いもので `required_asset: null` のものを1件以上含める） | **無相関性** |
+| **7** | **`primary_skill` の番号と難度を無相関にする** | **無相関性** |
 
-**理由**: 単一技能・単一設備ですべてを作れてしまうと、Agent は1つの技能だけを伸ばせば済み、**技能の広がり（`breadth`）が生まれない**。すると `judge_maker_stage` の `adv_breadth: 3`（3技能が閾値以上）が満たされず、**Advanced Maker への遷移条件が意味を失う**。
+**要件1〜4（網羅性）の理由**: 単一技能・単一設備ですべてを作れてしまうと、Agent は1つの技能だけを伸ばせば済み、**技能の広がり（`breadth`）が生まれない**。すると `judge_maker_stage` の `adv_breadth`（複数技能が閾値以上）が満たされず、**Advanced Maker への遷移条件が意味を失う**。要件3が必要なのは、設備を持たない Agent がまったく `make` できない世界になるのを避けるためである。
 
-要件3が必要なのは、設備を持たない Agent がまったく `make` できない世界になるのを避けるためである。要件1は `breadth` を、要件2は `success_probability` の勾配を、要件4は材料在庫の制約を、それぞれ意味あるものにする。
+**要件5〜7（無相関性）の理由**: 「難しいものほど材料も設備も多く要る」という相関を作り込むと、**難度の効果と資源制約の効果が分離できなくなる**。ある Agent が `proj_5` を作れなかったとき、それが技能不足なのか材料不足なのか設備がないのかを、モデルの構造上切り分けられなくなる。難度・技能・設備・材料を直交させることで、`success_probability` の勾配（難度）と `is_feasible()` の制約（資源）が独立に効く。
+
+要件7 は、`primary_skill` の番号と難度が対応していると「番号が大きい技能ほど高度」という**存在しない意味を番号に与えてしまう**ため必要である（§3.0 の中立コードネーム方針に反する）。
 
 **上記の値はすべて仮置きである。** 実験開始前に事前登録して固定する。
+
+#### 14.2.4 初期技能分布と難度の対応（決定 U1 系）
+
+**6技能すべてを同一の初期分布とする。** 以前は `skill_2` / `skill_3` / `skill_4` に異なる beta パラメータを与えていたが、これを廃止した。
+
+**理由**: §3.0 のとおり技能は**互いに交換可能な意味を持たないスロット**であり、初期分布に差を付ける根拠がない。差を付けたうえで難度も技能ごとに違うと、「初期技能が低い技能に高難度の project が割り当たる」といった**意図しない対応**が生じ、それが結果に効いても事後に切り分けられない。
+
+同一分布にすることで、**技能間の非対称性は「どの project がその技能を要求するか」だけに由来する**ことが保証される。これは要件7（技能番号と難度の無相関）と対になる設計である。
 
 ### 14.3 config 起動時検証（決定 Z6・W2）
 
@@ -1454,9 +1530,13 @@ projects:                       # 6件を明示的に列挙する。分布から
 
 | 検証項目 | 内容 |
 |---|---|
+| **`agent_init` 配下の全分布指定** | **キー名が `type:` に統一されていること**（決定 V2。`dist:` を使っていないこと） |
+| `agent_init.skills.*.type` | `beta` または `constant` であること |
 | `agent_init.assets.*.type` | `bernoulli` または `categorical` のいずれかであること |
+| `agent_init.traits.*.type` | `beta` または `constant` であること（決定 V3。素のスカラーを許さない） |
 | `categorical` の `values` / `probs` | 長さが一致し、`probs` の総和が 1.0 であること |
 | `bernoulli` の `p` | 0.0 〜 1.0 であること |
+| `constant` | `value` を持つこと |
 | Project の `primary_skill` | `IdRegistry.skill_ids` に含まれること |
 | Project の `required_asset` | `null` または `IdRegistry.asset_ids` に含まれること |
 | Project の `material_cost` のキー | `IdRegistry.material_ids` の部分集合であること |
@@ -1549,16 +1629,20 @@ peer_learning_enabled: false
 | 1 | **初期状態で Consumer が全Agentの 90% 以上** | `maker_stage_distribution` の初期値。**決定 Z1 により構成上100%となり、分布の校正なしに自動的に満たされる**（§6.4） |
 | 2 | participant の `participation_level` が**分散を持つ**（全員同値でない） | 標準偏差 > 閾値 |
 | 3 | participant 下位20% に**低participation層が存在する** | 20パーセンタイル値 < 閾値 |
-| 4 | 下記8項目が **participant と non-participant で同一分布**（決定 W3） | 生成元の config キーが同一であることを構造的に検証（統計検定ではなく、同じ分布オブジェクトから引いていることを保証する） |
+| 4 | 下記6項目が **participant と non-participant で同一分布**（決定 W3・V4） | 生成元の config キーが同一であることを構造的に検証（統計検定ではなく、同じ分布オブジェクトから引いていることを保証する） |
 | 5 | **Agent 生成が network 生成前に完了している** | 生成順序の構造的検証 |
 | 6 | **A/B/C/D で pre-network initial state が完全一致** | `agent_initial_states_sha256` の一致（T5 と共通、決定 Y6） |
-| 7 | `time_budget` が **M1 では全Agent同一** | 全Agentで同値 |
+| 7 | **`time_budget` と `trust_fixed` が M1 では全Agent同一**（決定 V4） | 全Agentで同値 |
 
 #### 要件4 の対象（決定 W3）— 確定リスト
 
-**同一分布であることを検証する8項目:**
+**同一分布であることを検証する6項目（決定 V4）:**
 
-`skills` / `assets` / `materials` / `sharing_tendency` / `imitation_tendency` / `helping_norm` / `time_budget` / `trust_fixed`
+`skills` / `assets` / `materials` / `sharing_tendency` / `imitation_tendency` / `helping_norm`
+
+**`time_budget` と `trust_fixed` を要件4から外した理由**: この2つは**全Agent共通のスカラー**（`{type: constant}`）であり、群ごとに「引く」ものではない。「群間で同一分布」という検証は定義上空振りになる。
+
+代わりに **要件7を「`time_budget` と `trust_fixed` が全Agentで同値であること」に拡張**する（独立要件を新設せず、既存の要件7に含める）。両者とも「全Agent同値」という同じ性質であり、分けて検証する意味がないため。
 
 **明示的に対象外:**
 
@@ -1657,7 +1741,7 @@ peer_learning_enabled: false
 | **Z2** | `Observation.cultural_peers` | **削除**。M1 の決定ルールが参照せず、non-participant では常に空集合となり区分が漏洩するため。M2 で必要になった時点で漏洩の可否を含めて再判断する（保留） | §3.3、§13 |
 | **Z3** | `participation_level` の乗算形 | **変更しない**。non-participant が make を実行せず M1 で MAKER に到達しないのは**設計どおりの帰結**。彼らは M3 への布石であり、M1 では社会的接触の提供のみを担う context population | §3.4.5 |
 | **Z4** | Metrics の系列数 | **3系列すべて必須**に統一（`all_agents` / `participants_only` / `nonparticipants_only`）。「任意」の記述を削除 | §3.4.6、§10.2.1 |
-| **Z5** | `count_assets()` | **保有している設備の種類数**と定義。tools（0-3）は 1 以上なら 1 種類。`advanced_assets: 3` = 3種類保有。tools の水準は `asset_distribution` へ別途記録 | §6.4 |
+| **Z5** | `count_assets()` | **保有している設備の種類数**と定義。tools（0-3）は 1 以上なら 1 種類。~~`advanced_assets: 3` = 3種類保有~~ → **決定 U1 により 2 へ変更（§17.5）**。~~tools の水準は `asset_distribution` へ別途記録~~ → **U1 により `asset_distribution` は M1 では記録せず、初期状態を `metadata.json` に保存** | §6.4 |
 | **Z6** | config 整合性 | **起動時検証を追加**し、不一致なら実行前に例外送出。`agent_init.skills` / `agent_init.assets` / `materials` 3種 / Project カタログの各キー集合を `IdRegistry` と照合 | §14.3 |
 | — | 識別子の呼称統一 | `Project.project_id` / `Method.project_id` / `Intent.target_project_id` / `IdRegistry.project_ids` に統一。**`project_type` という呼称は廃止**（config の個数指定キー `n_project_types` のみ従来どおり残す） | §3.1 |
 | — | `World` 構造体 | `step` / `cfg` / `id_registry` / `projects` / `agents` / `graph` / `rng` / `metrics` / `peer_learning_enabled` を定義 | §3.2.1 |
@@ -1680,6 +1764,19 @@ peer_learning_enabled: false
 | **V1** | `is_participant` の割り当て | **`agent_init` ストリーム（spawn 0）で、ノード番号と無関係にランダムに割り当てる。連番割り当てを禁止。** 順列の先頭 `n_participant_agents` 名を participant とし、ネットワーク生成（spawn 2）より前に確定させる。4条件で完全に同一になる。**理由**: base graph はリング格子でノード番号＝リング位置であるため、連番割り当てだと participant が連続弧を占め、条件A で cultural edge が密・条件B で疎になり、**topology 主効果（A vs B）が density 交絡を起こす** | §3.4.2、§7.2.1、§12.1 |
 | — | 交絡の記録 | `metadata.json` に **`cultural_edge_count`** と **`participant_ids_sha256`** を条件ごとに保存。`tests/test_participant_assignment.py`（T15）を新設。完了条件 C17 を追加 | §10.3、§13、§15 |
 | — | `cultural_edge_count` の扱い | **テストにしない**（§13.2）。合否判定を持たせると seed 除外の運用につながり §30 Anti-Goal に接近するため。代わりに `experiments/cultural_edge_report.py` で**全 seed を判定なしで報告**し、RESULTS.md では条件間差を必ず併記する（§10.4） | §10.4、§13.2 |
+
+### 17.5 S1〜S4 の再査読で確定した事項（2026-08-15 第5次）
+
+| # | 事項 | 決定 | 反映先 |
+|---|---|---|---|
+| **U1** | 設備の扱い | **設備獲得を M1 に実装しない**（獲得手段を入れると `money` の復活が必要になり D8 を覆すため）。`Agent.assets` は run 中不変。**`asset_distribution` は M1 では記録しない**（定数列のため）。**`advanced_assets` を 3 → 2 へ変更**。3 では初期保有確率から約11%にしか満たされず、その11%が4条件で同一なため Advanced 層の条件効果が構造的に観測不能になる。**これは結果を見ての調整ではなく、天井効果を回避する事前決定である。実験開始後に変更してはならない** | §6.4、§10.1、§14.1 |
+| — | カタログの単調性 | **難度・技能番号・設備・材料点数を互いに無相関に再配置**。設計要件に**無相関性3項目（要件5・6・7）**を追加 | §14.2、§14.2.3 |
+| — | 初期技能分布 | **6技能すべて同一分布**に統一。技能は交換可能なスロットであり初期分布に差を付ける根拠がない。差があると難度との意図しない対応が生じ、事後に切り分けられない | §14.1、§14.2.4 |
+| **U2** | `has_required_asset()` | **`_owns()` に判定を集約**し、`count_assets()` と同一規則にする。config の `type` 宣言を参照（bernoulli は True/False、categorical は 1 以上を保有） | §6.4 |
+| **V2** | 分布指定キー名 | `agent_init` 配下を**すべて `type:` に統一**（`skills` の `dist:` を廃止）。起動時検証に追加 | §14.1、§14.3 |
+| **V3** | traits の形式 | 固定値も **`{type: constant, value: ...}` 形式**に揃える。素のスカラーを兄弟にしない。ローダは `constant` を分布として扱う | §14.1、§14.3 |
+| **V4** | 要件4 の対象 | **6項目に確定**（skills / assets / materials / sharing / imitation / helping）。`time_budget` と `trust_fixed` は全Agent共通スカラーのため要件4から外し、**要件7（全Agent同値）に含める** | §3.4.1、§15.1 |
+| **V6** | 却下理由 | **`RejectionReason` Enum を定義**（6種）。`rejected_intents` に記録し、Metrics `rejection_reason_distribution` で分布を集計。時間超過は `break`、実行不能は `continue` | §3.1、§5.2、§10.1 |
 
 M1 実装をブロックする未決事項は**残っていない**。
 

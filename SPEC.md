@@ -1085,7 +1085,7 @@ Erdős–Rényi条件は将来の model specification sensitivity としての�
     condition_d.yaml
 ```
 
-`base.yaml` に4条件で完全に同一のパラメータを置き、条件別 YAML の差分は **`topology` と `peer_learning_enabled` の2キーのみ**とします（`docs/DESIGN_M1.md` §14.2）。この2キー以外に差分がないことが、比較の妥当性の担保になります。
+`base.yaml` に4条件で完全に同一のパラメータを置き、条件別 YAML の差分は **`topology` と `peer_learning_enabled` の2キーのみ**とします（`docs/DESIGN_M1.md` §14.5）。この2キー以外に差分がないことが、比較の妥当性の担保になります。
 
 **変更理由:**
 

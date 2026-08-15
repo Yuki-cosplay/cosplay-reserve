@@ -183,7 +183,8 @@ class AttributeVector:
 
 @dataclass(frozen=True)
 class Project:
-    """制作対象の仕様。カタログは seed から決定論的に生成され、4条件で完全に同一。
+    """制作対象の仕様。カタログは **base.yaml に固定値で記述**する（決定 W1、§14.2）。
+    分布から生成しない。4条件で完全に同一。
     Agent はカタログから選ぶだけで、新しい project_id を作らない（M1 の範囲）。"""
     project_id: str                      # 中立コードネーム: "proj_0" .. "proj_5"
     primary_skill: str                   # skill_ids のいずれか
@@ -202,8 +203,10 @@ class Method:
     method_id: str
     project_id: str              # 中立コードネーム: "proj_0" .. "proj_K"
     primary_skill: str           # skill_ids のいずれか
-    required_skill_level: float
     difficulty_reduction: float  # 0.0-0.6。実効難度をこの割合だけ下げる
+    # 決定 W6: required_skill_level は M1 では持たない。
+    # 書き込むだけで誰も読まないフィールドがあると、後から読む者が
+    # 「どこかで使われているはず」と誤解する。M2 で必要になった時点で追加する。
     origin_agent_id: str         # 最初の発明者
     source_agent_id: str         # 直接の伝達元
     origin_step: int
@@ -407,6 +410,9 @@ class Observation:
 | `imitation_tendency` | 同一分布 |
 | `helping_norm` | 同一分布 |
 | `time_budget` | 全Agent同一（決定 X2-7） |
+| `trust_fixed` | 全Agent同一（M1 では固定値） |
+
+この8項目が §15.1 要件4 の検証対象である（決定 W3）。**`participation_level` は含まれない** — 次項のとおり、意図的に差を付けた唯一の項目であるため。
 
 `money` は M1 に存在しない（決定 D8）。**Agent 初期状態にも config にも復活させない。**
 
@@ -538,6 +544,10 @@ def decide(obs: Observation, rng) -> list[Intent]:
 | `idle` | `w_idle`（一定の下限値） | 何もしない選択肢 |
 
 重み `w_*` はすべて config。
+
+**`ask` 効用における `trust` について（決定 W6）**: M1 では `trust` は全Agent一律の固定値（`trust_fixed`）であるため、`ask` 効用に対して**定数倍にしかならない**。すなわち **M1 では `ask` の相手選択は実質的に `perceived_skills`（推定技能差）のみで決まる**。
+
+`trust` の項を式に残しているのは、M2 以降で trust dynamics を導入する際に式を変更せずに済むようにするためである。M1 の結果を解釈するときに「信頼が相手選択に効いた」と読んではならない。
 
 **重要**: この効用関数は「Agent がループを回すため」に設計されていない。各 Agent は自分の局所状態から自分の効用を最大化するだけであり、ループは結果としてマクロに現れる（SPEC §5 の要求）。
 
@@ -691,7 +701,7 @@ SPEC §4 は各段階を**行動の記述**として定義している。
 
 初期状態では全Agentが `n_projects = 0` であるため、**Consumer 比率は構成上100%になる**。§15.1 要件1（Consumer ≥ 90%）は、分布パラメータの校正なしに自動的に満たされる。
 
-**これにより初期分布の恣意的調整の余地が消える。** 「Consumer 比率が目標に届かないので技能分布を下げる」という操作が、そもそも不要になり実行できなくなる。§14.1.1 の校正手続きは、以降**要件2・要件3（`participation_level` の分散と低participation層の存在）にのみ適用される**。
+**これにより初期分布の恣意的調整の余地が消える。** 「Consumer 比率が目標に届かないので技能分布を下げる」という操作が、そもそも不要になり実行できなくなる。§14.4 の校正手続きは、以降**要件2・要件3（`participation_level` の分散と低participation層の存在）にのみ適用される**。
 
 #### 帰結2: Customizer は不可逆、Maker 以上は可逆
 
@@ -713,10 +723,14 @@ Metrics を読むときは、`customizer 以上の人数` を**累積的な経�
 #### `count_assets()` の定義（決定 Z5）
 
 ```python
-def count_assets(agent) -> int:
+def count_assets(agent, cfg) -> int:
     """保有している設備の【種類数】を返す。
-    asset_2（tools、0-3 の離散値）は 1 以上であれば 1 種類として数える。"""
-    return sum(1 for v in agent.assets.values() if (v if isinstance(v, bool) else v >= 1))
+    categorical 型（0-3 の離散値）は 1 以上であれば 1 種類として数える。
+    【決定 W2】isinstance による型分岐をしない。config の type 宣言を参照する。
+    isinstance に頼ると、config で型を変えたときに意味が静かに変わる。"""
+    return sum(1 for aid, v in agent.assets.items()
+               if (v is True if cfg.agent_init.assets[aid].type == "bernoulli"
+                   else v >= 1))
 ```
 
 したがって `advanced_assets: 3` は「**3種類の設備を保有している**」を意味する。tools を 3 本持っていても、それは1種類である。
@@ -731,7 +745,6 @@ if success and rng.random() < cfg.method_discovery_prob:
     agent.methods[new_id] = Method(
         method_id=new_id, project_id=project.project_id,
         primary_skill=project.primary_skill,
-        required_skill_level=agent.skills[project.primary_skill],
         difficulty_reduction=cfg.base_reduction,
         origin_agent_id=agent.id, source_agent_id=agent.id,
         origin_step=world.step, acquired_step=world.step, hop_count=0,
@@ -789,6 +802,18 @@ def graph_for(condition: str, base_graphs, agents) -> nx.Graph:
     topology, _ = CONDITIONS[condition]
     return relabel_to_agent_ids(copy.deepcopy(base_graphs[topology]), agents)
 ```
+
+#### `add_skill_assortativity()` の契約（決定 W5）
+
+**`double_edge_swap` による次数保存型と定義する。エッジの追加・削除は行わない。**
+
+- **入力グラフの次数分布と総エッジ数を完全に保存する**
+- 技能の近い者同士が繋がりやすくなる方向へスワップを繰り返す
+- スワップ回数は config（`network.assortativity_swaps`）で指定する
+
+**理由**: 追加・削除型にすると `mean_degree` の意味が条件間で変わり、**A と B の比較が「繋ぎ方の違い」ではなく「密度の違い」を含んでしまう**。次数保存型なら、A と B の差は topology の構造のみに帰属する。
+
+これは B/D を作る `double_edge_swap`（次数保存）と同じ性質であり、**structured も rewired も同一の次数列を持つ**ことが構成上保証される。T9 の「A と B の次数列とエッジ数が一致」は、この2段の次数保存によって成立する。
 
 **4条件で共通なもの**: Agent の初期状態（技能・設備・材料・性向）、Project カタログ、効用重み、学習率、減衰率、補充設定、step 数、Agent 数。
 **条件間で違うもの**: 使用する base graph（structured / rewired）と `peer_learning_enabled` フラグの2つだけ。
@@ -1063,9 +1088,33 @@ M1 では `llm` と `prompt_version` は `null`。M2 でここが埋まる。`ag
 | 感度分析（§11） | 5 | 300 | 15セル × 4条件 × 5 |
 | 最終主実験 | 20 | 80 | 4条件 × 20。**事前登録してから実行する** |
 
-seed は `master_seed` から `rng.spawn()` で子ストリームを派生させる。Agent ごと・ネットワーク生成・解決順序でストリームを分離し、片方の呼び出し回数変更が他方の乱数列を汚染しないようにする。
-
 **同一 seed における4条件は、同じ `master_seed` から同じ初期状態を生成する。** 条件が変えるのは §7 の2点のみ。
+
+### 12.1 RNG spawn 規約（決定 W4）— 実装前に確定させる
+
+T1（決定論性）と T5（条件間不変）の**両方がこの規約に依存する**。規約が曖昧なまま実装すると、後から「なぜ条件間で初期状態がずれるのか」を追跡できなくなる。
+
+**ルート**: `master_seed` から `numpy.random.SeedSequence` を生成する。
+
+**第1階層の spawn 順序を固定する:**
+
+| index | ストリーム | 用途 |
+|---|---|---|
+| **0** | `agent_init` | Agent 初期状態の生成 |
+| **1** | `project_catalog` | **M1 では固定値のため未使用**（決定 W1）。番号は**予約**する |
+| **2** | `network` | structured topology の生成と rewiring |
+| **3** | `simulation` | step ループ内の全確率的判定 |
+
+**index 1 を空けたまま予約する理由**: M1 でカタログを固定値にしたからといって番号を詰めると、将来カタログを生成方式に変えたときに `network` 以降の全ストリームがずれ、**過去の run が再現できなくなる**。
+
+**追加規約:**
+
+- **`agent_init` は1回の spawn で全Agentを生成する。** Agent ごとに spawn しない
+  - 理由: Agent 数を変えても他のストリームがずれないようにするため。Agent ごとに spawn すると、`n_participant_agents` を変えた瞬間に network も simulation も別の乱数列になる
+- **`simulation` ストリームは step ごとに spawn しない。** 単一のストリームを **step 順・`agent_id` 昇順**で消費する
+- **条件 A/B/C/D で `agent_init` ストリームの消費が完全に同一になること**（T5 の前提）。**条件によって消費が変わってよいのは `network` ストリームのみ**である
+
+`test_determinism.py`（T1）と `test_condition_invariance.py`（T5）が、この規約が守られていることを検証する。
 
 ---
 
@@ -1083,7 +1132,7 @@ seed は `master_seed` から `rng.spawn()` で子ストリームを派生させ
 | `tests/test_stage_transition.py` | 固定シナリオで Consumer→Customizer→Maker が発火 | T6 |
 | `tests/test_learning_causality.py` | share 無効化で knowledge_diffusion が 0 になる | T7 |
 | `tests/test_metrics.py` | 手計算フィクスチャと算出値が一致（追加4指標を含む） | T8 |
-| `tests/test_network_pairing.py` | **A と C のエッジ集合が完全一致／B と D が完全一致／A と B の次数列とエッジ数が一致** | T9 |
+| `tests/test_network_pairing.py` | **A と C のエッジ集合が完全一致／B と D が完全一致／A と B の次数列とエッジ数が一致**（`add_skill_assortativity` が次数保存であることの検証を含む、決定 W5） | T9 |
 | `tests/test_peer_learning_gate.py` | **C/D で peer 由来 Method が 0 かつ observe/ask/share の実行回数 > 0** | T11 |
 | `tests/test_material_replenishment.py` | **補充設定が4条件で同一、在庫が cap を超えない** | T12 |
 | `tests/test_smoke.py` | 20 seed × 4条件が例外なく完走 | T10 |
@@ -1132,6 +1181,8 @@ network:
   mean_degree: 6
   rewire_p: 0.1
   assortativity: 0.3
+  assortativity_swaps: 5        # 決定 W5: assortativity 付与のスワップ回数
+                                # = 5 × エッジ数。次数保存型（追加・削除しない）
   swap_multiplier: 10           # rewired の double_edge_swap 回数 = 10 × エッジ数
 
 agent_init:                     # 決定 X2。participant / non-participant で同一（§3.4.1）
@@ -1142,12 +1193,14 @@ agent_init:                     # 決定 X2。participant / non-participant で�
     skill_3: {dist: beta, a: 1.2, b: 9.0}
     skill_4: {dist: beta, a: 1.0, b: 10.0}
     skill_5: {dist: beta, a: 1.5, b: 8.0}
-  assets:                       # 設備ごとの保有確率
-    asset_0: {dist: bernoulli, p: 0.35}
-    asset_1: {dist: bernoulli, p: 0.15}
-    asset_2: {dist: categorical, values: [0, 1, 2, 3],   # tools は 0-3 の離散分布
+  assets:                       # 決定 W2: type を明示宣言する。
+                                # count_assets() は isinstance ではなく
+                                # この type 宣言を参照する
+    asset_0: {type: bernoulli,   p: 0.35}
+    asset_1: {type: bernoulli,   p: 0.15}
+    asset_2: {type: categorical, values: [0, 1, 2, 3],
               probs: [0.30, 0.40, 0.20, 0.10]}
-    asset_3: {dist: bernoulli, p: 0.25}
+    asset_3: {type: bernoulli,   p: 0.25}
   traits:
     participation_level:        # participant のみこの分布から生成
       dist: beta                # non-participant は §3.4.2 により ≒ 0
@@ -1211,7 +1264,91 @@ time:
 
 **`consume` は config に現れない**（決定 Y5）。SPEC §12 では将来候補として列挙されているが、M1 では効用も時間コストも定義せず、`ActionType` からも削除している。
 
-### 14.1.2 config 起動時検証（決定 Z6）
+### 14.2 Project カタログ（決定 W1）— base.yaml に固定値で記述する
+
+```yaml
+projects:                       # 6件を明示的に列挙する。分布から生成しない
+  - project_id: proj_0
+    primary_skill: skill_0
+    base_difficulty: 0.20
+    required_asset: null
+    material_cost: {mat_0: 2.0}
+    target_profile: {attr_0: 0.0, attr_1: 0.0, attr_2: 0.0, attr_3: 0.0,
+                     attr_4: 0.0, attr_5: 0.0, attr_6: 0.0}
+
+  - project_id: proj_1
+    primary_skill: skill_1
+    base_difficulty: 0.35
+    required_asset: null
+    material_cost: {mat_1: 2.0, mat_2: 1.0}
+    target_profile: {attr_0: 0.0, attr_1: 0.0, attr_2: 0.0, attr_3: 0.0,
+                     attr_4: 0.0, attr_5: 0.0, attr_6: 0.0}
+
+  - project_id: proj_2
+    primary_skill: skill_2
+    base_difficulty: 0.45
+    required_asset: asset_0
+    material_cost: {mat_0: 1.0, mat_3: 2.0}
+    target_profile: {attr_0: 0.0, attr_1: 0.0, attr_2: 0.0, attr_3: 0.0,
+                     attr_4: 0.0, attr_5: 0.0, attr_6: 0.0}
+
+  - project_id: proj_3
+    primary_skill: skill_3
+    base_difficulty: 0.55
+    required_asset: asset_2
+    material_cost: {mat_2: 2.0, mat_4: 1.0}
+    target_profile: {attr_0: 0.0, attr_1: 0.0, attr_2: 0.0, attr_3: 0.0,
+                     attr_4: 0.0, attr_5: 0.0, attr_6: 0.0}
+
+  - project_id: proj_4
+    primary_skill: skill_4
+    base_difficulty: 0.70
+    required_asset: asset_1
+    material_cost: {mat_3: 1.0, mat_4: 2.0}
+    target_profile: {attr_0: 0.0, attr_1: 0.0, attr_2: 0.0, attr_3: 0.0,
+                     attr_4: 0.0, attr_5: 0.0, attr_6: 0.0}
+
+  - project_id: proj_5
+    primary_skill: skill_5
+    base_difficulty: 0.80
+    required_asset: asset_3
+    material_cost: {mat_0: 1.0, mat_1: 1.0, mat_4: 2.0}
+    target_profile: {attr_0: 0.0, attr_1: 0.0, attr_2: 0.0, attr_3: 0.0,
+                     attr_4: 0.0, attr_5: 0.0, attr_6: 0.0}
+```
+
+#### 14.2.1 なぜ分布生成ではなく固定値なのか
+
+1. **6件しかないため、生成アルゴリズムを持つ利点がない。** 生成規則を書く手間とバグの余地が、得られる柔軟性を上回る
+2. **カタログは4条件で完全一致が必須である**（T5）。固定値なら**構成上保証される**。分布生成にすると、生成規則の乱数消費順序が他のストリームとどう干渉するかを常に気にする必要が生じる（§12 の spawn 規約に1階層増える）
+3. **`base_difficulty` の分布を書くと、それ自体が校正対象のパラメータになる。** 「Maker が出ないので難度分布を下げる」という調整の余地が生まれ、SPEC §30 Anti-Goal に近づく。固定値なら**事前登録がそのまま成立する**
+
+決定 Z1 が初期化分布の校正余地を消したのと同じ趣旨である。**調整できる場所を構造的に減らす。**
+
+#### 14.2.2 `target_profile` を全属性 0.0 にする理由
+
+**M1 には需要が存在しない。** 値を入れると、**根拠のない数字が実験記録に残る**。`attr_3: 0.62` のような値が `config_resolved.yaml` に残り、後から読む者はそれに意味があると考えてしまう。
+
+`target_profile` が意味を持つのは、M3 で `RequiredItem` の仕様と**対にして充足判定を行うとき**である。対になる相手がいない段階で値を決めることはできない。
+
+**M1 では型の存在のみを確保し、値は使わない。** M1 のコードは `target_profile` を読まない。
+
+#### 14.2.3 カタログの設計要件（config を書く際に満たすこと）
+
+| # | 要件 |
+|---|---|
+| 1 | **6件の `primary_skill` が互いに異なり、6技能すべてを1件ずつカバーする** |
+| 2 | **`base_difficulty` に幅がある**（易しいものから難しいものまで） |
+| 3 | **`required_asset` が `null` のものと必要なものが混在する** |
+| 4 | **`material_cost` が件ごとに異なる材料構成を持つ** |
+
+**理由**: 単一技能・単一設備ですべてを作れてしまうと、Agent は1つの技能だけを伸ばせば済み、**技能の広がり（`breadth`）が生まれない**。すると `judge_maker_stage` の `adv_breadth: 3`（3技能が閾値以上）が満たされず、**Advanced Maker への遷移条件が意味を失う**。
+
+要件3が必要なのは、設備を持たない Agent がまったく `make` できない世界になるのを避けるためである。要件1は `breadth` を、要件2は `success_probability` の勾配を、要件4は材料在庫の制約を、それぞれ意味あるものにする。
+
+**上記の値はすべて仮置きである。** 実験開始前に事前登録して固定する。
+
+### 14.3 config 起動時検証（決定 Z6・W2）
 
 `n_skills` などの個数指定と、`agent_init` / `materials` / Project カタログの明示的なキー集合は**二重に結合している**。片方だけを変更すると、実行の途中で `KeyError` になるか、より悪い場合は静かに一部の技能だけが初期化されないまま進む。
 
@@ -1226,11 +1363,24 @@ time:
 | `materials.replenish_rate` のキー集合 | `IdRegistry.material_ids` |
 | Project カタログの `project_id` 集合 | `IdRegistry.project_ids` |
 
+**さらに型の妥当性も検証する（決定 W2）:**
+
+| 検証項目 | 内容 |
+|---|---|
+| `agent_init.assets.*.type` | `bernoulli` または `categorical` のいずれかであること |
+| `categorical` の `values` / `probs` | 長さが一致し、`probs` の総和が 1.0 であること |
+| `bernoulli` の `p` | 0.0 〜 1.0 であること |
+| Project の `primary_skill` | `IdRegistry.skill_ids` に含まれること |
+| Project の `required_asset` | `null` または `IdRegistry.asset_ids` に含まれること |
+| Project の `material_cost` のキー | `IdRegistry.material_ids` の部分集合であること |
+
+`count_assets()`（§6.4）が `type` 宣言に依存するため、**型の検証を省くと設備の数え方が静かに変わる**。キー集合の一致だけでは不十分である。
+
 **実行後ではなく実行前に落とす。** 300 run の感度分析（§11）が走り終わってから「mat_4 だけ補充されていなかった」と気付くのが最悪の失敗であり、それを構造的に防ぐ。
 
 `tests/test_config_validation.py` が、不整合な config を与えたときに例外が送出されることを検証する。
 
-### 14.1.1 初期化パラメータの校正について（決定 X2）
+### 14.4 初期化パラメータの校正について（決定 X2）
 
 **決定 Z1 により、要件1（Consumer ≥ 90%）は構成上100%で自動的に満たされる。** 初期状態では全Agentが `n_projects = 0` であり、`maker_stage` は技能水準を参照しないためである。**したがって技能・設備の初期分布に対する校正作業は存在しない。** これは恣意的調整の余地を構造的に消すための設計である。
 
@@ -1243,7 +1393,7 @@ time:
 
 これは SPEC §30 Anti-Goal「結果が出るように後からパラメータを恣意的調整する」を、初期化分布についても適用したものである。**初期条件の校正と、仮説に関わるパラメータの調整は、明確に別物として扱う。**
 
-### 14.2 条件別 YAML — 差分は2行のみ
+### 14.5 条件別 YAML — 差分は2行のみ
 
 ```yaml
 # configs/condition_a.yaml
@@ -1302,7 +1452,7 @@ peer_learning_enabled: false
 | C13 | **感度分析15セル（§11）が完走し、全セルの結果が出力される** |
 | C14 | **Agent 初期化テスト（T13）が通る**（§15.1 の7要件） |
 | C15 | **Metrics が `all_agents` / `participants_only` / `nonparticipants_only` の3系列で出力される**（§10.2.1） |
-| C16 | **config 検証テスト（T14）が通る**（§14.1.2） |
+| C16 | **config 検証テスト（T14）が通る**（§14.3） |
 
 ### 15.1 Agent 初期化の最低要件（決定 X2）— `tests/test_agent_init.py` が検証
 
@@ -1311,10 +1461,25 @@ peer_learning_enabled: false
 | 1 | **初期状態で Consumer が全Agentの 90% 以上** | `maker_stage_distribution` の初期値。**決定 Z1 により構成上100%となり、分布の校正なしに自動的に満たされる**（§6.4） |
 | 2 | participant の `participation_level` が**分散を持つ**（全員同値でない） | 標準偏差 > 閾値 |
 | 3 | participant 下位20% に**低participation層が存在する** | 20パーセンタイル値 < 閾値 |
-| 4 | `skills` / `assets` / `materials` / behavioral traits が **participant と non-participant で同一分布** | 生成元の config キーが同一であることを構造的に検証（統計検定ではなく、同じ分布オブジェクトから引いていることを保証する） |
+| 4 | 下記8項目が **participant と non-participant で同一分布**（決定 W3） | 生成元の config キーが同一であることを構造的に検証（統計検定ではなく、同じ分布オブジェクトから引いていることを保証する） |
 | 5 | **Agent 生成が network 生成前に完了している** | 生成順序の構造的検証 |
 | 6 | **A/B/C/D で pre-network initial state が完全一致** | `agent_initial_states_sha256` の一致（T5 と共通、決定 Y6） |
 | 7 | `time_budget` が **M1 では全Agent同一** | 全Agentで同値 |
+
+#### 要件4 の対象（決定 W3）— 確定リスト
+
+**同一分布であることを検証する8項目:**
+
+`skills` / `assets` / `materials` / `sharing_tendency` / `imitation_tendency` / `helping_norm` / `time_budget` / `trust_fixed`
+
+**明示的に対象外:**
+
+> **`participation_level` は要件4の検証対象に含めない。**
+> 決定 X3・Z3 により、これは **participant / non-participant で意図的に差を付けた唯一の項目**である。同一分布であることを検証すると、設計そのものと矛盾してテストが必ず落ちる。
+
+`tests/test_agent_init.py` の該当テストには、この理由をコメントとして残すこと。理由を書かずに除外リストだけがあると、後から読む者が「検証漏れではないか」と考えて追加してしまう。
+
+§3.4.1 の「差を付けないもの」の表と、この8項目は一致している。
 
 #### 「Consumer 90% 以上」の位置づけ — 誤読を防ぐための明示
 
@@ -1383,7 +1548,7 @@ peer_learning_enabled: false
 | # | 事項 | 決定 | 反映先 |
 |---|---|---|---|
 | **X1** | `Intent` 型 | **確定**。`action` / `target_agent_id` / `target_project_id` / `target_skill_id` / `target_method_id` / `reason` のみ。**数量フィールドを持たせない**（生産数量・金額・消費時間量を含めない）。`decide() -> list[Intent]`、Validator が time_budget 内で順に評価し予算超過以降を却下。M2 で LLM structured output schema として再利用 | §3.1、§5.2 |
-| **X2** | Agent 初期化 | **`base.yaml` に `agent_init` を追加**し全分布パラメータを config 化。最低要件7項目（§15.1）。**初期化分布を本実験結果を見て調整してはならない**。校正は独立した固定seedまたは解析的確認で一度だけ行い実験前に固定 | §14.1、§14.1.1、§15.1 |
+| **X2** | Agent 初期化 | **`base.yaml` に `agent_init` を追加**し全分布パラメータを config 化。最低要件7項目（§15.1）。**初期化分布を本実験結果を見て調整してはならない**。校正は独立した固定seedまたは解析的確認で一度だけ行い実験前に固定 | §14.1、§14.4、§15.1 |
 | **X3** | participant / non-participant | **技能・設備・材料・向社会性に一切差を付けない**。差は `participation_level` と cultural peer-learning network の参加資格のみ。**non-participant を孤立ノードにしない**。M1 の主要因果対照ではない（context population） | §3.4、§7.2、§10.2.1 |
 | **X4** | 識別子の中立化 | `n_cosplay_agents` → **`n_participant_agents`**、`n_general_agents` → **`n_nonparticipant_agents`**。T2 の対象は **Agent-facing strings のみ**に限定 | §3.0.1、§14.1 |
 | **Y1** | 材料パラメータ | `inventory_cap` / `replenish_rate` を **material ID ごとの dict に統一**。全条件で同一 | §9.1、§14.1 |
@@ -1405,9 +1570,20 @@ peer_learning_enabled: false
 | **Z3** | `participation_level` の乗算形 | **変更しない**。non-participant が make を実行せず M1 で MAKER に到達しないのは**設計どおりの帰結**。彼らは M3 への布石であり、M1 では社会的接触の提供のみを担う context population | §3.4.5 |
 | **Z4** | Metrics の系列数 | **3系列すべて必須**に統一（`all_agents` / `participants_only` / `nonparticipants_only`）。「任意」の記述を削除 | §3.4.6、§10.2.1 |
 | **Z5** | `count_assets()` | **保有している設備の種類数**と定義。tools（0-3）は 1 以上なら 1 種類。`advanced_assets: 3` = 3種類保有。tools の水準は `asset_distribution` へ別途記録 | §6.4 |
-| **Z6** | config 整合性 | **起動時検証を追加**し、不一致なら実行前に例外送出。`agent_init.skills` / `agent_init.assets` / `materials` 3種 / Project カタログの各キー集合を `IdRegistry` と照合 | §14.1.2 |
+| **Z6** | config 整合性 | **起動時検証を追加**し、不一致なら実行前に例外送出。`agent_init.skills` / `agent_init.assets` / `materials` 3種 / Project カタログの各キー集合を `IdRegistry` と照合 | §14.3 |
 | — | 識別子の呼称統一 | `Project.project_id` / `Method.project_id` / `Intent.target_project_id` / `IdRegistry.project_ids` に統一。**`project_type` という呼称は廃止**（config の個数指定キー `n_project_types` のみ従来どおり残す） | §3.1 |
 | — | `World` 構造体 | `step` / `cfg` / `id_registry` / `projects` / `agents` / `graph` / `rng` / `metrics` / `peer_learning_enabled` を定義 | §3.2.1 |
+
+### 17.3 S1〜S4 の再査読で確定した事項（2026-08-15 第3次）
+
+| # | 事項 | 決定 | 反映先 |
+|---|---|---|---|
+| **W1** | Project カタログ | **`base.yaml` の `projects:` ブロックに6件を固定値で記述**。分布生成しない。`target_profile` は M1 では全属性 0.0。設計要件4項目（6技能を1件ずつカバー／難度に幅／`required_asset` の有無が混在／材料構成が件ごとに異なる） | §3.1、§14.2 |
+| **W2** | asset の型宣言 | `agent_init.assets.*` に **`type: bernoulli` / `categorical` を明示**。`count_assets()` は `isinstance` をやめ config の `type` を参照。起動時検証に型の妥当性検証を追加 | §6.4、§14.1、§14.3 |
+| **W3** | 要件4 の対象 | **8項目に限定**（skills / assets / materials / sharing / imitation / helping / time_budget / trust_fixed）。**`participation_level` は明示的に対象外**（X3・Z3 で意図的に差を付けた唯一の項目）。理由を T13 にコメントとして残す | §3.4.1、§15.1 |
+| **W4** | RNG spawn 規約 | 第1階層の spawn 順序を **0:agent_init / 1:project_catalog（予約）/ 2:network / 3:simulation** に固定。`agent_init` は1回の spawn で全Agent生成、`simulation` は step 順・agent_id 昇順で単一ストリームを消費。**条件間で消費が変わってよいのは network のみ** | §12.1 |
+| **W5** | assortativity の契約 | **`double_edge_swap` による次数保存型**と定義。エッジの追加・削除をしない。スワップ回数は `network.assortativity_swaps` | §7、§14.1 |
+| **W6** | trust / 死にフィールド | `ask` 効用の `trust` は M1 では定数倍にすぎず、**相手選択は実質 `perceived_skills` のみで決まる**旨を明記。`Method.required_skill_level` は**フィールドごと削除** | §3.1、§5.1、§6.5 |
 
 M1 実装をブロックする未決事項は**残っていない**。
 

@@ -103,6 +103,6 @@ tests/
 
 これは出発点として改善してよいものであり、厳格な規定ではありません — ただし過剰な作り込み（重厚なframework、時期尚早なマイクロサービス化など）は避けてください（§30）。
 
-条件別 YAML の差分は `topology` と `peer_learning_enabled` の**2キーのみ**です（`docs/DESIGN_M1.md` §14.2）。学習率・減衰率・Agent数・材料補充・効用重み・step数を条件ごとに変えてはいけません。
+条件別 YAML の差分は `topology` と `peer_learning_enabled` の**2キーのみ**です（`docs/DESIGN_M1.md` §14.5）。学習率・減衰率・Agent数・材料補充・効用重み・step数を条件ごとに変えてはいけません。
 
 M1 で実際に作成するモジュール構成は `docs/DESIGN_M1.md` §2 が正典です（`src/world/resources.py`、`src/agents/observation.py` 等が追加されています）。

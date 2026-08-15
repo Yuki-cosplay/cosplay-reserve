@@ -1189,4 +1189,62 @@ SPEC.md は研究仕様として高い完成度を持つ。特に以下は優れ
 
 **M1 実装をブロックする未決事項は残っていない。**
 
-SPEC.md は v0.2 へ改訂済み（§33 改訂履歴に4件を記録）。`docs/DESIGN_M1.md` は v0.2 に同期済み。
+SPEC.md は v0.2 へ改訂済み（§33 改訂履歴に6件を記録）。`docs/DESIGN_M1.md` は v0.2 に同期済み。
+
+---
+
+## 16. S1〜S4 着手前の再査読で確定した事項（2026-08-15）
+
+DESIGN_M1 を v0.2 へ同期した後、S1〜S4（`common/types.py` / `agents/agent.py` / `culture/network.py` / `agents/observation.py`）の実装を妨げる矛盾・欠落を洗い出し、以下を確定した。詳細は `docs/DESIGN_M1.md` §17.1。
+
+### 16.1 X1〜X4（S1〜S4 を実際に止めていた4件）
+
+| # | 問題 | 決定 |
+|---|---|---|
+| **X1** | `Intent` 型がどこにも定義されていなかった（S1 が書けない） | 6フィールドで確定。**数量フィールドを持たせない**。時間・実現可能性は Validator が判定 |
+| **X2** | Agent 初期状態の生成規則が完全に欠落（S2 が書けない） | `base.yaml` に `agent_init` を新設。最低要件7項目と**校正手続きの分離**を明文化 |
+| **X3** | 30名と10名を分ける意味が未定義（S2 が書けない・研究上の判断） | **participant / non-participant** として定義。§16.2 に詳述 |
+| **X4** | `n_cosplay_agents` が中立コードネーム方針と自己矛盾 | 識別子を中立化し、**T2 の対象を Agent-facing strings のみに限定**して線引きを確定 |
+
+### 16.2 X3 の決着 — participant / non-participant の因果設計
+
+**当初の懸念**: 30/10 に差を付ける設計は、SPEC §6 が禁じる「コスプレイヤーは技能が高い／利他的である」という未証明の前提を、初期分布として密輸入しかねない。
+
+**決着**: 差を付ける対象を極限まで絞った。
+
+- **差を付けないもの**: `skills` / `assets` / `materials` / `sharing_tendency` / `imitation_tendency` / `helping_norm` / `time_budget` — **すべて共通分布から生成**
+- **差を付けるもの**: `participation_level` と cultural peer-learning network への参加資格の**2点のみ**
+
+さらに **non-participant を孤立ノードにしない**ことを必須要件とした。孤立させると、participant との差が「participation の差」と「ネットワーク孤立の差」の**二重差**になり、文化参加効果と単純な社会接触効果が交絡する。これは条件C/Dを `nx.empty_graph()` にしてはならない理由（§12.1【要承認2】の決着）とまったく同じ構造の誤りである。
+
+一般社会接触（`known_agents`）と cultural peer-learning edge（`cultural_peers`）を概念上分離し、後者のみが Method を運ぶ。
+
+**位置づけ**: participant / non-participant は **M1 の主要な因果対照ではない**。主要対照はあくまで A/B/C/D（topology × peer learning）の2×2完全要因計画である。non-participant は **context population** として扱い、**この比較から「文化参加の因果効果」を直接主張しない**。30/10 という比率も現実の人口比を表す実証値ではなく、M1 の仮置き構成である。
+
+Metrics は `all_agents` / `participants_only` / `nonparticipants_only` の3系列で保存し、**H1/H2 の主要判定は `participants_only`** で行う。
+
+### 16.3 Y1〜Y6（実装可能だが不整合だった6件）
+
+| # | 問題 | 決定 |
+|---|---|---|
+| **Y1** | `inventory_cap` がconfigではスカラー、コードではdict添字 | **material ID ごとの dict に統一** |
+| **Y2** | `learn_rate_failure` を読むが config には ratio しかない | **ratio を正とし、コードで導出**。`learn_rate_failure` を config に書かない |
+| **Y3** | make の時間コストが `Project.time_cost` と `action_time_cost.make` に二重定義 | **`action_time_cost.make` へ一本化**。`Project.time_cost` を削除 |
+| **Y4** | ID 一覧が types.py 定数と config に二重定義 | **config を single source of truth** とし `IdRegistry` をロード時に生成 |
+| **Y5** | `ActionType.CONSUME` に効用も時間コストもない | **M1 から削除**（SPEC §33 改訂6）。`idle` の時間コストを 0.0 に |
+| **Y6** | `agent_initial_states_sha256` が pre/post-network のどちらか不明 | **pre-network** で確定。network 由来フィールドをハッシュ対象から除外 |
+
+### 16.4 trust の最終仕様
+
+**M1 では trust を固定値とし、更新式を実装しない。**
+
+本レビュー §5.1（I12）および SPEC §19 旧記述にあった「`ask` によって `perceived_skills` と `trust` を更新する」は**廃止**した。正しくは「**`ask` によって `perceived_skills` は更新するが、trust は M1 では固定**」である。
+
+**理由**: peer learning の ON/OFF が trust dynamics まで変化させると、操作した因子が2つになり、A−C の差を peer reproduction 経路だけに帰属できなくなる。§12.1【要承認2】の決着が要求した「遮断するのは単一経路のみ」という設計が崩れる。
+
+`accept_peer_method()` は固定 trust 値を参照してよい。trust dynamics の必要性は M2 以降で再検討する。
+
+### 16.5 その他の確定
+
+- **`temperature`**（`success_probability` の sigmoid 温度）を `base.yaml` の `learning` ブロックへ追加。コードにハードコードしない
+- **make と技能維持**: `make` を実行した Project の `primary_skill` は、**成功・失敗を問わず** `practiced_this_step` へ追加し、その step の減衰対象から除外する。制作に失敗しても技能は使用しており、同じ step で「使ったのに腕が鈍る」のは機構として不自然であるため

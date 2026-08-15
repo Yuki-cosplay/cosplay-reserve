@@ -368,6 +368,12 @@ LLMはその局所状態から次の行動を判断します。
 
 `make` は一般化された制作行動です。
 
+**Milestone 1 で実装するAction**（v0.2追加。§33 改訂6）
+
+上記は**初期候補**であり、全Actionを最初から実装するという意味ではありません。M1 で実装するのは `observe` / `ask` / `practice` / `make` / `share` / `idle` の6つです。
+
+`consume` を含むそれ以外のActionは**将来候補**として保持しますが、**M1 では使用しません**。効用も時間コストも定義せず、`ActionType` にも含めません（`docs/DESIGN_M1.md` §3.1）。使われないAction定義を残しておくと、実装されていない行動が選択肢として存在するかのような誤解を生むためです。
+
 ---
 
 ## 13. LLMとコードの責務分離
@@ -555,7 +561,11 @@ C/Dは「ネットワークを除去した世界」ではありません。
 
 を表します。
 
-**全条件で有効**（C/Dでも維持）：practiceによる技能向上、make成功/失敗からの技能向上、make成功時のMethod自己発見、自己発見Methodのself-scaffolding、observe、ask、share、通常の社会的接触、perceived_skillsの更新、trustの更新。
+**全条件で有効**（C/Dでも維持）：practiceによる技能向上、make成功/失敗からの技能向上、make成功時のMethod自己発見、自己発見Methodのself-scaffolding、observe、ask、share、通常の社会的接触、perceived_skillsの更新。
+
+> **trustについて**（v0.2改訂。§33 改訂6）
+> **Milestone 1 では trust を固定値とし、更新式を実装しません。** 旧記述にあった「trustの更新」は M1 の対象から外します。
+> peer learningのON/OFFがtrust dynamicsまで変化させると、操作した因子が2つになり、A−Cの差をpeer経路だけに帰属できなくなるためです。trust dynamicsの必要性はM2以降で再検討します。
 
 **C/Dでのみ無効**：他AgentからのMethod取得、peer Method transfer、peer由来Methodによるsocial scaffolding。
 
@@ -1089,6 +1099,28 @@ Erdős–Rényi条件は将来の model specification sensitivity としての�
 
 ---
 
+#### 改訂6: §12 / §19 — M1 実装範囲の明確化（Action と trust）
+
+**変更内容:**
+
+1. **§12 Agent Actions** — 「初期候補」の一覧は変更せず、**M1 で実装するのは6Action（`observe` / `ask` / `practice` / `make` / `share` / `idle`）である**旨を追記。`consume` は将来候補として保持するが M1 では使用しない。
+2. **§19 Peer learning OFF の意味** — 「全条件で有効」の列挙から **`trustの更新` を削除**し、M1 では trust を固定値とする旨を追記。
+
+**旧定義（v0.2 改訂1時点、原文）:**
+
+> **全条件で有効**（C/Dでも維持）：practiceによる技能向上、make成功/失敗からの技能向上、make成功時のMethod自己発見、自己発見Methodのself-scaffolding、observe、ask、share、通常の社会的接触、perceived_skillsの更新、trustの更新。
+
+**変更理由:**
+
+**trust**: trust に更新式を入れると、peer learning の ON/OFF が「Method が渡るか」だけでなく「信頼関係がどう育つか」まで変えてしまう。すると A−C の差を peer reproduction 経路だけに帰属できなくなり、§19 が意図した**単一経路の遮断**が成立しない。操作する因子を1つに保つため、M1 では trust を固定する。
+
+**Action**: 初期候補13Actionをすべて実装すると、効用も時間コストも定義されない Action が選択肢として存在することになり、決定論ルール（M1）でも LLM（M2）でも挙動が未定義になる。M1 の実装範囲を明示して曖昧さを消す。
+
+**これはSPECの研究命題の変更ではなく、Milestoneごとの実装範囲の明確化である。** §12 の初期候補一覧と §19 の条件定義そのものは変更していない。
+
+---
+
 #### 改訂されなかった項目（参考）
 
 - **§7 H1/H2/H3** — 仮説そのものは不変。§19 に操作的定義（peer learning ON/OFF）を追記する形で対応。
+- **§11 Agent State** — `money` を含む一覧は変更していない。M1 で `money` を扱わないのは Milestone スコープの決定（D8）であり、SPECの改訂ではない。M3 で経済を導入する際に §11 の記載が有効になる。

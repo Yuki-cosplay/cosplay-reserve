@@ -55,8 +55,9 @@ Windowsネイティブ環境、Python 3.12の仮想環境が `.venv/` にあり�
 - **Actionに「答え」をハードコードしない**（§12）。`make_ppe` や `make_mask` のようなActionは禁止で、一般化されたAction（`make`、`modify`、`share`、`help`、`trade`、`propose` 等）のみを使用します。Agentへ「PPEを作れ」「マスクを作れ」「医療を助けろ」と指示してはいけません — Phase 1のPPEへの転化は指令ではなく創発として起きる必要があります（§8）。
 - **Information Locality、神の視点の禁止**（§14）。Agentが見えるのは、自分自身、自分のmemory、接続されたAgentから届いたメッセージ、観測可能な市場情報、自ら取得した情報のみで、世界全体の状態を見せてはいけません。
 - **Required Itemは抽象化された仕様であり、名称ではない**（§18）。需要は `RequiredItem` を**属性ベクトル `attr_0` 〜 `attr_6`** としてモデル化し、「PPE」という具体名で扱わないこと — これによりPhase 2への一般化が可能になります。
-  - **属性に意味を持つ名前を付けないこと。** コード・config・ログ・出力ファイル・プロンプトには `attr_0` 〜 `attr_6` しか出現させません。技能・材料・設備・制作対象も同様に `skill_N` / `mat_N` / `asset_N` / `proj_N` の中立コード表記を使います（`docs/DESIGN_M1.md` §3.0）。
+  - **属性に意味を持つ名前を付けないこと。** 技能・材料・設備・制作対象も同様に `skill_N` / `mat_N` / `asset_N` / `proj_N` / `attr_N` の中立コード表記を使います（`docs/DESIGN_M1.md` §3.0）。
   - **意味の対応表は研究者向けドキュメント（SPEC.md §18）にのみ存在します。** `attr_0` 〜 `attr_6` は §18 の列挙順に対応します。対応表をこのファイル・コード・プロンプトへ複製しないでください — 複製した時点で、既知知識のリーク経路と「答え」の埋め込み経路になります。
+  - **禁止語テスト（T2）の対象は Agent-facing strings のみ**です（`docs/DESIGN_M1.md` §3.0.1）。対象=prompt・Action名・Agentへ渡るidentifier・Observation上の文字列・Agent memoryへ格納される文字列。対象外=README・RESULTS.md・SPEC.md・docs/・config_resolved.yaml・researcher-facing logs・コードコメント/docstring。**ただしconfigのキー名も中立に保つこと**（実装者の頭に「答え」を持ち込むため）。
 - **未証明の主張を事実として扱わない**（§6）。次のことをモデルの前提として実装してはいけません: コスプレコミュニティが他の趣味コミュニティより強い、コスプレイヤーが他人より利他的である、コスプレイヤーの災害対応能力が高い、コスプレネットワークが必ずより密である、コスプレイヤーが有事に必ず供給活動を行う。これらは検証対象の仮説であり、モデルの前提ではありません。
 - **Anti-Goals**（§30）: コスプレイヤーを英雄として描かない、利他的だと決めつけない、PPE制作を命令しない、結果に合わせて後からパラメータを恣意的に調整しない、LLMの文章だけを「創発」の証拠として扱わない、Agent数の多さを成果にしない、Milestone 1が終わる前にPhase 2・UI・マイクロサービス化・巨大なAgent frameworkに手を出さない。
 - **モデル内実験から現実への直接推論をしない**（§19）: A/B/C/D の比較は**仮説的モデル内部でのfactorial experiment**です。この結果から現実のコスプレ文化について直接因果主張してはいけません。特に A/C の structured topology は現実のネットワークの再現ではなく、検討用の仮説的構成です。
@@ -71,11 +72,17 @@ Windowsネイティブ環境、Python 3.12の仮想環境が `.venv/` にあり�
 - **Makerの成熟段階**（§4、シミュレーション中に変化しうる、固定属性ではない）: `Consumer → Customizer → Maker → Advanced Maker`。
 - **検証対象の仮説**（§7）: H1 — 相互学習構造は時間経過とともにMaker人口を増加させるか。H2 — 初期の技能・設備が同一でも、Capability Reproduction Loopが存在するとLatent Capabilityがより速く成長するか。H3 — その蓄積差は供給ショック時の転化確率・転化速度・供給量に差を生むか。
 - **2×2完全要因計画**（§19）。因子は **topology**（structured / rewired）× **peer learning**（ON / OFF）: **A**=structured+ON、**B**=rewired+ON、**C**=structured+OFF、**D**=rewired+OFF。初期技能・設備・資源は4条件で完全に同一。
-  - **C/D は「ネットワークを除去した世界」ではない**。社会的接触は維持される: practice・make・**Method自己発見**・**self-scaffolding**・observe・**ask**・**share**・perceived_skills更新・trust更新はすべて有効。C/Dで無効化されるのは **他AgentからのMethod取得（peer Method transfer）とpeer由来Methodによるsocial scaffolding のみ**。表現したいのは「人は社会的につながっているが、そのつながりが制作能力の再生産経路として機能しない世界」。
+  - **C/D は「ネットワークを除去した世界」ではない**。社会的接触は維持される: practice・make・**Method自己発見**・**self-scaffolding**・observe・**ask**・**share**・perceived_skills更新はすべて有効。C/Dで無効化されるのは **他AgentからのMethod取得（peer Method transfer）とpeer由来Methodによるsocial scaffolding のみ**。表現したいのは「人は社会的につながっているが、そのつながりが制作能力の再生産経路として機能しない世界」。
+  - **trustはM1では固定値。更新式を実装しない**（SPEC §33 改訂6）。「askによってtrustを更新する」という記述は廃止済み。peer learningのON/OFFがtrust dynamicsまで変えると、操作因子が2つになりA−Cの差をpeer経路に帰属できなくなるため。`accept_peer_method()` は固定trust値を参照してよい。
   - `skill assortativity → knowledge diffusion向上` を事前に仮定しないこと。**A < B** も正当な研究結果。
 - **転化とEmergenceは物語ではなくコードで判定する**（§20〜21）: 転化は閾値化された条件（`community_supply_share`、`active_supplier_count`、`supply_duration`、`coordination_edges`、いずれもconfig管理）で判定。Emergenceには E0（転化なし）から E4（マクロな供給能力として定着）までのレベルがあります。
 - **Milestoneの順序は厳守**（§28）: M1 = LLMなしの機構のみ（Agent生成、skills/assets/network、observe/practice/make/share、skill learning、ステージ遷移 — 目標はLoopが機構として成立可能なことの証明。特にConsumer→Customizer→Makerの遷移）。M2 = event-drivenな局所LLM意思決定の導入。M3 = 供給ショックの導入、答えを与えない。M4 = A/B/C/D の2×2比較（topology × peer learning の主効果と交互作用）。先に進みすぎないこと（例: §9の通り、Phase 1の妥当性確認前にPhase 2へ着手しない）。
 - **時間は二相クロック**（§25）: 蓄積相 = 1 step 1週（M1、標準156週）／ショック相 = 1 step 6時間（M3）。
+- **participant / non-participant は主要な因果対照ではない**（`docs/DESIGN_M1.md` §3.4）。母集団は participant 30 / non-participant 10（N=40）。**技能・設備・材料・向社会性の初期分布は完全に同一**で、差を付けるのは `participation_level` と cultural peer-learning networkへの参加資格のみ。
+  - **participantは「初期技能が高い人」でも「利他的な人」でもありません。** participationによる能力形成が起きるかは検証対象であって前提ではありません（§6）。
+  - **non-participantを孤立ノードにしてはいけません。** 一般社会接触（`known_agents`）は保持し、cultural Method transferとpeer scaffoldingのみ遮断します（`cultural_peers`）。二重差にすると文化参加効果と社会接触効果を分離できなくなります。
+  - non-participantは**context population**として扱い、**この比較から「文化参加の因果効果」を直接主張してはいけません**。主要対照はA/B/C/Dの2×2です。30/10も現実の人口比ではなく仮置き構成です。
+  - Metricsは `all_agents` / `participants_only` / `nonparticipants_only` の3系列で保存し、**H1/H2の主要判定は `participants_only`** で行います。
 
 ## 計画中のリポジトリ構成（SPEC.md §27、まだ未作成）
 

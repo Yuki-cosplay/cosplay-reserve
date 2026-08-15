@@ -144,6 +144,10 @@ cosplay-reserve/
 
 **ID 一覧は config が single source of truth（決定 Y4）。** `types.py` に `SKILL_NAMES` のようなタプルを**ハードコードしない**。config のロード時に ID 一覧を生成し、`IdRegistry` として引き回す。二重定義があると、config を変えたのにコード側の定数が古いまま、という不整合が静かに発生する。
 
+**project だけ生成元が異なる（決定 P4）。** skill / material / asset は `n_skills` などの**個数指定から連番を生成**するが、`project_ids` は **`projects:` カタログの `project_id` から導出**する。`world.n_project_types` は config から**削除した**。
+
+この非対称の理由: skill / material / asset は**中身を持たない純粋な ID**であり、個数さえ決まれば ID を作れる。一方 project は `primary_skill` / `base_difficulty` / `required_asset` / `material_cost` という**中身を伴う実体**であり、決定 W1 によりカタログに固定値で列挙されている。件数を別途宣言すると、**カタログの長さと個数指定という2つの真実の源**ができる。Y4 が排除しようとしたのはまさにこの二重定義である。
+
 ```python
 # src/common/types.py
 from dataclasses import dataclass
@@ -152,8 +156,8 @@ from enum import Enum
 @dataclass(frozen=True)
 class IdRegistry:
     """config から生成される ID 一覧。Python 側に定数を持たない（決定 Y4）。
-    world.n_skills / n_materials / n_assets / n_project_types から
-    skill_0.. / mat_0.. / asset_0.. / proj_0.. を決定論的に生成する。"""
+    skill / material / asset は個数指定から生成し、
+    project だけはカタログから導出する（決定 P4、下記の非対称）。"""
     skill_ids: tuple[str, ...]
     material_ids: tuple[str, ...]
     asset_ids: tuple[str, ...]
@@ -165,7 +169,7 @@ class IdRegistry:
         return cls(gen("skill", cfg.world.n_skills),
                    gen("mat",   cfg.world.n_materials),
                    gen("asset", cfg.world.n_assets),
-                   gen("proj",  cfg.world.n_project_types))
+                   tuple(p.project_id for p in cfg.projects))   # 決定 P4
 
 @dataclass(frozen=True)
 class AttributeVector:
@@ -425,7 +429,7 @@ class Observation:
 | `time_budget` | 全Agent同一（決定 X2-7） |
 | `trust_fixed` | 全Agent同一（M1 では固定値） |
 
-このうち **`skills` / `assets` / `materials` / `sharing_tendency` / `imitation_tendency` / `helping_norm` の6項目**が §15.1 要件4（同一分布）の検証対象である（決定 W3・V4）。`time_budget` と `trust_fixed` は全Agent共通のスカラーなので**要件7（全Agent同値）**で検証する。
+このうち **`skills` / `assets` / `sharing_tendency` / `imitation_tendency` / `helping_norm` の5項目**が §15.1 要件4（同一分布）の検証対象である（決定 W3・V4・P1）。**`materials` / `time_budget` / `trust_fixed` は全Agent共通の固定値**なので**要件7（全Agent同値）**で検証する。
 
 **`participation_level` はいずれにも含まれない** — 次項のとおり、意図的に差を付けた唯一の項目であるため。
 
@@ -1045,9 +1049,9 @@ SPEC §22 のうち M1 で算出可能なもの、および v0.2 同期で追加
 | `maker_stage_distribution` | 各段階の人数 | 毎step |
 | `skill_distribution` | 技能別の平均・中央値・分散・分位点 | 毎step |
 | ~~`asset_distribution`~~ | **M1 では記録しない**（決定 U1: 設備は run 中不変で定数列になるため）。初期状態は `metadata.json` に保存。M3 で設備獲得が入った時点で復活させる | — |
-| `network_density` | `nx.density(g)` | 毎step |
-| `skill_reachability` | 「必要技能を持つAgentに何ホップで到達できるか」の平均 | 10step毎 |
-| `resource_reachability` | 同上（材料・設備） | 10step毎 |
+| ~~`network_density`~~ | **M1 では時系列記録しない**（決定 P2: step ループにグラフを変更する処理がなく定数列になるため）。初期値を `metadata.json` に保存。M3 で協調エッジが動的に生成される段階で時系列記録を復活させる | — |
+| `skill_reachability` | 「必要技能を持つAgentに何ホップで到達できるか」の平均。**技能の変化に依存するため定数にならない → 時系列記録を継続** | 10step毎 |
+| `resource_reachability` | 同上（材料・設備）。**材料の変化に依存するため時系列記録を継続** | 10step毎 |
 | `knowledge_diffusion_speed` | Method の `origin_step → acquired_step` 差の分布、hop_count の分布 | 毎step |
 | `method_count_total` | 世界に存在する Method の総数（重複なし） | 毎step |
 | `method_adoption_rate` | 各 Method の保有Agent数 / 全Agent数 | 毎step |
@@ -1083,6 +1087,20 @@ SPEC §22 のうち M1 で算出可能なもの、および v0.2 同期で追加
 **主要判定を `participants_only` に置く理由**: H1/H2 は「文化圏内部で相互学習構造が能力再生産を変えるか」を問うている。non-participant は cultural peer-learning edge を持たないため、条件 A/B/C/D の操作がそもそも到達しない。彼らを分母に含めた指標を主要判定に使うと、効果量が母集団構成比（30/10）という**仮置きの数字**に依存してしまう。
 
 **それでも `all_agents` を捨てない理由**: 「文化圏の内側では差が出たが社会全体では無視できる大きさだった」という結果も、報告すべき知見だからである。
+
+### 10.2.2 M1 における `latent_capacity` の構成（決定 P3）
+
+SPEC §22 は `latent_capacity` を概念的に `Distributed Resources × Network Connectivity × Reconfiguration Ability` と捉える。**M1 における各成分の挙動は次のとおりである。**
+
+| 成分 | M1 での挙動 |
+|---|---|
+| 分散資源量 | **変動する**（材料の消費と外生補充による） |
+| ネットワーク連結度 | **定数**（M1 ではグラフが変化しないため。決定 P2 と同じ理由） |
+| 再構成能力 | **M1 には存在しない**（需要がないため。M3 で導入） |
+
+**したがって M1 では `latent_capacity` を単一スコアに合成しない。** 構成指標を別々に保存する方針（SPEC §22、`docs/REVIEW.md` §12.3）を維持する。
+
+**理由**: 3成分のうち1つが定数、1つが不在という状態で積を取ると、得られるスコアは実質「分散資源量の定数倍」にすぎない。それを `latent_capacity` と名付けると、**Latent Capability を測っているように見えて資源量しか測っていない**という誤読を生む。定数成分を含んだ合成スコアは M1 では解釈できない。
 
 **`latent_capacity` は積の形で単一スコア化しない**（`docs/REVIEW.md` §12.3）。構成指標を別々に保存する。
 
@@ -1322,9 +1340,10 @@ world:
   n_skills: 6                   # -> skill_0 .. skill_5
   n_materials: 5                # -> mat_0 .. mat_4
   n_assets: 4                   # -> asset_0 .. asset_3
-  n_project_types: 6            # -> proj_0 .. proj_5
                                 # 決定 Y4: ID 一覧はここから生成する。
                                 # types.py に定数を二重定義しない
+                                # 決定 P4: n_project_types は廃止した。
+                                # project_ids は projects: カタログから導出する
 
 network:
   mean_degree: 6
@@ -1421,7 +1440,7 @@ projects:                       # 6件を明示的に列挙する。分布から
   - project_id: proj_0
     primary_skill: skill_2
     base_difficulty: 0.25       # 低難度だが材料3種（単調性を崩す）
-    required_asset: asset_1
+    required_asset: asset_2     # 最も一般的な設備(p=0.70)が最易 project を門番する
     material_cost: {mat_0: 1.0, mat_2: 1.0, mat_4: 2.0}
     target_profile: {attr_0: 0.0, attr_1: 0.0, attr_2: 0.0, attr_3: 0.0,
                      attr_4: 0.0, attr_5: 0.0, attr_6: 0.0}
@@ -1445,7 +1464,7 @@ projects:                       # 6件を明示的に列挙する。分布から
   - project_id: proj_3
     primary_skill: skill_3
     base_difficulty: 0.80
-    required_asset: asset_2
+    required_asset: asset_1     # 最も希少な設備(p=0.15)が最難 project を門番する
     material_cost: {mat_0: 2.0, mat_1: 1.0}
     target_profile: {attr_0: 0.0, attr_1: 0.0, attr_2: 0.0, attr_3: 0.0,
                      attr_4: 0.0, attr_5: 0.0, attr_6: 0.0}
@@ -1453,7 +1472,7 @@ projects:                       # 6件を明示的に列挙する。分布から
   - project_id: proj_4
     primary_skill: skill_5
     base_difficulty: 0.30
-    required_asset: asset_0
+    required_asset: asset_0     # p=0.35
     material_cost: {mat_2: 2.0}
     target_profile: {attr_0: 0.0, attr_1: 0.0, attr_2: 0.0, attr_3: 0.0,
                      attr_4: 0.0, attr_5: 0.0, attr_6: 0.0}
@@ -1461,7 +1480,7 @@ projects:                       # 6件を明示的に列挙する。分布から
   - project_id: proj_5
     primary_skill: skill_4
     base_difficulty: 0.55
-    required_asset: asset_3
+    required_asset: asset_3     # p=0.25
     material_cost: {mat_1: 2.0, mat_2: 1.0, mat_3: 1.0}
     target_profile: {attr_0: 0.0, attr_1: 0.0, attr_2: 0.0, attr_3: 0.0,
                      attr_4: 0.0, attr_5: 0.0, attr_6: 0.0}
@@ -1494,12 +1513,19 @@ projects:                       # 6件を明示的に列挙する。分布から
 | **5** | **`base_difficulty` の順序と `material_cost` の点数の順序を一致させない**（難度が低いが材料点数が多いもの、難度が高いが材料が少ないものを含める） | **無相関性** |
 | **6** | **`required_asset` の有無を難度と無相関にする**（難度の高いもので `required_asset: null` のものを1件以上含める） | **無相関性** |
 | **7** | **`primary_skill` の番号と難度を無相関にする** | **無相関性** |
+| **8** | **設備の保有確率が低いものほど難度の高い project に対応させる**（希少な設備が易しい project を門番しない） | **希少度** |
 
 **要件1〜4（網羅性）の理由**: 単一技能・単一設備ですべてを作れてしまうと、Agent は1つの技能だけを伸ばせば済み、**技能の広がり（`breadth`）が生まれない**。すると `judge_maker_stage` の `adv_breadth`（複数技能が閾値以上）が満たされず、**Advanced Maker への遷移条件が意味を失う**。要件3が必要なのは、設備を持たない Agent がまったく `make` できない世界になるのを避けるためである。
 
 **要件5〜7（無相関性）の理由**: 「難しいものほど材料も設備も多く要る」という相関を作り込むと、**難度の効果と資源制約の効果が分離できなくなる**。ある Agent が `proj_5` を作れなかったとき、それが技能不足なのか材料不足なのか設備がないのかを、モデルの構造上切り分けられなくなる。難度・技能・設備・材料を直交させることで、`success_probability` の勾配（難度）と `is_feasible()` の制約（資源）が独立に効く。
 
 要件7 は、`primary_skill` の番号と難度が対応していると「番号が大きい技能ほど高度」という**存在しない意味を番号に与えてしまう**ため必要である（§3.0 の中立コードネーム方針に反する）。
+
+**要件8（希少度）の理由**: 要件6 は「設備の**有無**」と難度の無相関を求めるが、それだけでは**「どの設備が」門番しているか**の偏りが残る。当初の配置は、最も希少な `asset_1`（p=0.15）が最も易しい `proj_0`（0.25）を、最も一般的な `asset_2`（p=0.70）が最も難しい `proj_3`（0.80）を門番していた。
+
+これは **15%の少数派だけが極めて易しい制作ルートを独占する**構図であり、要件5〜7 が排除しようとした「難度と資源制約の交絡」が、**設備の希少度という別の軸で復活していた**。しかも「希少な設備を持っていること」が初期の制作経験の速度を決めてしまい、`participation_level` 以外の初期差が事実上生まれる（§3.4.1 の「差を付けない」方針と緊張する）。
+
+保有確率の低い設備ほど高難度に対応させることで、**希少さが早期の有利さに直結しなくなる**。希少な設備の保有者は「難しい project への鍵」を持つが、初期技能ではまだ使いこなせない。
 
 **上記の値はすべて仮置きである。** 実験開始前に事前登録して固定する。
 
@@ -1524,7 +1550,7 @@ projects:                       # 6件を明示的に列挙する。分布から
 | `materials.initial` のキー集合 | `IdRegistry.material_ids` |
 | `materials.inventory_cap` のキー集合 | `IdRegistry.material_ids` |
 | `materials.replenish_rate` のキー集合 | `IdRegistry.material_ids` |
-| Project カタログの `project_id` 集合 | `IdRegistry.project_ids` |
+| Project カタログの `project_id` | **重複がないこと**、および `proj_<連番>` の命名規約に従うこと（決定 P4 により集合の一致は自明になったため、代わりに一意性と命名を検証する） |
 
 **さらに型の妥当性も検証する（決定 W2）:**
 
@@ -1629,20 +1655,20 @@ peer_learning_enabled: false
 | 1 | **初期状態で Consumer が全Agentの 90% 以上** | `maker_stage_distribution` の初期値。**決定 Z1 により構成上100%となり、分布の校正なしに自動的に満たされる**（§6.4） |
 | 2 | participant の `participation_level` が**分散を持つ**（全員同値でない） | 標準偏差 > 閾値 |
 | 3 | participant 下位20% に**低participation層が存在する** | 20パーセンタイル値 < 閾値 |
-| 4 | 下記6項目が **participant と non-participant で同一分布**（決定 W3・V4） | 生成元の config キーが同一であることを構造的に検証（統計検定ではなく、同じ分布オブジェクトから引いていることを保証する） |
+| 4 | 下記5項目が **participant と non-participant で同一分布**（決定 W3・V4・P1） | 生成元の config キーが同一であることを構造的に検証（統計検定ではなく、同じ分布オブジェクトから引いていることを保証する） |
 | 5 | **Agent 生成が network 生成前に完了している** | 生成順序の構造的検証 |
 | 6 | **A/B/C/D で pre-network initial state が完全一致** | `agent_initial_states_sha256` の一致（T5 と共通、決定 Y6） |
-| 7 | **`time_budget` と `trust_fixed` が M1 では全Agent同一**（決定 V4） | 全Agentで同値 |
+| 7 | **`time_budget` / `trust_fixed` / `materials` が M1 では全Agent同一**（決定 V4・P1） | 全Agentで同値 |
 
 #### 要件4 の対象（決定 W3）— 確定リスト
 
-**同一分布であることを検証する6項目（決定 V4）:**
+**同一分布であることを検証する5項目（決定 V4・P1）:**
 
-`skills` / `assets` / `materials` / `sharing_tendency` / `imitation_tendency` / `helping_norm`
+`skills` / `assets` / `sharing_tendency` / `imitation_tendency` / `helping_norm`
 
-**`time_budget` と `trust_fixed` を要件4から外した理由**: この2つは**全Agent共通のスカラー**（`{type: constant}`）であり、群ごとに「引く」ものではない。「群間で同一分布」という検証は定義上空振りになる。
+**`time_budget` / `trust_fixed` / `materials` を要件4から外した理由**: この3つは**全Agent共通の固定値**であり、群ごとに「引く」ものではない。`time_budget` と `trust_fixed` は `{type: constant}`、**`materials.initial` は `agent_init` の下ですらなく、全Agent一律の固定 dict である**（§14.1）。引く分布が存在しない以上、「群間で同一分布」という検証は定義上空振りになる。
 
-代わりに **要件7を「`time_budget` と `trust_fixed` が全Agentで同値であること」に拡張**する（独立要件を新設せず、既存の要件7に含める）。両者とも「全Agent同値」という同じ性質であり、分けて検証する意味がないため。
+代わりに **要件7を「`time_budget` / `trust_fixed` / `materials` が全Agentで同値であること」に拡張**する（独立要件を新設せず、既存の要件7に含める）。3つとも「全Agent同値」という同じ性質であり、分けて検証する意味がないため。
 
 **明示的に対象外:**
 
@@ -1778,7 +1804,17 @@ peer_learning_enabled: false
 | **V4** | 要件4 の対象 | **6項目に確定**（skills / assets / materials / sharing / imitation / helping）。`time_budget` と `trust_fixed` は全Agent共通スカラーのため要件4から外し、**要件7（全Agent同値）に含める** | §3.4.1、§15.1 |
 | **V6** | 却下理由 | **`RejectionReason` Enum を定義**（6種）。`rejected_intents` に記録し、Metrics `rejection_reason_distribution` で分布を集計。時間超過は `break`、実行不能は `continue` | §3.1、§5.2、§10.1 |
 
-M1 実装をブロックする未決事項は**残っていない**。
+### 17.6 設計フェーズの最終確定（2026-08-15 第6次）
+
+| # | 事項 | 決定 | 反映先 |
+|---|---|---|---|
+| — | 設備希少度と難度の逆相関 | **`required_asset` の割り当てを入れ替え**、保有確率が低い設備ほど高難度に対応させた（`proj_0`↔`proj_3` の設備を交換）。**設計要件8（希少度）を新設**。旧配置では最希少の `asset_1`(p=0.15) が最易 `proj_0`(0.25) を門番し、**15%の少数派が極めて易しい制作ルートを独占**していた。要件5〜7 が排除しようとした交絡が希少度という別軸で復活していたため | §14.2、§14.2.3 |
+| **P1** | 要件4 の対象 | **5項目に確定**（skills / assets / sharing / imitation / helping）。**`materials` を要件7へ移動** — `materials.initial` は `agent_init` の下ですらなく全Agent一律の固定 dict であり、V4 で外した `time_budget` / `trust_fixed` と同じ性質のため | §3.4.1、§15.1 |
+| **P2** | `network_density` | **M1 では時系列記録しない**。step ループにグラフを変更する処理がなく定数列になるため（U1 と同じ論理）。初期値を `metadata.json` へ。M3 で協調エッジが動的生成される段階で復活。`skill_reachability` / `resource_reachability` は変動するため継続 | §10.1 |
+| **P3** | `latent_capacity` の構成 | **M1 では分散資源量のみ変動、ネットワーク連結度は定数、再構成能力は不在**であることを明記。**単一スコアに合成しない**方針を再確認。定数成分を含む積は「Latent Capability を測っているように見えて資源量しか測っていない」誤読を生むため | §10.2.2 |
+| **P4** | `n_project_types` | **config から削除**。`IdRegistry.project_ids` は `projects:` カタログから導出する。skill / material / asset は中身を持たない純粋な ID なので個数指定から生成、project は中身を伴う実体なのでカタログが唯一の源、という**非対称の理由**を明記 | §3.1、§14.1、§14.3 |
+
+M1 実装をブロックする未決事項は**残っていない**。**設計フェーズはここで完了とする。**
 
 ---
 

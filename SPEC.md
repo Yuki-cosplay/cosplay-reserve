@@ -499,19 +499,70 @@ Hospital等は、
 
 ## 19. 比較世界
 
-Phase 1では最低3条件を比較できる構造にしてください。
+Phase 1は **2×2完全要因計画** で構成します。（v0.2改訂。旧3条件定義は §33 参照）
 
-**A. Culture**
-技能・設備あり。Capability Reproduction Loopおよび文化ネットワークあり。
+### 2つの因子
 
-**B. Skill-Matched Random**
-初期技能・設備分布はAと同一。文化ネットワークをランダム化。
+| 因子 | 水準 |
+|---|---|
+| **Topology** | `structured` / `rewired`（次数保存リワイヤリング） |
+| **Peer learning** | `ON` / `OFF` |
 
-**C. Isolated**
-初期技能・設備分布はAと同一。相互学習・ネットワークをほぼ除去。
+### 4条件
 
-**重要：**
-可能な限り同じseedから初期Agentを生成し、文化構造だけを変えられるようにしてください。
+| 条件 | Topology | Peer learning |
+|---|---|---|
+| **A** | structured | ON |
+| **B** | rewired | ON |
+| **C** | structured | OFF |
+| **D** | rewired | OFF |
+
+初期技能・設備・資源の分布は4条件で完全に同一とします。
+
+### 比較
+
+- **A vs B** = topology effect under peer learning ON
+- **C vs D** = topology effect under peer learning OFF
+- **A vs C** = peer-learning effect under structured topology
+- **B vs D** = peer-learning effect under rewired topology
+- **4条件全体** = topology × peer-learning interaction
+
+### Peer learning OFF（条件C/D）の意味
+
+C/Dは「ネットワークを除去した世界」ではありません。
+
+> **人は社会的につながっているが、そのつながりが制作能力の再生産経路として機能しない世界**
+
+を表します。
+
+**全条件で有効**（C/Dでも維持）：practiceによる技能向上、make成功/失敗からの技能向上、make成功時のMethod自己発見、自己発見Methodのself-scaffolding、observe、ask、share、通常の社会的接触、perceived_skillsの更新、trustの更新。
+
+**C/Dでのみ無効**：他AgentからのMethod取得、peer Method transfer、peer由来Methodによるsocial scaffolding。
+
+遮断するのは「他者の制作知識 → 自分のMethod Library → 自分の制作成功率向上」というpeer reproduction経路だけです。社会的接触そのものを除去してはいけません。
+
+これによりH2の「Capability Reproduction Loopが存在する社会」は、**peer learning ON / OFF** として操作的に定義されます。
+
+### 完全ペアリング（必須要件）
+
+同一seedにおいて：
+
+- **AとCは完全に同じGraph object由来のネットワーク構造**を使用する
+- **BとDは完全に同じdegree-preserving rewired graph**を使用する
+
+同じ生成アルゴリズムを使うだけでは不十分です。base graphを1回だけ生成してdeep copyで配布し、**peer learning flagだけを変更**してください。ネットワーク生成の乱数差によってA/CまたはB/Dに差が生じることを禁止します。
+
+### structured topologyの位置づけ
+
+A/Cのstructured topologyは、**現実のコスプレコミュニティのネットワークを再現したものではありません。**
+
+現段階では「相互学習・情報共有を持つコミュニティについて、ネットワーク構造の効果を検討するための仮説的structured topology」です。Watts–Strogatz型やskill assortativityの実在性を、コスプレ文化の確認済み事実として記述してはいけません。実際のネットワークトポロジーは将来的な実データ・学術研究によるcalibration対象とします。
+
+また、`skill assortativity → knowledge diffusion向上` と事前に仮定しないでください。高技能者同士のクラスタリングにより低技能者への知識伝播が阻害され、**A < B** となる可能性も正当な研究結果です。
+
+### 解釈の限界
+
+この4条件比較は**仮説的モデル内部でのfactorial experiment**です。この比較から現実のコスプレ文化について直接因果主張してはいけません。
 
 ---
 
@@ -635,13 +686,27 @@ LLM call数、input tokens、output tokens、推定API費用もログしてく�
 
 ## 25. Time
 
-暫定：
+**二相クロック**を採用します。（v0.2改訂。旧定義は §33 参照）
+
+技能・設備・関係性の形成は年単位で起こり、供給ショックへの応答は時間単位で起こります。単一の時間解像度では両方を扱えないため、相ごとに解像度を変えます。
+
+### 蓄積相（Accumulation Phase）— M1の対象
+
+- 1 step = 1 week
+- 標準期間 = 156 steps（3年相当）
+- 期間比較の候補 = 52 / 104 / 156 weeks
+
+文化活動による技能・設備・関係性の形成を扱います。H1・H2の測定対象です。
+
+### ショック相（Shock Phase）— M3の対象
 
 - 1 step = 6 hours
 - 4 steps = 1 day
 - 120 steps = 30 days
 
-ただしconfigurableにしてください。
+供給ショックへの応答を扱います。H3の測定対象です。
+
+両相のstep数・解像度はconfigurableにしてください。
 
 ---
 
@@ -745,9 +810,11 @@ LLMなし。30〜50 Agent程度。
 
 ### Milestone 4
 
-Culture / Skill-Matched Random / Isolated を比較。
+A / B / C / D の2×2完全要因計画を比較（§19）。
 
-**目標：** 同じ技能・設備でも文化ネットワークの有無によって、Maker形成・Knowledge diffusion・Reconfiguration・Supply transition に差が生まれるか確認する。
+**目標：** 同じ技能・設備を持つ集団において、**topology**と**peer learning**のそれぞれが、またその**交互作用**が、Maker形成・Knowledge diffusion・Reconfiguration・Supply transition に差を生むか確認する。
+
+差がないこと、および事前の予想と逆転することも、正当な研究結果として報告します。
 
 ---
 
@@ -840,3 +907,86 @@ Culture / Skill-Matched Random / Isolated を比較。
 を提示して、人間の承認を待ってください。
 
 レビュー完了までは、大規模な実装を開始しないでください。
+
+---
+
+## 33. 改訂履歴
+
+SPEC.mdは本研究の憲法です。本文の改訂はすべてこの章に記録し、旧定義を原文で保存します。
+
+### v0.2 — 2026-08-15（人間承認済み）
+
+`docs/REVIEW.md` の設計レビューおよび再査読を経て、以下を改訂しました。
+
+---
+
+#### 改訂1: §19 比較世界 — 3条件 → 2×2完全要因計画
+
+**旧定義（v0.1、原文）:**
+
+> Phase 1では最低3条件を比較できる構造にしてください。
+>
+> **A. Culture**
+> 技能・設備あり。Capability Reproduction Loopおよび文化ネットワークあり。
+>
+> **B. Skill-Matched Random**
+> 初期技能・設備分布はAと同一。文化ネットワークをランダム化。
+>
+> **C. Isolated**
+> 初期技能・設備分布はAと同一。相互学習・ネットワークをほぼ除去。
+>
+> **重要：**
+> 可能な限り同じseedから初期Agentを生成し、文化構造だけを変えられるようにしてください。
+
+**変更理由:**
+
+1. **旧条件Cのトートロジー性** — 「相互学習・ネットワークをほぼ除去」した世界で学習が遅いのは機構上自明であり、A−Cの差はH2の証拠にならない。同語反復として棄却されるリスクがあった。
+2. **交互作用が推定できない** — 旧設計はtopologyとpeer learningを混合した1因子デザインであり、「構造が効くのか、相互学習が効くのか」を分離できなかった。2×2にすることで両因子の主効果と交互作用が推定可能になる。
+3. **社会的接触の除去は過剰** — 旧Cはネットワークそのものを除去していた。検証したいのは「つながりが能力再生産経路として機能するか」であって「つながりの有無」ではない。新C/Dは社会的接触を維持したままpeer reproduction経路のみを遮断する。
+
+**廃止した名称**（実験条件名として使用しないこと）:
+
+- `A. Culture` / `culture` / `culture network`（条件名として）
+- `B. Skill-Matched Random`
+- `C. Isolated` / `isolated`
+- `B1` / `B2`（レビュー過程で一時的に使用した中間案の名称）
+- Erdős–Rényi条件（B2として検討されたが、M1から削除）
+
+Erdős–Rényi条件は将来の model specification sensitivity としてのみ再検討対象とします。
+
+---
+
+#### 改訂2: §25 Time — 単一クロック → 二相クロック
+
+**旧定義（v0.1、原文）:**
+
+> 暫定：
+>
+> - 1 step = 6 hours
+> - 4 steps = 1 day
+> - 120 steps = 30 days
+>
+> ただしconfigurableにしてください。
+
+**変更理由:**
+
+現実の制作技能（縫製・造形・CAD・3Dプリント・電子工作）の習得には数ヶ月から数年を要する。120 steps = 30日では `Consumer → Maker` の遷移が起きず、H1「相互学習構造は時間経過とともにMaker人口を増加させるか」およびH2「Latent Capabilityがより速く成長するか」が測定不能になる。
+
+30日で遷移を起こすには学習率を非現実的に高く設定する必要があり、それは §30 Anti-Goal「結果が出るように後からパラメータを恣意的調整する」に接近する。
+
+また「平時に長期間かけて蓄積された能力が危機時に転化する」は §31 の中心命題そのものであり、蓄積期間がなければモデル上で表現できない。
+
+旧定義の 6時間刻みは削除せず、**ショック相の解像度として保持**しています。
+
+---
+
+#### 改訂3: §28 Milestone 4 — 比較対象の更新
+
+条件名を A/B/C/D に統一し、交互作用の検証を目標に追加。「差がない・逆転する結果も正当」であることを明記。
+
+---
+
+#### 改訂されなかった項目（参考）
+
+- **§7 H1/H2/H3** — 仮説そのものは不変。§19 に操作的定義（peer learning ON/OFF）を追記する形で対応。
+- **§8/§29 Phase 1 妥当性判定基準** — 「現実の転化現象を再現できた」と判定する基準が未定義である問題は**未解決のまま**。M1をブロックしないため保留。M3完了前に決定が必要。

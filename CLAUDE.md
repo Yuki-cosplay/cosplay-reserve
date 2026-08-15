@@ -9,6 +9,7 @@
 - make_ppe / make_mask のように「答え」を含むActionを作らない。
 - Agentに渡すプロンプトに「コスプレ」「PPE」「マスク」「COVID」の語を出さない。
 - LLM decides intent. Code determines feasibility.
+- 非線形な創発を観測したいからといって、非線形性をコードに埋め込まない。
 - Milestoneの順番を守る。Milestone 1が完了するまでLLM実装を始めない。
 - API費用の上限を設定し、超えたら実行を止める仕組みを必ず入れる。
 - ユーザーへの応答は日本語で行うこと。
@@ -51,6 +52,8 @@ Windowsネイティブ環境、Python 3.12の仮想環境が `.venv/` にあり�
 - **Required Itemは抽象化された仕様であり、名称ではない**（§18）。需要は `RequiredItem`（flexible_material、filtration_requirement、shape_requirement、durability、sterility_requirement、production_complexity、unit_demand）としてモデル化し、「PPE」という具体名で扱わないこと — これによりPhase 2への一般化が可能になります。
 - **未証明の主張を事実として扱わない**（§6）。次のことをモデルの前提として実装してはいけません: コスプレコミュニティが他の趣味コミュニティより強い、コスプレイヤーが他人より利他的である、コスプレイヤーの災害対応能力が高い、コスプレネットワークが必ずより密である、コスプレイヤーが有事に必ず供給活動を行う。これらは検証対象の仮説であり、モデルの前提ではありません。
 - **Anti-Goals**（§30）: コスプレイヤーを英雄として描かない、利他的だと決めつけない、PPE制作を命令しない、結果に合わせて後からパラメータを恣意的に調整しない、LLMの文章だけを「創発」の証拠として扱わない、Agent数の多さを成果にしない、Milestone 1が終わる前にPhase 2・UI・マイクロサービス化・巨大なAgent frameworkに手を出さない。
+- **モデル内実験から現実への直接推論をしない**（§19）: A/B/C/D の比較は**仮説的モデル内部でのfactorial experiment**です。この結果から現実のコスプレ文化について直接因果主張してはいけません。特に A/C の structured topology は現実のネットワークの再現ではなく、検討用の仮説的構成です。
+- **条件間のネットワーク同一性**（§19）: 同一seedにおいて **A と C は完全に同じGraph object由来**、**B と D は完全に同じrewired graph由来**でなければなりません。同じ生成アルゴリズムを使うだけでは不十分です。base graphを1回生成してdeep copyで配布し、`peer_learning_enabled` フラグだけを変更します。ネットワーク生成の乱数差でA/CまたはB/Dに差が出ることを禁止します。
 - **再現性**（§23）: すべての実行でseed、モデル名/バージョン、プロンプトバージョン、config、timestamp、シミュレーションパラメータ、Agentの初期状態を保存すること。LLMの非決定性があるため、単一runだけで結論を出さないこと。
 - **コスト制御**（§24）: 全Agentを毎step LLMで動かさない。通常状態はコード、軽い意思決定はcheapモデル/ルール、重要な再構成判断は高性能なLLM、という切り分けにする。LLM呼び出し回数とトークン使用量をログに残すこと。
 
@@ -60,9 +63,12 @@ Windowsネイティブ環境、Python 3.12の仮想環境が `.venv/` にあり�
 - **Capability Reproduction Loop**（§5）: Attraction → Participation → Observation → Information Acquisition → Imitation/Scaffolding → Making → Feedback → Skill Acquisition → Sharing → （他者のObservationへ）。これはAgentが実行する台本ではなく、Agent間相互作用の結果として*創発*するべきものです。
 - **Makerの成熟段階**（§4、シミュレーション中に変化しうる、固定属性ではない）: `Consumer → Customizer → Maker → Advanced Maker`。
 - **検証対象の仮説**（§7）: H1 — 相互学習構造は時間経過とともにMaker人口を増加させるか。H2 — 初期の技能・設備が同一でも、Capability Reproduction Loopが存在するとLatent Capabilityがより速く成長するか。H3 — その蓄積差は供給ショック時の転化確率・転化速度・供給量に差を生むか。
-- **3つの比較世界が必須**（§19）。可能な限り同一seedから生成し、文化・ネットワーク構造だけを変える: **A. Culture**（フルのネットワーク＋ループあり）、**B. Skill-Matched Random**（技能・設備分布は同一、ネットワークをランダム化）、**C. Isolated**（分布は同一、相互学習・ネットワークをほぼ除去）。
+- **2×2完全要因計画**（§19）。因子は **topology**（structured / rewired）× **peer learning**（ON / OFF）: **A**=structured+ON、**B**=rewired+ON、**C**=structured+OFF、**D**=rewired+OFF。初期技能・設備・資源は4条件で完全に同一。
+  - **C/D は「ネットワークを除去した世界」ではない**。社会的接触は維持される: practice・make・**Method自己発見**・**self-scaffolding**・observe・**ask**・**share**・perceived_skills更新・trust更新はすべて有効。C/Dで無効化されるのは **他AgentからのMethod取得（peer Method transfer）とpeer由来Methodによるsocial scaffolding のみ**。表現したいのは「人は社会的につながっているが、そのつながりが制作能力の再生産経路として機能しない世界」。
+  - `skill assortativity → knowledge diffusion向上` を事前に仮定しないこと。**A < B** も正当な研究結果。
 - **転化とEmergenceは物語ではなくコードで判定する**（§20〜21）: 転化は閾値化された条件（`community_supply_share`、`active_supplier_count`、`supply_duration`、`coordination_edges`、いずれもconfig管理）で判定。Emergenceには E0（転化なし）から E4（マクロな供給能力として定着）までのレベルがあります。
-- **Milestoneの順序は厳守**（§28）: M1 = LLMなしの機構のみ（Agent生成、skills/assets/network、observe/practice/make/share、skill learning、ステージ遷移 — 目標はLoopが機構として成立可能なことの証明。特にConsumer→Customizer→Makerの遷移）。M2 = event-drivenな局所LLM意思決定の導入。M3 = 供給ショックの導入、答えを与えない。M4 = 3つの世界の比較。先に進みすぎないこと（例: §9の通り、Phase 1の妥当性確認前にPhase 2へ着手しない）。
+- **Milestoneの順序は厳守**（§28）: M1 = LLMなしの機構のみ（Agent生成、skills/assets/network、observe/practice/make/share、skill learning、ステージ遷移 — 目標はLoopが機構として成立可能なことの証明。特にConsumer→Customizer→Makerの遷移）。M2 = event-drivenな局所LLM意思決定の導入。M3 = 供給ショックの導入、答えを与えない。M4 = A/B/C/D の2×2比較（topology × peer learning の主効果と交互作用）。先に進みすぎないこと（例: §9の通り、Phase 1の妥当性確認前にPhase 2へ着手しない）。
+- **時間は二相クロック**（§25）: 蓄積相 = 1 step 1週（M1、標準156週）／ショック相 = 1 step 6時間（M3）。
 
 ## 計画中のリポジトリ構成（SPEC.md §27、まだ未作成）
 

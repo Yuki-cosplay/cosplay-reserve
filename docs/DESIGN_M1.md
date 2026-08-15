@@ -86,6 +86,7 @@ cosplay-reserve/
   experiments/
     m1_smoke.py               # 4条件 × 複数seed のスモーク実行
     sensitivity_grid.py       # §11 の 15セル感度分析
+    cultural_edge_report.py   # §10.4 の集計レポート（合否判定を伴わない記録）
   outputs/                    # .gitignore 済み
   tests/
 ```
@@ -424,6 +425,31 @@ class Observation:
 | cultural peer-learning network | **参加資格あり** | 参加しない |
 
 `participation_level` は「文化活動へどれだけ時間と関心を向けているか」であり、能力でも善意でもない。
+
+##### `is_participant` の割り当て規則（決定 V1）
+
+**`is_participant` は `agent_init` ストリーム（§12.1 の spawn 0）で、ノード番号と無関係にランダムに割り当てる。**
+
+```python
+# agent_init ストリームから 0..N-1 の順列を生成し、先頭 n_participant_agents 名を participant とする
+perm = agent_init_rng.permutation(n_total)
+participant_ids = set(perm[:cfg.world.n_participant_agents])
+```
+
+- この割り当ては §12.1 の spawn 規約により **4条件で完全に同一**になる。**どの `agent_id` が participant かは A/B/C/D で1人残らず一致する**
+- **ネットワーク生成（spawn 2）より前に確定させる**
+
+> **禁止**: `agent_0` 〜 `agent_{n-1}` を participant にするような**連番割り当てを行ってはならない。**
+
+**理由 — 連番割り当ては topology 主効果を交絡させる:**
+
+§7 の base graph は `watts_strogatz_like(...)` が生成する**リング格子**であり、**ノード番号はリング上の位置そのもの**である。participant を連番の先頭に割り当てると、participant がリング上で**連続した弧**を占める。
+
+その弧の内部で cultural edge（両端が participant のエッジ）が**ほぼ閉じる**ため、条件 A では cultural peer-learning network が**密**になる。一方 rewire によってこの弧は壊れるため、条件 B では**疎**になる。
+
+結果として **A と B の差は topology の構造ではなく participant の配置に由来する**ことになり、**2×2 の topology 主効果が交絡する**。W5 で次数保存を定めて排除したはずの density 交絡が、participant 層の内部で再発する。
+
+**ランダム割り当てであれば、participant はリング上に分散するため、rewire の前後で cultural edge 数の期待値が変わらない。**
 
 #### 3.4.3 non-participant を孤立ノードにしてはならない
 
@@ -840,6 +866,21 @@ def build_edge_layers(graph, agents) -> None:
 
 **non-participant の `known_agents` は空にならない。** 彼らは観測され、尋ねられ、共有の宛先にもなる。運ばれないのは Method だけである。
 
+#### 7.2.1 participant はリング上に分散していなければならない（決定 V1）
+
+**`build_edge_layers()` を呼ぶ前提として、`is_participant` がノード番号と無関係に割り当てられていること**（§3.4.2）が必要である。ここに再掲するのは、この要件が**ネットワーク側の性質**でもあるためである。
+
+`watts_strogatz_like()` が生成する base graph は**リング格子**であり、**ノード番号 = リング上の位置**である。したがって participant を連番ブロックで割り当てると、
+
+- **条件A（structured）**: participant がリング上で連続した弧を占め、cultural edge がその弧の内部でほぼ閉じる → **密**
+- **条件B（rewired）**: `double_edge_swap` が弧を壊す → **疎**
+
+となり、**A と B で cultural peer-learning network の規模そのものが変わる**。これは「繋ぎ方の違い」ではなく「**文化的学習経路の本数の違い**」であり、topology 主効果（A vs B）に density 交絡を持ち込む。
+
+**participant をリング位置と独立に割り当てれば、structured / rewired のどちらでも cultural edge 数の期待値は等しくなる。**
+
+**期待値が等しくても実現値は seed ごとにずれる。** そのため `cultural_edge_count` を `metadata.json` に記録し（§10.3）、`tests/test_participant_assignment.py`（T15、§13）で割り当ての性質を検証する。
+
 **この分離が必要な理由**: participant と non-participant の差を「participation の差」と「ネットワーク孤立の差」の二重差にすると、文化参加の効果と単純な社会接触の効果が交絡する（§3.4.3）。C/D を `empty_graph` にしない理由とまったく同じ構造である。
 
 **topology のリワイヤリングは一般社会接触層に対して行う。** `cultural_peers` は base graph 確定後に導出されるため、A/C と B/D のペアリング（§7）はそのまま保たれる。
@@ -1017,6 +1058,8 @@ outputs/
   "prompt_version": null,
   "config_sha256": "...",
   "base_graph_sha256": "...",
+  "cultural_edge_count": 67,
+  "participant_ids_sha256": "...",
   "code_git_commit": "...",
   "python_version": "3.12.10",
   "package_versions": {"numpy": "2.5.2", "networkx": "3.6.1", "...": "..."},
@@ -1026,6 +1069,36 @@ outputs/
 ```
 
 `base_graph_sha256` は**完全ペアリングの証拠**として残す。A と C、B と D でこの値が一致していなければ、SPEC §19 の要件を満たしていない。
+
+**`cultural_edge_count`（両端が participant のエッジ数）を条件ごとに保存する**（決定 V1）。participant をランダム割り当てにすれば A と B で期待値は等しくなるが、**実現値は seed ごとにずれる**。この値を記録しておかないと、「A と B の差が topology によるものか、たまたま cultural edge が多かったことによるものか」を事後に切り分けられない。
+
+**`participant_ids_sha256`** は、4条件で participant の集合が完全一致していることの証拠として残す（T15）。
+
+### 10.4 `cultural_edge_count` 集計レポート（決定 V1）
+
+`experiments/` に集計処理を置き、**合否判定を伴わない記録**として出力する。
+
+| 項目 | 内容 |
+|---|---|
+| 出力先 | `outputs/<run_id>/cultural_edge_report.csv` |
+| 集計対象 | **全 seed × 全条件**の `cultural_edge_count` |
+| 出力内容 | 条件間（特に **A vs B**、**C vs D**）の差の分布 |
+| 判定 | **行わない。seed の除外もしない。全 seed を報告する** |
+
+#### RESULTS.md 執筆時の規約
+
+**A と B（および C と D）を比較する際は、`cultural_edge_count` の条件間差を必ず併記する。**
+
+| 差の大きさ | 書けること |
+|---|---|
+| **小さい** | topology の効果として解釈できる |
+| **大きい** | **topology の効果と cultural network 規模の効果を分離できない**旨を明示する |
+
+**どちらの場合も seed を除外してはならない。**
+
+**差が大きいこと自体が報告すべき知見である。** 「参加者のランダム配置でも、リング格子と rewired graph では文化的学習経路の規模がこれだけばらつく」という観察は、モデルの性質についての情報であり、隠すべき不都合ではない。
+
+これは §15.2「完了条件に含めないもの」と同じ姿勢である — **結果の方向性を合格基準にせず、観測して報告する。**
 
 M1 では `llm` と `prompt_version` は `null`。M2 でここが埋まる。`agent_initial_states_sha256` は条件間不変テスト（T5）でも利用する。
 
@@ -1100,7 +1173,7 @@ T1（決定論性）と T5（条件間不変）の**両方がこの規約に依�
 
 | index | ストリーム | 用途 |
 |---|---|---|
-| **0** | `agent_init` | Agent 初期状態の生成 |
+| **0** | `agent_init` | Agent 初期状態の生成、および **`is_participant` の割り当て**（決定 V1、§3.4.2） |
 | **1** | `project_catalog` | **M1 では固定値のため未使用**（決定 W1）。番号は**予約**する |
 | **2** | `network` | structured topology の生成と rewiring |
 | **3** | `simulation` | step ループ内の全確率的判定 |
@@ -1113,6 +1186,7 @@ T1（決定論性）と T5（条件間不変）の**両方がこの規約に依�
   - 理由: Agent 数を変えても他のストリームがずれないようにするため。Agent ごとに spawn すると、`n_participant_agents` を変えた瞬間に network も simulation も別の乱数列になる
 - **`simulation` ストリームは step ごとに spawn しない。** 単一のストリームを **step 順・`agent_id` 昇順**で消費する
 - **条件 A/B/C/D で `agent_init` ストリームの消費が完全に同一になること**（T5 の前提）。**条件によって消費が変わってよいのは `network` ストリームのみ**である
+- **`is_participant` の割り当ては `agent_init` ストリームで行い、`network`（spawn 2）より前に確定させる**（決定 V1）。これにより「どの `agent_id` が participant か」が4条件で1人残らず一致する
 
 `test_determinism.py`（T1）と `test_condition_invariance.py`（T5）が、この規約が守られていることを検証する。
 
@@ -1127,6 +1201,7 @@ T1（決定論性）と T5（条件間不変）の**両方がこの規約に依�
 | `tests/test_agent_init.py` | **§15.1 の初期条件7項目を検証**（Consumer ≥ 90%、participation の分散、下位20%の低participation層、participant/non-participant の分布同一性、pre-network 完了、4条件一致、time_budget 一律） | T13 |
 | `tests/test_locality.py` | `Observation` に World 参照・他Agent真値・`peer_learning_enabled`・`is_participant`・**`cultural_peers`** が含まれない（決定 Z2） | T3 |
 | `tests/test_config_validation.py` | **不整合な config で実行前に例外が送出される**（決定 Z6 の6項目） | T14 |
+| `tests/test_participant_assignment.py` | **`is_participant` の割り当てが A/B/C/D で完全一致／participant の `agent_id` がノード番号順に連続していない（リング上の位置に偏っていない）** — この2項目のみ（下記） | T15 |
 | `tests/test_conservation.py` | 材料が負にならない・`inventory_cap` を超えない | T4 |
 | `tests/test_condition_invariance.py` | **A/B/C/D の4条件で pre-network 初期Agent状態・Projectカタログが完全一致**（決定 Y6） | T5 |
 | `tests/test_stage_transition.py` | 固定シナリオで Consumer→Customizer→Maker が発火 | T6 |
@@ -1142,6 +1217,18 @@ T1（決定論性）と T5（条件間不変）の**両方がこの規約に依�
 **決定 Y6: `agent_initial_states_sha256` は pre-network 状態から算出する。** ハッシュ対象に **network 由来フィールド（`known_agents` / `cultural_peers` / `trust` / `perceived_skills`）を含めない**。post-network 状態でハッシュを取ると、A と B は近傍が違うため必ず不一致になり、T5 が成立しなくなる。`metadata.json` に記録するのも pre-network のハッシュである。
 
 **`trust` を除外する理由**: M1 では固定値だが、初期化時に近傍ごとの dict として展開されるため、近傍構造に依存する。値そのものは条件不変でも、キー集合が条件によって変わる。
+
+### 13.2 `cultural_edge_count` をテストにしない理由（決定 V1）
+
+T15 は上記**2項目のみ**とし、`cultural_edge_count` の条件間差に関する検証を**含めない**。
+
+`cultural_edge_count` の条件間差は、**「割り当てが正しいか」の判定ではなく「この seed 集合ではどの程度ずれたか」の観測である**。
+
+観測結果に合否判定を持たせると、**条件を満たさない seed を除外する運用につながる**。それは SPEC §30 Anti-Goal「結果が出るように後からパラメータを恣意的調整する」に接近する。seed の取捨選択は、パラメータ調整と同じ性質の操作である。
+
+**したがってテストにはしない。代わりに §10.4 の集計レポートとして記録する。**
+
+T15 が検証するのは「割り当てのアルゴリズムが規約どおりか」（4条件で一致し、リング位置に偏っていない）という**手続きの正しさ**だけである。手続きが正しければ、実現値のばらつきは受け入れて報告する対象になる。
 
 ### 13.1 実行方法
 
@@ -1453,6 +1540,7 @@ peer_learning_enabled: false
 | C14 | **Agent 初期化テスト（T13）が通る**（§15.1 の7要件） |
 | C15 | **Metrics が `all_agents` / `participants_only` / `nonparticipants_only` の3系列で出力される**（§10.2.1） |
 | C16 | **config 検証テスト（T14）が通る**（§14.3） |
+| C17 | **participant 割り当てテスト（T15）が通り、`cultural_edge_count` が条件ごとに記録され、`cultural_edge_report.csv` が出力される**（§3.4.2、§7.2.1、§10.4） |
 
 ### 15.1 Agent 初期化の最低要件（決定 X2）— `tests/test_agent_init.py` が検証
 
@@ -1584,6 +1672,14 @@ peer_learning_enabled: false
 | **W4** | RNG spawn 規約 | 第1階層の spawn 順序を **0:agent_init / 1:project_catalog（予約）/ 2:network / 3:simulation** に固定。`agent_init` は1回の spawn で全Agent生成、`simulation` は step 順・agent_id 昇順で単一ストリームを消費。**条件間で消費が変わってよいのは network のみ** | §12.1 |
 | **W5** | assortativity の契約 | **`double_edge_swap` による次数保存型**と定義。エッジの追加・削除をしない。スワップ回数は `network.assortativity_swaps` | §7、§14.1 |
 | **W6** | trust / 死にフィールド | `ask` 効用の `trust` は M1 では定数倍にすぎず、**相手選択は実質 `perceived_skills` のみで決まる**旨を明記。`Method.required_skill_level` は**フィールドごと削除** | §3.1、§5.1、§6.5 |
+
+### 17.4 S1〜S4 の再査読で確定した事項（2026-08-15 第4次）
+
+| # | 事項 | 決定 | 反映先 |
+|---|---|---|---|
+| **V1** | `is_participant` の割り当て | **`agent_init` ストリーム（spawn 0）で、ノード番号と無関係にランダムに割り当てる。連番割り当てを禁止。** 順列の先頭 `n_participant_agents` 名を participant とし、ネットワーク生成（spawn 2）より前に確定させる。4条件で完全に同一になる。**理由**: base graph はリング格子でノード番号＝リング位置であるため、連番割り当てだと participant が連続弧を占め、条件A で cultural edge が密・条件B で疎になり、**topology 主効果（A vs B）が density 交絡を起こす** | §3.4.2、§7.2.1、§12.1 |
+| — | 交絡の記録 | `metadata.json` に **`cultural_edge_count`** と **`participant_ids_sha256`** を条件ごとに保存。`tests/test_participant_assignment.py`（T15）を新設。完了条件 C17 を追加 | §10.3、§13、§15 |
+| — | `cultural_edge_count` の扱い | **テストにしない**（§13.2）。合否判定を持たせると seed 除外の運用につながり §30 Anti-Goal に接近するため。代わりに `experiments/cultural_edge_report.py` で**全 seed を判定なしで報告**し、RESULTS.md では条件間差を必ず併記する（§10.4） | §10.4、§13.2 |
 
 M1 実装をブロックする未決事項は**残っていない**。
 

@@ -184,8 +184,8 @@ class AttributeVector:
 @dataclass(frozen=True)
 class Project:
     """制作対象の仕様。カタログは seed から決定論的に生成され、4条件で完全に同一。
-    Agent はカタログから選ぶだけで、新しい project_type を作らない（M1 の範囲）。"""
-    project_type: str                    # 中立コードネーム: "proj_0" .. "proj_5"
+    Agent はカタログから選ぶだけで、新しい project_id を作らない（M1 の範囲）。"""
+    project_id: str                      # 中立コードネーム: "proj_0" .. "proj_5"
     primary_skill: str                   # skill_ids のいずれか
     base_difficulty: float               # 0.0-1.0
     required_asset: str | None           # asset_ids のいずれか、または None
@@ -200,7 +200,7 @@ class Method:
     """共有される手順知識。伝播経路の追跡情報を必ず持つ。
     これにより knowledge_diffusion_speed が副産物として測定可能になる。"""
     method_id: str
-    project_type: str            # 中立コードネーム: "proj_0" .. "proj_K"
+    project_id: str              # 中立コードネーム: "proj_0" .. "proj_K"
     primary_skill: str           # skill_ids のいずれか
     required_skill_level: float
     difficulty_reduction: float  # 0.0-0.6。実効難度をこの割合だけ下げる
@@ -315,6 +315,27 @@ class Agent:
 
 **`money` と参入・退出フィールドを「将来のために置いておく」ことをしない。** 未使用フィールドは、後から因果モデルへ紛れ込む経路になる。M3 で必要になった時点で追加する。
 
+### 3.2.1 World
+
+```python
+# src/world/world.py
+@dataclass
+class World:
+    """世界の全状態。**Agent はこの object を直接参照しない**（§3.3）。
+    build_observation() だけが World から Observation を切り出す。"""
+    step: int
+    cfg: Config                          # 継承解決済みの実効config
+    id_registry: IdRegistry              # config から生成された ID 一覧（§3.1）
+    projects: tuple[Project, ...]        # Project カタログ。4条件で同一
+    agents: dict[str, Agent]
+    graph: nx.Graph                      # 一般社会接触層（§7.2）
+    rng: np.random.Generator             # マスターstream。子streamは child_rng() で派生
+    metrics: MetricsRecorder
+    peer_learning_enabled: bool          # 条件の操作。§8 のゲートのみが参照する
+```
+
+`peer_learning_enabled` は `cfg` にも入るが、**参照してよいのは `accept_peer_method()` だけ**である（§8.3）。World のフィールドとして持つのは、`metadata.json` への記録と条件の自己記述のためである。
+
 ### 3.3 Observation — 神の視点の唯一の遮断点
 
 ```python
@@ -343,7 +364,7 @@ class Observation:
     project_catalog: tuple[Project, ...]              # 全Agent共通。世界の状態ではない
 
     neighbors: tuple[str, ...]                        # known_agents のみ（一般社会接触）
-    cultural_peers: tuple[str, ...]                   # neighbors の部分集合（§7.2）
+    # 決定 Z2: cultural_peers は Observation に入れない（下記）
     perceived_neighbor_skills: dict[str, dict[str, PerceivedSkill]]
     trust: dict[str, float]
 
@@ -358,6 +379,16 @@ class Observation:
 **`peer_learning_enabled` を Observation に入れてはならない。** これは世界の物理法則であって、Agent が知覚し戦略を変える対象ではない（§8）。
 
 `is_participant` も Observation に入れない。Agent が自分の「区分」を知って戦略を変えるのではなく、`participation_level` という連続量として効用に効く。
+
+**`cultural_peers` も Observation に入れない（決定 Z2）。** 理由は3つある。
+
+1. **M1 の決定ルール（§5.1）は `cultural_peers` を一度も参照しない。** `ask` の相手選択は `neighbors` と `perceived_neighbor_skills`、`share` は手持ち Method 数で決まる
+2. **区分の漏洩になる。** non-participant の `cultural_peers` は常に空集合であるため、Agent は自分が non-participant であることを完全に推定できてしまう。`is_participant` を隠す方針と正面から矛盾する
+3. **Agent が知る必要がない。** Method 転送の可否は `accept_peer_method()`（世界側コード）が判定する。SPEC §13「LLM decides intent. Code determines feasibility.」に従えば、伝達可能性の判定は世界側の責務である
+
+`tests/test_locality.py` は、**`cultural_peers` が `Observation` に存在しないこと**を機械的に検証する。
+
+> **M2 への保留事項**: M2 で LLM に「誰と文化的に繋がっているか」を渡す必要が生じた場合は、その時点で**区分の漏洩を許容するかどうかを含めて改めて判断する**。M1 の時点でこの判断を先取りしない。
 
 ### 3.4 participant / non-participant の定義（決定 X3）
 
@@ -406,11 +437,30 @@ class Observation:
 - **この比較から「文化参加の因果効果」を直接主張してはならない。** non-participant は M1 では **context population**（文化圏の外側に人がいる、という背景）として扱う
 - **30 / 10 という比率は現実の人口比を表す実証値ではない。** M1 の仮置き構成である。将来的に participant 比率自体が感度分析または実データ校正の対象になりうる
 
-#### 3.4.5 Metrics の併記（§10.1）
+#### 3.4.5 non-participant は M1 において構造的に不活性である（決定 Z3）
 
-すべての集計 Metrics を **`all_agents` と `participants_only` の2系列で併記**する。`nonparticipants_only` も補助指標として保存してよいが、**主要仮説（H1/H2）の判定指標にはしない**。
+§5.1 の `make` 効用は `w_make × participation_level × expected_success_prob` であり、**`participation_level` は乗算で入る**。この形は変更しない。帰結を明示する。
 
-判定指標を participants_only に置くのは、H1/H2 が「文化圏内部で相互学習構造が能力再生産を変えるか」を問うているためである。all_agents 系列は、context population を含めたときに効果が希釈されるかを見る補助情報として残す。
+- **non-participant は `make` を実行しない。** `participation_level ≒ 0` により make 効用が 0 になるため
+- したがって `completed_projects` が増えず、`n_projects >= 1` を満たさないため、**maker_stage は Consumer のまま動かない**（決定 Z1 の判定規則による）
+- `practice` 効用には `participation_level` が入らないため技能は多少動くが、**stage 遷移の対象にはならない**
+
+**これは設計どおりの帰結であり、不具合ではない。** non-participant は M1 では **maker_stage 遷移の対象ではない**。
+
+**M1 で彼らを置く目的:**
+
+1. **M3 への布石** — 需要が発生したとき「文化参加していない層も転化しうるか」を問えるようにするため。M1 の時点で母集団に存在していなければ、M3 で後から足すことになり初期条件が変わってしまう
+2. **M1 では `known_agents` による社会的接触の提供のみを担う** — 観測され、尋ねられ、共有の宛先になる。文化圏の外側に人がいる、という背景を成立させる
+
+**したがって H1 / H2 の主要判定は `participants_only` 系列で行う**（§10.2.1）。non-participant を分母に含めた指標を主要判定に使うと、条件操作が到達しない層で効果量が機械的に希釈される。
+
+**participant 内の低participation層について:** participant の下位20%（§15.1 要件3）も `make` 頻度が低くなる。これは不具合ではなく、SPEC §3「ただし、全コスプレイヤーがこれらを持つと仮定してはいけません。**購入中心の参加者も存在します**」の要請そのものである。文化圏の内部にも消費中心の層が存在する構成になっている。
+
+#### 3.4.6 Metrics の併記（§10.2.1）
+
+すべての集計 Metrics を **`all_agents` / `participants_only` / `nonparticipants_only` の3系列すべてで保存する（必須、決定 Z4）**。
+
+**H1/H2 の主要判定指標は `participants_only`** である。`all_agents` は context population を含めたときの希釈を、`nonparticipants_only` は不活性であることの確認を担う。3系列とも保存するが、**主要仮説の判定に使うのは `participants_only` のみ**である。
 
 ---
 
@@ -530,7 +580,7 @@ def success_probability(agent, project, methods) -> float:
 
     # scaffolding: 該当Methodを持っていると実効難度が下がる ← ループの閉じ目
     reduction = max((m.difficulty_reduction for m in methods
-                     if m.project_type == project.project_type), default=0.0)
+                     if m.project_id == project.project_id), default=0.0)
     effective_difficulty = project.base_difficulty * (1.0 - reduction)
 
     raw = skill + asset_bonus - effective_difficulty
@@ -619,12 +669,59 @@ def judge_maker_stage(agent, cfg) -> MakerStage:
         return MakerStage.ADVANCED_MAKER
     if max_skill >= cfg.maker_skill and n_projects >= cfg.maker_projects:
         return MakerStage.MAKER
-    if max_skill >= cfg.customizer_skill or n_projects >= 1:
+    if n_projects >= 1:                      # 決定 Z1: 技能による経路を削除
         return MakerStage.CUSTOMIZER
     return MakerStage.CONSUMER
 ```
 
-**仮置き**: `customizer_skill=0.20`, `maker_skill=0.45`, `maker_projects=3`, `adv_skill=0.70`, `adv_breadth=3`, `adv_assets=3`, `adv_projects=10`, `breadth_threshold=0.35`
+**仮置き**: `maker_skill=0.45`, `maker_projects=3`, `adv_skill=0.70`, `adv_breadth=3`, `adv_assets=3`, `adv_projects=10`, `breadth_threshold=0.35`
+
+#### 判定規則の根拠（決定 Z1）— 潜在技能ではなく行動で判定する
+
+**`max_skill >= customizer_skill` の経路を削除し、Customizer の条件を `n_projects >= 1` のみとした。** `customizer_skill` は config からも削除する。
+
+SPEC §4 は各段階を**行動の記述**として定義している。
+
+> - **Consumer**: 完成品購入中心。
+> - **Customizer**: 既製品の調整・加工、一部制作等を行う。
+
+これは「どれだけ潜在技能を持っているか」ではなく「**何をしているか**」である。技能が高くても一度も手を動かしていない人は Consumer であり、技能が低くても一度手を加えた人は Customizer である。旧規則は潜在技能の水準で Customizer を判定しており、SPEC §4 の定義から乖離していた。
+
+#### 帰結1: 初期分布の校正が不要になる
+
+初期状態では全Agentが `n_projects = 0` であるため、**Consumer 比率は構成上100%になる**。§15.1 要件1（Consumer ≥ 90%）は、分布パラメータの校正なしに自動的に満たされる。
+
+**これにより初期分布の恣意的調整の余地が消える。** 「Consumer 比率が目標に届かないので技能分布を下げる」という操作が、そもそも不要になり実行できなくなる。§14.1.1 の校正手続きは、以降**要件2・要件3（`participation_level` の分散と低participation層の存在）にのみ適用される**。
+
+#### 帰結2: Customizer は不可逆、Maker 以上は可逆
+
+`completed_projects` は減少しないため、**一度 Customizer になった Agent は Consumer へ戻らない**。これは「一度手を加えた経歴は消えない」という自然な解釈である。
+
+一方 **MAKER 以上は `max_skill`（減衰する）を要求するため、依然として上下しうる**。技能減衰が続けば Maker から Customizer へ落ちる。したがって `maker_count` は単調増加ではなく、**H1「相互学習構造は Maker 人口を増加させるか」は非自明なまま保たれる**（§6.3 の減衰導入意図はそのまま生きている）。
+
+#### 帰結3: 段階判定における「履歴」と「現在の能力」の非対称
+
+| 段階 | 判定基準 | 可逆性 |
+|---|---|---|
+| **Customizer** | **行動したことがあるか**（`n_projects >= 1`） | **不可逆** |
+| **Maker / Advanced Maker** | **現在その能力があるか**（`max_skill` + 履歴の複合） | **可逆** |
+
+この非対称は意図的である。「制作に手を出した経験」は経歴であって能力ではなく、失われない。「今つくれるか」は能力であり、使わなければ失われる。両者を同じ可逆性で扱うと、どちらかの意味が壊れる。
+
+Metrics を読むときは、`customizer 以上の人数` を**累積的な経験者数**、`maker_count` を**現時点の能力保有者数**として区別して解釈すること。
+
+#### `count_assets()` の定義（決定 Z5）
+
+```python
+def count_assets(agent) -> int:
+    """保有している設備の【種類数】を返す。
+    asset_2（tools、0-3 の離散値）は 1 以上であれば 1 種類として数える。"""
+    return sum(1 for v in agent.assets.values() if (v if isinstance(v, bool) else v >= 1))
+```
+
+したがって `advanced_assets: 3` は「**3種類の設備を保有している**」を意味する。tools を 3 本持っていても、それは1種類である。
+
+**tools の水準そのものは `asset_distribution`（§10.1）へ別途記録する。** 「設備の種類の広さ」と「1種類の充実度」は別の概念であり、混同すると Advanced Maker の判定が「多様な設備を持つ人」から「特定の設備を大量に持つ人」へずれる。SPEC §4 の Advanced Maker 定義（「複数技能、高度造形、CAD、3Dプリント、電子工作等を**組み合わせられる**」）は前者を指している。
 
 ### 6.5 Method の生成と共有
 
@@ -632,7 +729,7 @@ def judge_maker_stage(agent, cfg) -> MakerStage:
 # make 成功時に、一定確率で新しい Method が生まれる（自己発見。全条件で有効）
 if success and rng.random() < cfg.method_discovery_prob:
     agent.methods[new_id] = Method(
-        method_id=new_id, project_type=project.project_type,
+        method_id=new_id, project_id=project.project_id,
         primary_skill=project.primary_skill,
         required_skill_level=agent.skills[project.primary_skill],
         difficulty_reduction=cfg.base_reduction,
@@ -758,7 +855,7 @@ def accept_peer_method(agent, method: Method, cfg, rng) -> bool:
         return False                      # ← C/D はここで止まる。ask/share 自体は起きている
     if method.source_agent_id not in agent.cultural_peers:
         return False                      # ← non-participant はここで止まる（§7.2）
-    if method.project_type in {m.project_type for m in agent.methods.values()}:
+    if method.project_id in {m.project_id for m in agent.methods.values()}:
         return False
     # trust は M1 では固定値。ここで参照はするが、更新はどこでも行わない
     p = agent.imitation_tendency * agent.trust.get(method.source_agent_id, 0.0)
@@ -851,9 +948,9 @@ SPEC §22 のうち M1 で算出可能なもの、および v0.2 同期で追加
 |---|---|---|
 | `all_agents` | N=40 全員 | context population を含めたときの希釈を見る補助情報 |
 | **`participants_only`** | participant 30名 | **H1 / H2 の主要判定指標** |
-| `nonparticipants_only` | non-participant 10名 | 補助指標。**主要仮説の判定には使わない** |
+| `nonparticipants_only` | non-participant 10名 | 補助指標。**主要仮説の判定には使わない**。構造的不活性（§3.4.5）の確認を担う |
 
-`timeseries.csv` は `metric_name` × `population` の形で3系列を保存する。
+**3系列すべての保存が必須である**（決定 Z4）。`timeseries.csv` は `metric_name` × `population` の形で3系列を保存する。「任意で保存してもよい」ではない — 不活性であるはずの層が動いていないことの確認も、記録として必要である。
 
 **主要判定を `participants_only` に置く理由**: H1/H2 は「文化圏内部で相互学習構造が能力再生産を変えるか」を問うている。non-participant は cultural peer-learning edge を持たないため、条件 A/B/C/D の操作がそもそも到達しない。彼らを分母に含めた指標を主要判定に使うと、効果量が母集団構成比（30/10）という**仮置きの数字**に依存してしまう。
 
@@ -979,7 +1076,8 @@ seed は `master_seed` から `rng.spawn()` で子ストリームを派生させ
 | `tests/test_determinism.py` | 同一seedで2回実行し `final_state_sha256` が一致 | T1 |
 | `tests/test_no_answer_leak.py` | **§3.0.1 で定義した Agent-facing strings のみ**に禁止語が含まれない | T2 |
 | `tests/test_agent_init.py` | **§15.1 の初期条件7項目を検証**（Consumer ≥ 90%、participation の分散、下位20%の低participation層、participant/non-participant の分布同一性、pre-network 完了、4条件一致、time_budget 一律） | T13 |
-| `tests/test_locality.py` | `Observation` に World 参照・他Agent真値・`peer_learning_enabled` が含まれない | T3 |
+| `tests/test_locality.py` | `Observation` に World 参照・他Agent真値・`peer_learning_enabled`・`is_participant`・**`cultural_peers`** が含まれない（決定 Z2） | T3 |
+| `tests/test_config_validation.py` | **不整合な config で実行前に例外が送出される**（決定 Z6 の6項目） | T14 |
 | `tests/test_conservation.py` | 材料が負にならない・`inventory_cap` を超えない | T4 |
 | `tests/test_condition_invariance.py` | **A/B/C/D の4条件で pre-network 初期Agent状態・Projectカタログが完全一致**（決定 Y6） | T5 |
 | `tests/test_stage_transition.py` | 固定シナリオで Consumer→Customizer→Maker が発火 | T6 |
@@ -1082,7 +1180,7 @@ learning:
                                 # コードにハードコードしない
 
 stage_thresholds:
-  customizer_skill: 0.20
+  # 決定 Z1: customizer_skill は削除した。Customizer は n_projects >= 1 のみで判定する
   maker_skill: 0.45
   maker_projects: 3
   advanced_skill: 0.70
@@ -1113,9 +1211,30 @@ time:
 
 **`consume` は config に現れない**（決定 Y5）。SPEC §12 では将来候補として列挙されているが、M1 では効用も時間コストも定義せず、`ActionType` からも削除している。
 
+### 14.1.2 config 起動時検証（決定 Z6）
+
+`n_skills` などの個数指定と、`agent_init` / `materials` / Project カタログの明示的なキー集合は**二重に結合している**。片方だけを変更すると、実行の途中で `KeyError` になるか、より悪い場合は静かに一部の技能だけが初期化されないまま進む。
+
+**config ローダは起動時に以下を検証し、不一致があれば実行前に例外を送出する。**
+
+| 検証項目 | 一致すべき対象 |
+|---|---|
+| `agent_init.skills` のキー集合 | `IdRegistry.skill_ids` |
+| `agent_init.assets` のキー集合 | `IdRegistry.asset_ids` |
+| `materials.initial` のキー集合 | `IdRegistry.material_ids` |
+| `materials.inventory_cap` のキー集合 | `IdRegistry.material_ids` |
+| `materials.replenish_rate` のキー集合 | `IdRegistry.material_ids` |
+| Project カタログの `project_id` 集合 | `IdRegistry.project_ids` |
+
+**実行後ではなく実行前に落とす。** 300 run の感度分析（§11）が走り終わってから「mat_4 だけ補充されていなかった」と気付くのが最悪の失敗であり、それを構造的に防ぐ。
+
+`tests/test_config_validation.py` が、不整合な config を与えたときに例外が送出されることを検証する。
+
 ### 14.1.1 初期化パラメータの校正について（決定 X2）
 
-`agent_init` の分布パラメータは **§15.1 の初期条件（Consumer ≥ 90% 等）を満たすように選ぶ**。この校正には次の制約を課す。
+**決定 Z1 により、要件1（Consumer ≥ 90%）は構成上100%で自動的に満たされる。** 初期状態では全Agentが `n_projects = 0` であり、`maker_stage` は技能水準を参照しないためである。**したがって技能・設備の初期分布に対する校正作業は存在しない。** これは恣意的調整の余地を構造的に消すための設計である。
+
+校正手続きが適用されるのは **要件2・要件3（`participation_level` の分散と低participation層の存在）のみ**である。この校正には次の制約を課す。
 
 - **本実験の結果を見て調整してはならない。**
 - 校正は**本実験とは独立した固定 seed、または解析的確認により一度だけ**行う
@@ -1183,12 +1302,13 @@ peer_learning_enabled: false
 | C13 | **感度分析15セル（§11）が完走し、全セルの結果が出力される** |
 | C14 | **Agent 初期化テスト（T13）が通る**（§15.1 の7要件） |
 | C15 | **Metrics が `all_agents` / `participants_only` / `nonparticipants_only` の3系列で出力される**（§10.2.1） |
+| C16 | **config 検証テスト（T14）が通る**（§14.1.2） |
 
 ### 15.1 Agent 初期化の最低要件（決定 X2）— `tests/test_agent_init.py` が検証
 
 | # | 要件 | 検証方法 |
 |---|---|---|
-| 1 | **初期状態で Consumer が全Agentの 90% 以上** | `maker_stage_distribution` の初期値 |
+| 1 | **初期状態で Consumer が全Agentの 90% 以上** | `maker_stage_distribution` の初期値。**決定 Z1 により構成上100%となり、分布の校正なしに自動的に満たされる**（§6.4） |
 | 2 | participant の `participation_level` が**分散を持つ**（全員同値でない） | 標準偏差 > 閾値 |
 | 3 | participant 下位20% に**低participation層が存在する** | 20パーセンタイル値 < 閾値 |
 | 4 | `skills` / `assets` / `materials` / behavioral traits が **participant と non-participant で同一分布** | 生成元の config キーが同一であることを構造的に検証（統計検定ではなく、同じ分布オブジェクトから引いていることを保証する） |
@@ -1225,10 +1345,10 @@ peer_learning_enabled: false
 
 | 段階 | 内容 | 完了の目安 |
 |---|---|---|
-| S1 | `common/types.py`（`IdRegistry` / `Intent` / `Project` / `Method` 等）, `common/rng.py`, `common/io.py`, config ローダ | 型が定義され、config から ID 一覧が生成され、seed の子ストリーム生成が動く |
+| S1 | `common/types.py`（`IdRegistry` / `Intent` / `Project` / `Method` 等）, `common/rng.py`, `common/io.py`, config ローダ + `test_config_validation` | 型が定義され、config から ID 一覧が生成され、不整合な config が起動時に落ち、seed の子ストリーム生成が動く |
 | S2 | `agents/agent.py` + 初期化 + `test_agent_init` + `test_condition_invariance` | §15.1 の7要件を満たし、同一seedから4条件のAgentが pre-network で完全一致で生成される |
 | S3 | `culture/network.py`（base graph + `build_edge_layers`）+ `test_network_pairing` | A/C・B/D の完全ペアリング、次数保存、`cultural_peers ⊆ known_agents` が検証される |
-| S4 | `agents/observation.py` + `test_locality` | Observation に World 参照・`peer_learning_enabled`・`is_participant` がないことが保証される |
+| S4 | `agents/observation.py` + `test_locality` | Observation に World 参照・`peer_learning_enabled`・`is_participant`・`cultural_peers` がないことが保証される |
 | S5 | `agents/decision.py`（決定論ルール） | Intent 列が返る |
 | S6 | `world/resources.py` + `test_material_replenishment` | 補充が全条件同一で動く |
 | S7 | `world/production.py` + `culture/learning.py` | make の成否と技能獲得が動く |
@@ -1275,6 +1395,19 @@ peer_learning_enabled: false
 | **trust** | trust の扱い | **M1 では固定値。更新式を実装しない。** 「`ask` によって trust を更新する」という旧記述は**全文書で廃止**。`accept_peer_method()` は固定 trust 値を参照してよい。dynamics は M2 以降で再検討 | §3.2、§8.1、§8.3 |
 | **temperature** | `success_probability` の温度 | **`base.yaml` の `learning` ブロックへ追加**。コードにハードコードしない | §6.1、§14.1 |
 | **make と技能維持** | 減衰免除 | **成功・失敗を問わず**、`make` を実行した Project の `primary_skill` を `practiced_this_step` へ追加し、その step の減衰対象から除外する | §6.3 |
+
+### 17.2 S1〜S4 の再査読で確定した事項（2026-08-15 第2次）
+
+| # | 事項 | 決定 | 反映先 |
+|---|---|---|---|
+| **Z1** | `maker_stage` 判定規則 | **`max_skill >= customizer_skill` の経路を削除**し、Customizer を `n_projects >= 1` のみで判定。`customizer_skill` を config から削除。SPEC §4 が段階を**行動の記述**として定義しているため。初期 Consumer 比率は構成上100%となり**初期分布の校正が不要になる** | §6.4、§14.1 |
+| **Z2** | `Observation.cultural_peers` | **削除**。M1 の決定ルールが参照せず、non-participant では常に空集合となり区分が漏洩するため。M2 で必要になった時点で漏洩の可否を含めて再判断する（保留） | §3.3、§13 |
+| **Z3** | `participation_level` の乗算形 | **変更しない**。non-participant が make を実行せず M1 で MAKER に到達しないのは**設計どおりの帰結**。彼らは M3 への布石であり、M1 では社会的接触の提供のみを担う context population | §3.4.5 |
+| **Z4** | Metrics の系列数 | **3系列すべて必須**に統一（`all_agents` / `participants_only` / `nonparticipants_only`）。「任意」の記述を削除 | §3.4.6、§10.2.1 |
+| **Z5** | `count_assets()` | **保有している設備の種類数**と定義。tools（0-3）は 1 以上なら 1 種類。`advanced_assets: 3` = 3種類保有。tools の水準は `asset_distribution` へ別途記録 | §6.4 |
+| **Z6** | config 整合性 | **起動時検証を追加**し、不一致なら実行前に例外送出。`agent_init.skills` / `agent_init.assets` / `materials` 3種 / Project カタログの各キー集合を `IdRegistry` と照合 | §14.1.2 |
+| — | 識別子の呼称統一 | `Project.project_id` / `Method.project_id` / `Intent.target_project_id` / `IdRegistry.project_ids` に統一。**`project_type` という呼称は廃止**（config の個数指定キー `n_project_types` のみ従来どおり残す） | §3.1 |
+| — | `World` 構造体 | `step` / `cfg` / `id_registry` / `projects` / `agents` / `graph` / `rng` / `metrics` / `peer_learning_enabled` を定義 | §3.2.1 |
 
 M1 実装をブロックする未決事項は**残っていない**。
 

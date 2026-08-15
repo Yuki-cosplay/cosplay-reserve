@@ -70,6 +70,9 @@ Windowsネイティブ環境、Python 3.12の仮想環境が `.venv/` にあり�
 - **中心仮説**: 文化は「何を望むか」（Soft Power）だけでなく「何をできるか」（Latent Capability）まで変える。経路は `Cultural Participation → Latent Capability` であり、Soft Powerそのものと混同してはいけません（§2）。
 - **Capability Reproduction Loop**（§5）: Attraction → Participation → Observation → Information Acquisition → Imitation/Scaffolding → Making → Feedback → Skill Acquisition → Sharing → （他者のObservationへ）。これはAgentが実行する台本ではなく、Agent間相互作用の結果として*創発*するべきものです。
 - **Makerの成熟段階**（§4、シミュレーション中に変化しうる、固定属性ではない）: `Consumer → Customizer → Maker → Advanced Maker`。
+  - **判定は潜在技能ではなく行動で行う**（`docs/DESIGN_M1.md` §6.4）。**Customizer = `n_projects >= 1` のみ**（技能による経路は削除済み、`customizer_skill` は存在しない）。SPEC §4 が段階を行動の記述として定義しているためです。
+  - **「履歴」と「現在の能力」の非対称**: Customizer は**不可逆**（経歴は消えない）、Maker 以上は `max_skill` を要求するため**可逆**（技能減衰で落ちうる）。`maker_count` は単調増加しません。
+  - この規則により初期状態の Consumer 比率は構成上100%となり、**初期分布の校正が不要**になります（恣意的調整の余地を構造的に排除）。
 - **検証対象の仮説**（§7）: H1 — 相互学習構造は時間経過とともにMaker人口を増加させるか。H2 — 初期の技能・設備が同一でも、Capability Reproduction Loopが存在するとLatent Capabilityがより速く成長するか。H3 — その蓄積差は供給ショック時の転化確率・転化速度・供給量に差を生むか。
 - **2×2完全要因計画**（§19）。因子は **topology**（structured / rewired）× **peer learning**（ON / OFF）: **A**=structured+ON、**B**=rewired+ON、**C**=structured+OFF、**D**=rewired+OFF。初期技能・設備・資源は4条件で完全に同一。
   - **C/D は「ネットワークを除去した世界」ではない**。社会的接触は維持される: practice・make・**Method自己発見**・**self-scaffolding**・observe・**ask**・**share**・perceived_skills更新はすべて有効。C/Dで無効化されるのは **他AgentからのMethod取得（peer Method transfer）とpeer由来Methodによるsocial scaffolding のみ**。表現したいのは「人は社会的につながっているが、そのつながりが制作能力の再生産経路として機能しない世界」。

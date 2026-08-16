@@ -1,0 +1,6 @@
+# 条件C: structured × peer learning OFF
+# base.yaml との差分は topology と peer_learning_enabled の2キーのみ（DESIGN_M1 §14.5）
+extends: base.yaml
+condition: C
+topology: structured
+peer_learning_enabled: false

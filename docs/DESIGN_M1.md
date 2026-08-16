@@ -1769,7 +1769,7 @@ peer_learning_enabled: false
 | **Z4** | Metrics の系列数 | **3系列すべて必須**に統一（`all_agents` / `participants_only` / `nonparticipants_only`）。「任意」の記述を削除 | §3.4.6、§10.2.1 |
 | **Z5** | `count_assets()` | **保有している設備の種類数**と定義。tools（0-3）は 1 以上なら 1 種類。~~`advanced_assets: 3` = 3種類保有~~ → **決定 U1 により 2 へ変更（§17.5）**。~~tools の水準は `asset_distribution` へ別途記録~~ → **U1 により `asset_distribution` は M1 では記録せず、初期状態を `metadata.json` に保存** | §6.4 |
 | **Z6** | config 整合性 | **起動時検証を追加**し、不一致なら実行前に例外送出。`agent_init.skills` / `agent_init.assets` / `materials` 3種 / Project カタログの各キー集合を `IdRegistry` と照合 | §14.3 |
-| — | 識別子の呼称統一 | `Project.project_id` / `Method.project_id` / `Intent.target_project_id` / `IdRegistry.project_ids` に統一。**`project_type` という呼称は廃止**（config の個数指定キー `n_project_types` のみ従来どおり残す） | §3.1 |
+| — | 識別子の呼称統一 | `Project.project_id` / `Method.project_id` / `Intent.target_project_id` / `IdRegistry.project_ids` に統一。**`project_type` という呼称は廃止**（~~config の個数指定キー `n_project_types` のみ従来どおり残す~~ → **決定 P4（§17.6）により廃止。`IdRegistry.project_ids` はカタログから導出する**） | §3.1 |
 | — | `World` 構造体 | `step` / `cfg` / `id_registry` / `projects` / `agents` / `graph` / `rng` / `metrics` / `peer_learning_enabled` を定義 | §3.2.1 |
 
 ### 17.3 S1〜S4 の再査読で確定した事項（2026-08-15 第3次）

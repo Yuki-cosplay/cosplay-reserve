@@ -1,0 +1,137 @@
+# Milestone 1 共通パラメータ（docs/DESIGN_M1.md §14.1 / §14.2）
+# このファイルの値は 4条件（A/B/C/D）で完全に同一である。
+# 条件別 YAML で上書きしてよいのは topology / peer_learning_enabled の2キーのみ。
+
+run:
+  seed: 42
+  phase: accumulation
+  steps: 156                    # 蓄積相。52 / 104 / 156 から選択（決定 D11）
+  step_hours: 168               # 1 step = 1週間（SPEC §25 蓄積相）
+  output_dir: outputs/
+
+world:
+  # 決定 X4: cosplay 由来の識別子は使わない
+  n_participant_agents: 30
+  n_nonparticipant_agents: 10   # 合計 N=40 固定（決定 D7。参入・退出なし）
+                                # 30/10 は仮置き構成。現実の人口比ではない（§3.4.4）
+  n_skills: 6                   # -> skill_0 .. skill_5
+  n_materials: 5                # -> mat_0 .. mat_4
+  n_assets: 4                   # -> asset_0 .. asset_3
+                                # 決定 P4: n_project_types は廃止。
+                                # project_ids は projects: カタログから導出する
+
+network:
+  mean_degree: 6
+  rewire_p: 0.1
+  assortativity: 0.3            # 目標 assortativity 係数（§7、暫定解釈）
+  assortativity_swaps: 5        # 決定 W5: スワップ予算 = 5 × エッジ数。次数保存型
+  swap_multiplier: 10           # rewired の double_edge_swap 回数 = 10 × エッジ数
+
+agent_init:                     # 決定 X2。participant / non-participant で同一（§3.4.1）
+  skills:                       # §14.2.4: 6技能すべて同一分布。技能に優劣を作らない
+    skill_0: {type: beta, a: 1.5, b: 8.0}
+    skill_1: {type: beta, a: 1.5, b: 8.0}
+    skill_2: {type: beta, a: 1.5, b: 8.0}
+    skill_3: {type: beta, a: 1.5, b: 8.0}
+    skill_4: {type: beta, a: 1.5, b: 8.0}
+    skill_5: {type: beta, a: 1.5, b: 8.0}
+  assets:                       # 決定 W2: type を明示宣言する
+    asset_0: {type: bernoulli, p: 0.35}
+    asset_1: {type: bernoulli, p: 0.15}
+    asset_2: {type: categorical, values: [0, 1, 2, 3], probs: [0.30, 0.40, 0.20, 0.10]}
+    asset_3: {type: bernoulli, p: 0.25}
+  traits:                       # 決定 V3: 固定値も {type: constant} 形式に揃える
+    participation_level:                {type: beta, a: 2.0, b: 3.0}
+    nonparticipant_participation_level: {type: constant, value: 0.0}
+    sharing_tendency:                   {type: beta, a: 2.5, b: 2.5}
+    imitation_tendency:                 {type: beta, a: 2.5, b: 2.5}
+    helping_norm:                       {type: beta, a: 2.5, b: 2.5}
+    trust_fixed:                        {type: constant, value: 0.5}
+    time_budget:                        {type: constant, value: 3.0}
+
+materials:                      # 決定 D13 / Y1。条件別 YAML で上書き禁止
+  initial:       {mat_0: 5.0,  mat_1: 5.0,  mat_2: 5.0,  mat_3: 5.0,  mat_4: 5.0}
+  inventory_cap: {mat_0: 10.0, mat_1: 10.0, mat_2: 10.0, mat_3: 10.0, mat_4: 10.0}
+  replenish_rate: {mat_0: 1.0,  mat_1: 1.0,  mat_2: 1.0,  mat_3: 1.0,  mat_4: 1.0}
+
+learning:
+  learn_rate_success: 0.04      # = L。感度分析の因子（§11）
+  learn_rate_failure_ratio: 0.25  # 決定 Y2: learn_rate_failure = L × ratio
+  decay_rate: 0.005             # = D = L / 8。感度分析の因子（§11）
+  base_reduction: 0.25
+  method_discovery_prob: 0.15
+  asset_bonus: 0.2
+  temperature: 0.15             # success_probability の sigmoid 温度
+
+stage_thresholds:
+  # 決定 Z1: customizer_skill は削除。Customizer は n_projects >= 1 のみで判定
+  maker_skill: 0.45
+  maker_projects: 3
+  advanced_skill: 0.70
+  advanced_breadth: 3
+  advanced_assets: 2            # 決定 U1: 3 では初期設備で天井ができるため 2 へ
+  advanced_projects: 10
+  breadth_threshold: 0.35
+
+decision_weights:
+  observe: 0.30
+  ask: 0.50
+  practice: 0.40
+  make: 0.70
+  share: 0.35
+  idle: 0.10
+
+action_time_cost:               # 決定 Y3: make の時間コストはここだけ
+  observe: 0.1
+  ask: 0.2
+  practice: 0.5
+  make: 1.0
+  share: 0.2
+  idle: 0.0                     # 決定 Y5
+
+time:
+  max_actions_per_step: 6       # time_budget は agent_init.traits.time_budget
+
+projects:                       # 決定 W1: 6件を固定値で列挙。分布から生成しない
+                                # 難度・技能番号・設備・材料点数・設備希少度は互いに無相関
+  - project_id: proj_0
+    primary_skill: skill_2
+    base_difficulty: 0.25       # 低難度だが材料3種（単調性を崩す）
+    required_asset: asset_2     # 最も一般的な設備(p=0.70)が最易 project を門番する
+    material_cost: {mat_0: 1.0, mat_2: 1.0, mat_4: 2.0}
+    target_profile: {attr_0: 0.0, attr_1: 0.0, attr_2: 0.0, attr_3: 0.0, attr_4: 0.0, attr_5: 0.0, attr_6: 0.0}
+
+  - project_id: proj_1
+    primary_skill: skill_1
+    base_difficulty: 0.70       # 高難度だが設備不要・材料1種（単調性を崩す）
+    required_asset: null
+    material_cost: {mat_3: 2.0}
+    target_profile: {attr_0: 0.0, attr_1: 0.0, attr_2: 0.0, attr_3: 0.0, attr_4: 0.0, attr_5: 0.0, attr_6: 0.0}
+
+  - project_id: proj_2
+    primary_skill: skill_0
+    base_difficulty: 0.40
+    required_asset: null
+    material_cost: {mat_1: 1.0, mat_4: 1.0}
+    target_profile: {attr_0: 0.0, attr_1: 0.0, attr_2: 0.0, attr_3: 0.0, attr_4: 0.0, attr_5: 0.0, attr_6: 0.0}
+
+  - project_id: proj_3
+    primary_skill: skill_3
+    base_difficulty: 0.80
+    required_asset: asset_1     # 最も希少な設備(p=0.15)が最難 project を門番する
+    material_cost: {mat_0: 2.0, mat_1: 1.0}
+    target_profile: {attr_0: 0.0, attr_1: 0.0, attr_2: 0.0, attr_3: 0.0, attr_4: 0.0, attr_5: 0.0, attr_6: 0.0}
+
+  - project_id: proj_4
+    primary_skill: skill_5
+    base_difficulty: 0.30
+    required_asset: asset_0     # p=0.35
+    material_cost: {mat_2: 2.0}
+    target_profile: {attr_0: 0.0, attr_1: 0.0, attr_2: 0.0, attr_3: 0.0, attr_4: 0.0, attr_5: 0.0, attr_6: 0.0}
+
+  - project_id: proj_5
+    primary_skill: skill_4
+    base_difficulty: 0.55
+    required_asset: asset_3     # p=0.25
+    material_cost: {mat_1: 2.0, mat_2: 1.0, mat_3: 1.0}
+    target_profile: {attr_0: 0.0, attr_1: 0.0, attr_2: 0.0, attr_3: 0.0, attr_4: 0.0, attr_5: 0.0, attr_6: 0.0}

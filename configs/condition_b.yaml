@@ -1,0 +1,6 @@
+# 条件B: rewired × peer learning ON
+# base.yaml との差分は topology と peer_learning_enabled の2キーのみ（DESIGN_M1 §14.5）
+extends: base.yaml
+condition: B
+topology: rewired
+peer_learning_enabled: true

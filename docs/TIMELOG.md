@@ -38,3 +38,5 @@
 | 0.68h | 13:27 | C13（感度分析）は P2 へ後回し（ユーザー指示）。L4 に記録 |
 | 0.68h | 13:27 | **L3 発見**: maker_count 天井効果（全条件 30/30, sd 0）。要人間判断 |
 | 1.15h | 13:55 | M2 最小構成を実装（client/prompts/decider/CostGuard）。90 tests green。**条件1（実LLM呼び出し）は認証待ちでブロック** |
+| 1.6h | 14:23 | M3 実装完了（demand/transition/shock/runner）。124 tests green。dry-run: 12 calls / $0.174 |
+| 1.6h | 14:25 | M3 本実行: 段階1-2 通過、段階3（LLM呼び出し）で認証エラー。ユーザ実行待ち |

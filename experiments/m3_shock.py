@@ -27,6 +27,8 @@ from src.world.demand import RequiredItem, SupplyLedger
 from src.world.shock import ShockState, shock_step
 from src.world.step import step as accumulation_step
 from src.world.world import build_world
+from src.common.config import config_sha256
+from src.simulation.runner import _git_commit
 
 # M2 実測（in=1430 / out=295 で $0.014525）。ショック相プロンプトは需要ブロック分だけ長い。
 MEASURED_IN, MEASURED_OUT = 1430, 295
@@ -77,6 +79,7 @@ def main() -> int:
     ap.add_argument("--max-usd", type=float, default=0.50, help="この run の費用上限")
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--out", default="outputs/m3_shock.json")
+    ap.add_argument("--run-type", default="PIPELINE_VALIDATION")
     args = ap.parse_args()
 
     world = build_world(args.config, seed=args.seed)
@@ -152,6 +155,28 @@ def main() -> int:
         ),
     )
     summary = {
+        # --- この run の位置づけ（人間承認済み、2026-08-16）---
+        "run_type": args.run_type,
+        "confirmatory_evidence": False,
+        "excluded_from_main_experiment": True,
+        "excluded_from_d4_d5_calibration": True,
+        "purpose": (
+            "end-to-end pipeline 疎通の確認のみ。Transition が TRUE になることは"
+            "成功条件ではない。FALSE でも pipeline が正常なら成功。"
+        ),
+        "provisional_parameters": {
+            "note": (
+                "D4（転化閾値）と D5（baseline_supply_per_step）は PIPELINE_VALIDATION 用の"
+                "暫定値であり、研究上の確定値ではない。この run の結果を見て D4/D5 を"
+                "調整・選択してはならない。本実験前に独立した根拠から固定し"
+                "PREREGISTRATION へ記録すること。"
+            ),
+            "D5_baseline_supply_per_step": shock_cfg["baseline_supply_per_step"],
+            "D4_transition": dict(shock_cfg["transition"]),
+            "status": "provisional / not research-final",
+        },
+        "config_sha256": config_sha256(world.cfg),
+        "code_git_commit": _git_commit(),
         **world.provenance,
         "accumulation_steps": args.accum_steps,
         "accumulation_participant_makers": accum_makers,

@@ -35,13 +35,17 @@ def _node_index(agent_id: str) -> int:
 
 
 def _skill_scalar(agent: Agent) -> float:
-    """assortativity 計算に使う「技能水準」のスカラー。
+    """assortativity 計算に使う「技能水準」のスカラー。**6技能の平均**（確定）。
 
-    ★暫定解釈（設計書に定義がない）★ 6技能の平均を用いる。
-    docs/DESIGN_M1.md §7 は add_skill_assortativity の対象を
-    「技能の近い者同士」とだけ記しており、複数技能をどうスカラー化するかを
-    定めていない。max を使うか mean を使うかで structured topology の
-    性質が変わるため、人間の確認が必要（報告済み）。
+    max を採用しない理由（DESIGN_M1 §7）:
+
+    (a) N=40 で6技能の最大値は単一の順序統計量にすぎず、「1技能だけ高い者同士が
+        繋がる」構造になる。assortativity で表現したいのは全体的な習熟度の近さである。
+    (b) max_skill は judge_maker_stage() の MAKER 判定に使われている。同じ量を
+        2つの異なる構成概念に流用すると、「技能水準」と「段階」の交絡を疑われる。
+
+    平均という選択自体は設計上の任意選択である（max や合計を採ると構造が変わりうる）。
+    docs/LIMITATIONS_CANDIDATES.md に記録済み。
     """
     return float(np.mean(list(agent.skills.values())))
 
@@ -69,12 +73,16 @@ def add_skill_assortativity(
     契約（§7）:
       - 入力グラフの次数分布と総エッジ数を完全に保存する
       - エッジの追加・削除は行わない
-      - スワップ回数は config（network.assortativity_swaps × |E|）
+      - 打ち切り上限は config（network.assortativity_swaps × |E|）
 
-    ★暫定解釈（設計書に定義がない）★
-    network.assortativity（既定 0.3）を「目標 assortativity 係数」と解釈し、
-    係数が目標に達した時点で早期終了する。swap_budget は打ち切り上限。
-    この2パラメータの関係が設計書で定義されていないため、人間の確認が必要（報告済み）。
+    **network.assortativity（既定 0.3）は目標係数である（確定）。**
+    係数が目標に達した時点で早期終了する。固定スワップ回数にすると達成
+    assortativity が seed ごとにばらつき、条件A の構造の強さが seed 依存になる。
+    目標値で止める方が条件間比較が安定する。
+
+    **打ち切り上限に達して目標未達だった場合も、再試行や上限延長はしない。**
+    達成値をそのまま記録して続行する（達成値は metadata.json に保存）。
+    未達を埋めるために上限を伸ばすのは、結果に合わせた調整に接近する。
     """
     edges = list(g.edges())
     if len(edges) < 2:
@@ -106,12 +114,15 @@ def add_skill_assortativity(
 
 def build_base_graphs(
     agents: dict[str, Agent], cfg: dict, rng: np.random.Generator
-) -> dict[str, nx.Graph]:
-    """topology ごとに base graph を1回だけ生成する。
+) -> tuple[dict[str, nx.Graph], dict]:
+    """topology ごとに base graph を1回だけ生成し、(graphs, stats) を返す。
 
     ノード番号 = リング上の位置である。participant は agent_init ストリームで
     ノード番号と無関係にランダム割り当てされているため（決定 V1）、
     リング上に分散する。
+
+    stats には達成 assortativity（structured / rewired の両方）と目標・上限を
+    含める。全 run・全条件で metadata.json に記録する義務がある。
     """
     net = cfg["network"]
     n = len(agents)
@@ -122,12 +133,10 @@ def build_base_graphs(
     )
 
     skill = {_node_index(a.id): _skill_scalar(a) for a in agents.values()}
+    target = float(net["assortativity"])
+    budget = int(net["assortativity_swaps"] * structured.number_of_edges())
     structured = add_skill_assortativity(
-        structured,
-        skill,
-        target=float(net["assortativity"]),
-        swap_budget=int(net["assortativity_swaps"] * structured.number_of_edges()),
-        rng=rng,
+        structured, skill, target=target, swap_budget=budget, rng=rng
     )
 
     # 次数保存リワイヤリング。次数分布とエッジ数を完全に保存し、
@@ -140,7 +149,17 @@ def build_base_graphs(
         max_tries=10**7,
         seed=swap_seed,
     )
-    return {"structured": structured, "rewired": rewired}
+
+    achieved_structured = _assortativity_coefficient(structured, skill)
+    stats = {
+        "assortativity_target": target,
+        "assortativity_swap_budget": budget,
+        "assortativity_achieved_structured": achieved_structured,
+        "assortativity_achieved_rewired": _assortativity_coefficient(rewired, skill),
+        # 未達でも再試行・上限延長はせず、達成値をそのまま記録して続行する
+        "assortativity_target_reached": bool(achieved_structured >= target),
+    }
+    return {"structured": structured, "rewired": rewired}, stats
 
 
 def graph_for(

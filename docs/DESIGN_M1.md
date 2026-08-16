@@ -903,6 +903,32 @@ def graph_for(condition: str, base_graphs, agents) -> nx.Graph:
 
 **理由**: 追加・削除型にすると `mean_degree` の意味が条件間で変わり、**A と B の比較が「繋ぎ方の違い」ではなく「密度の違い」を含んでしまう**。次数保存型なら、A と B の差は topology の構造のみに帰属する。
 
+#### 技能スカラーの定義 — 6技能の**平均**（確定）
+
+`add_skill_assortativity` が参照する「技能水準」は、**6技能の平均**とする。**`max` は採用しない。**
+
+**理由:**
+
+1. **max は単一の順序統計量にすぎない。** N=40 で6技能の最大値を使うと「1技能だけ高い者同士が繋がる」構造になる。assortativity で表現したいのは**全体的な習熟度の近さ**である
+2. **`max_skill` は `judge_maker_stage()` の MAKER 判定に使われている**（§6.4）。同じ量を2つの異なる構成概念に流用すると、「**技能水準**」と「**段階**」の交絡を疑われる
+
+平均という選択自体は設計上の任意選択であり、`max` や合計を採れば structured topology の性質は変わりうる。この点は `docs/LIMITATIONS_CANDIDATES.md` に記録している。
+
+#### `network.assortativity` は目標係数である（確定）
+
+`network.assortativity`（既定 0.3）を**目標 assortativity 係数**と解釈し、係数が目標に達した時点でスワップを打ち切る。`network.assortativity_swaps × |E|` は**打ち切り上限**である。
+
+**理由**: 固定スワップ回数にすると、達成 assortativity が seed ごとにばらつき、**条件A の「構造の強さ」自体が seed 依存**になる。目標値で止めるほうが条件間比較が安定する。
+
+**義務（P1決定2）:**
+
+- **達成 assortativity を全 run・全条件で `metadata.json` に記録する**（structured と rewired の両方）
+- **打ち切り上限に達して目標未達だった場合も、再試行や上限延長はしない。** 達成値をそのまま記録して続行する。未達を埋めるために上限を伸ばすのは、結果に合わせた調整に接近する
+- 打ち切り上限は config 値とする（`network.assortativity_swaps`）
+- **RESULTS.md で A vs B を論じる際は、達成 assortativity の seed 間ばらつきを併記する**
+
+記録するキー: `assortativity_target` / `assortativity_swap_budget` / `assortativity_achieved_structured` / `assortativity_achieved_rewired` / `assortativity_target_reached`
+
 これは B/D を作る `double_edge_swap`（次数保存）と同じ性質であり、**structured も rewired も同一の次数列を持つ**ことが構成上保証される。T9 の「A と B の次数列とエッジ数が一致」は、この2段の次数保存によって成立する。
 
 **4条件で共通なもの**: Agent の初期状態（技能・設備・材料・性向）、Project カタログ、効用重み、学習率、減衰率、補充設定、step 数、Agent 数。

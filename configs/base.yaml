@@ -92,6 +92,14 @@ action_time_cost:               # 決定 Y3: make の時間コストはここだ
 time:
   max_actions_per_step: 6       # time_budget は agent_init.traits.time_budget
 
+decision:
+  # 設計書に値の指定がないためここで config 化する（実装規約2）。
+  # observe は他Agentの技能を「信念」として推定する（SPEC §14: 真値を渡さない）。
+  # 誤差 0 にすると perceived_skills が真値と一致し、Information Locality が
+  # 実質的に無効化されるため、正の値が必要。
+  observation_noise: 0.05       # observe 時の推定誤差の標準偏差
+                                # ask は対象技能を直接尋ねるため誤差は半分にする
+
 projects:                       # 決定 W1: 6件を固定値で列挙。分布から生成しない
                                 # 難度・技能番号・設備・材料点数・設備希少度は互いに無相関
   - project_id: proj_0

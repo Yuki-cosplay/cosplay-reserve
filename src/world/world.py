@@ -68,7 +68,7 @@ def build_world(condition_path: str | Path, seed: int | None = None) -> World:
     pre_hash = agent_initial_states_sha256(agents)
 
     # --- spawn 2: network ---
-    base_graphs = build_base_graphs(agents, cfg, streams["network"])
+    base_graphs, net_stats = build_base_graphs(agents, cfg, streams["network"])
     graph = graph_for(cfg["condition"], base_graphs, agents)
     build_edge_layers(graph, agents)
 
@@ -96,6 +96,8 @@ def build_world(condition_path: str | Path, seed: int | None = None) -> World:
             "base_graph_sha256": graph_sha256(graph),
             "cultural_edge_count": cultural_edge_count(graph, agents),
             "network_density": nx.density(graph),
+            # 達成 assortativity は全 run・全条件で記録する義務がある（P1決定2）
+            **net_stats,
         },
     )
     return world

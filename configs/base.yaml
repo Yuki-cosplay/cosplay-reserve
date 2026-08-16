@@ -92,6 +92,16 @@ action_time_cost:               # 決定 Y3: make の時間コストはここだ
 time:
   max_actions_per_step: 6       # time_budget は agent_init.traits.time_budget
 
+llm:
+  # M2 最小構成。蓄積相では使わない（決定 D12）— ショック相の局所判断に限定する。
+  model: claude-opus-5
+  max_tokens: 2048              # Intent 列は小さい。structured output のみ
+  effort: low                   # SPEC §24 コスト制御: 軽い意思決定は低effort
+  # 【CLAUDE.md 絶対ルール】API費用の上限。超えたら実行を止める（CostGuard）
+  max_usd: 1.00                 # 累積上限。呼び出し「前」に判定して停止する
+  input_usd_per_mtok: 5.00      # claude-opus-5 の list price
+  output_usd_per_mtok: 25.00
+
 decision:
   # 設計書に値の指定がないためここで config 化する（実装規約2）。
   # observe は他Agentの技能を「信念」として推定する（SPEC §14: 真値を渡さない）。

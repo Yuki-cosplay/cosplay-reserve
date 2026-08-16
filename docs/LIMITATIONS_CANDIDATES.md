@@ -54,7 +54,7 @@ RESULTS.md の Limitations へ転記する候補を、発生時点で記録す�
 - 「構造的な観測不能性の除去」= 観測装置の較正 → 実験開始前なら許容される
 - 「仮説に有利な方向へのパラメータ調整」= 結果の捏造 → 禁止
 
-**現状**: 実装者の判断でパラメータを変更していない。人間の決定待ち。
+**決定（2026-08-16、人間承認済み）**: **パラメータを変更しない。** `maker_skill` / stage threshold / `learn_rate` / `decay_rate` / Method 効果その他のモデルパラメータは一切変更しない。**天井効果を解消する目的での閾値変更は禁止する。** 天井効果は認めたうえで、到達**速度**の指標（`mean_time_to_maker`）を primary metric として holdout seed 21〜40 で判定した（L3 分類 **Case C**、`docs/RESULTS_CANDIDATES.md`）。
 
 **なお peer learning の遮断自体は正しく機能している**（C/D で peer 由来 Method が厳密に 0、A/B で約53）。機構は動いており、飽和しているのは maker_count という指標の側である。
 

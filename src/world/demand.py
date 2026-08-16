@@ -62,9 +62,31 @@ def apply_shifts(base: AttributeVector, shifts: dict[str, float]) -> AttributeVe
     return AttributeVector(**values)
 
 
+def external_reference_supply_per_step(cfg: dict, shock_agent_count: int) -> float:
+    """External Supply Parity Reference（D5、人間確定 2026-08-16）。
+
+    ★現実の外部メーカー能力の実証値ではない★
+    community supply を無次元比較するための正規化基準である。
+    「Manufacturer 能力の推定値」と呼んではならない。
+
+        = (time_budget / action_time_cost.make) × shock_agent_count
+
+    shock 対象コミュニティ全員が 1 step の時間予算をすべて make へ投入した場合の
+    理論最大供給能力と同量を、比較用 reference capacity とする。
+    """
+    time_budget = float(cfg["agent_init"]["traits"]["time_budget"]["value"])
+    make_cost = float(cfg["action_time_cost"]["make"])
+    max_make_per_agent = time_budget // make_cost
+    return max_make_per_agent * shock_agent_count
+
+
 @dataclass
 class SupplyLedger:
-    """供給の記帳（SPEC §22）。転化判定はここではなく transition.py が行う。"""
+    """供給の記帳（SPEC §22）。転化判定はここではなく transition.py が行う。
+
+    baseline_per_step は External Supply Parity Reference（D5）。
+    実証的な外部供給能力ではなく正規化基準である。
+    """
 
     baseline_per_step: float
     community_total: float = 0.0

@@ -9,7 +9,12 @@ from src.common.types import ActionType, AttributeVector, Intent, RejectionReaso
 from src.llm.prompts import SHOCK_INTENT_LIST_SCHEMA, SHOCK_SYSTEM_PROMPT, build_shock_user_prompt
 from src.agents.observation import build_observation
 from src.simulation.transition import TransitionJudge, reconfiguration_time
-from src.world.demand import RequiredItem, SupplyLedger, apply_shifts
+from src.world.demand import (
+    RequiredItem,
+    SupplyLedger,
+    apply_shifts,
+    external_reference_supply_per_step,
+)
 from src.world.shock import ShockState, shock_step, validate_shock
 from src.world.world import build_world
 from tests.forbidden import assert_clean
@@ -200,7 +205,7 @@ def test_shock_step_runs_without_llm(world, required):
     """pipeline がコード側だけでも一周すること（LLM なしのスモーク）。"""
     w = build_world(CONFIG_DIR / "condition_a.yaml", seed=7)
     state = ShockState()
-    ledger = SupplyLedger(baseline_per_step=w.cfg["shock"]["baseline_supply_per_step"])
+    ledger = SupplyLedger(baseline_per_step=external_reference_supply_per_step(w.cfg, 3))
     judge = TransitionJudge.from_config(w.cfg["shock"]["transition"])
     stats = {"actions": {}, "rejections": {}, "proposed": 0, "accepted": 0,
              "qualifying_makes": 0, "nonqualifying_makes": 0}

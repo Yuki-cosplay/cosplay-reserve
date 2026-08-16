@@ -27,7 +27,11 @@ from src.simulation.transition import (
     reconfiguration_time,
     structural_coordination_capacity,
 )
-from src.world.demand import RequiredItem, SupplyLedger
+from src.world.demand import (
+    RequiredItem,
+    SupplyLedger,
+    external_reference_supply_per_step,
+)
 from src.world.shock import ShockState, shock_step
 from src.world.step import step as accumulation_step
 from src.world.world import build_world
@@ -110,7 +114,8 @@ def main() -> int:
 
     # --- ショック発生 ---
     onset = world.step
-    ledger = SupplyLedger(baseline_per_step=shock_cfg["baseline_supply_per_step"])
+    external_ref = external_reference_supply_per_step(world.cfg, args.llm_agents)
+    ledger = SupplyLedger(baseline_per_step=external_ref)
     judge = TransitionJudge.from_config(shock_cfg["transition"])
     print(f"[2/4] ショック発生 step={onset} 要求={required.thresholds} "
           f"（要求を初期状態で満たす project は存在しない）")
@@ -176,14 +181,14 @@ def main() -> int:
             "end-to-end pipeline 疎通の確認のみ。Transition が TRUE になることは"
             "成功条件ではない。FALSE でも pipeline が正常なら成功。"
         ),
-        "provisional_parameters": {
+        "parameters": {
             "note": (
                 "D4（転化閾値）と D5（baseline_supply_per_step）は PIPELINE_VALIDATION 用の"
                 "暫定値であり、研究上の確定値ではない。この run の結果を見て D4/D5 を"
                 "調整・選択してはならない。本実験前に独立した根拠から固定し"
                 "PREREGISTRATION へ記録すること。"
             ),
-            "D5_baseline_supply_per_step": shock_cfg["baseline_supply_per_step"],
+            "D5_external_reference_supply_per_step": external_ref,
             "D4_transition": dict(shock_cfg["transition"]),
             "status": "provisional / not research-final",
         },
@@ -197,6 +202,16 @@ def main() -> int:
         "required_item": {"thresholds": required.thresholds, "unit_demand": required.unit_demand},
         "llm_agent_ids": llm_ids,
         "structural_coordination": structural,
+        "external_supply_parity_reference_per_step": external_ref,
+        "external_reference_note": (
+            "現実の外部メーカー能力の実証値ではない。community supply を無次元比較する"
+            "ための正規化基準（D5）。Manufacturer 能力の推定値と呼んではならない。"
+        ),
+        "unit_demand_note": (
+            "unit_demand はショック発生時点で不足している総需要量（stock）。"
+            "M3 では remaining_demand を実装せず、供給停止条件にも transition 判定にも"
+            "使用しない。文脈情報としてのみ保存する。"
+        ),
         "community_supply_total": ledger.community_total,
         "baseline_supply_total": ledger.baseline_total,
         "community_supply_share": round(ledger.community_supply_share(), 6),

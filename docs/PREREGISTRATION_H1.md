@@ -78,3 +78,117 @@ paired-seed 差分（負 = peer ON のほうが速い）:
 **ただし方向は2つの独立した seed 集合で再現している**（seed 1–20: A−C −0.420 / B−D −0.353、seed 21–40: −0.387 / −0.298）。効果は一貫して peer ON が速い向きだが、**seed 間ばらつきに対して小さい**。
 
 topology 効果と交互作用は**ほぼ 0**（符号も seed 集合間で不安定）。
+
+---
+
+# M3 事前登録（Transition Threshold / External Supply Parity Reference / seed）
+
+**記録時刻**: 2026-08-16 15:5x JST
+**記録時点の commit**: `51cba70`
+**config_sha256 (condition A)**: `9ed5ad771bc60335c0977a4a3ae734dd98f7c55820832e0f73a841431167371f`
+**すべて main experiment の LLM 実行前に確定した。**
+
+## D5 — External Supply Parity Reference（人間確定）
+
+```
+external_reference_supply_per_step
+  = max_make_per_agent_per_step × shock_agent_count
+  = (time_budget / action_time_cost.make) × shock_agent_count
+  = 3 × shock_agent_count          （n=6 なら 18.0 units/step）
+```
+
+**★これは現実の外部メーカー能力の実証値ではない★**
+community supply を無次元比較するための**正規化基準**である。
+
+- 「Manufacturer 能力の推定値」と呼んではならない
+- README / RESULTS / presentation でも、実証的な外部供給能力であるかのように記述してはならない
+- **PIPELINE_VALIDATION の観測結果から決定した値ではない**
+- `manufacturer_coverage_ratio` 案は却下（実装しない）
+
+**意味**: shock 対象コミュニティの全 Agent が 1 step の時間予算をすべて make へ投入した場合の理論最大供給能力と同量を、比較用 reference capacity とする。
+
+## unit_demand の定義（人間確定）
+
+`unit_demand = 200` は「**ショック発生時点で不足している総需要量（stock）**」である。per-step flow ではない。
+
+**M3 では `remaining_demand` の減少機構を実装しない。** `unit_demand` を供給停止条件にも transition 判定にも使用しない。
+
+**理由**: SPEC §20 の Transition Threshold は4項目のみであり、需要枯渇はそこに含まれない。n=6 では外部比較基準だけで 8 step に 144 units となり、需要枯渇時点が transition 判定に影響しうるため、これを避ける。
+
+**用途**: ショックの不足規模を示す**文脈情報**としてのみ、metadata と Agent-facing shock specification に保存する。Agent へ提示する際も中立属性表現を維持し、answer leak を起こさない。
+
+## D4 — Transition Threshold（人間確定・main experiment 開始前に固定）
+
+| 閾値 | 値 | 根拠 |
+|---|---|---|
+| `community_supply_share` | **>= 0.25** | share = community/(community + external_reference) より、share=0.25 ⇔ **community = external_reference / 3**。外部比較基準の少なくとも1/3に相当する供給をコミュニティが追加した状態を「無視できない供給」の操作的定義とする |
+| `active_supplier_count` | **>= ceil(n/2)** | 少数の突出した Agent だけでなく、shock 対象コミュニティの**少なくとも半数**が供給主体へ転化した状態を要求する |
+| `supply_duration_steps` | **>= 4** | ショック相は 1 step = 6時間。**4 step = 24時間**。「継続的供給」の最小単位を1日と定義する |
+| `coordination_edges` | **>= 2** | 単発の二者協力1件ではなく、**最低2本**の協調関係が形成された状態を最小の coordination network 形成と定義する |
+
+> **これら4閾値は、PIPELINE_VALIDATION で観測された share / supplier count / duration / coordination edges の値を根拠として選択したものではない。**
+> PIPELINE_VALIDATION run（seed 42）は `confirmatory_evidence: false` / `excluded_from_d4_d5_calibration: true` として除外済みである。
+
+## 使用 seed（構造的 eligibility に基づく事前選定）
+
+| 項目 | 内容 |
+|---|---|
+| **固定 seed** | **5, 7, 11, 13, 14** |
+| scan した seed 範囲 | 1 〜 14 |
+| scan 総数 | **14** |
+| ineligible seed | 1, 2, 3, 4, 6, 8, 9, 10, 12 |
+| eligibility 判定規則 | **structured(A,C) と rewired(B,D) の4条件すべてで `structurally_available_pairs >= 2`** |
+| shock_agent_count | 6 |
+| 蓄積相 | 156 steps |
+
+### 各 seed の構造的 capacity（隣接ペア数）
+
+| seed | structured A | structured C | rewired B | rewired D | eligible |
+|---|---|---|---|---|---|
+| 1 | 0 | 1 | 2 | 2 | ✗ |
+| 2 | 4 | 1 | 3 | 4 | ✗ |
+| 3 | 2 | 2 | 1 | 1 | ✗ |
+| 4 | 2 | 1 | 2 | 3 | ✗ |
+| **5** | **5** | **3** | **4** | **4** | **✓** |
+| 6 | 3 | 1 | 2 | 3 | ✗ |
+| **7** | **4** | **3** | **3** | **2** | **✓** |
+| 8 | 1 | 1 | 1 | 2 | ✗ |
+| 9 | 1 | 1 | 2 | 3 | ✗ |
+| 10 | 0 | 1 | 2 | 2 | ✗ |
+| **11** | **5** | **5** | **2** | **3** | **✓** |
+| 12 | 3 | 3 | 1 | 1 | ✗ |
+| **13** | **4** | **2** | **3** | **3** | **✓** |
+| **14** | **2** | **2** | **5** | **3** | **✓** |
+
+### seed 選定に使用していないもの
+
+**LLM の Intent / community supply / supplier count / transition 結果 / emergence level / その他 Agent 行動結果を一切参照していない。** 参照したのはネットワーク構造と Agent 選出規則（participant の技能上位 n 名）のみである。
+
+**これは outcome selection ではなく、測定可能性に基づく pre-experiment eligibility check である。**
+
+## 一般化範囲の制約（重要）
+
+main experiment の推論対象は、
+
+> **「coordination_edges >= 2 が構造的に測定可能なネットワーク realization」**
+
+に**限定される**。
+
+- 結果を「**すべての network realization で成立する**」と一般化してはならない
+- ineligible seed を除外したこと自体は、LLM outcome を観測する**前**の構造的 eligibility 判定であり outcome-based cherry picking ではない
+- ただし **conditional sample であることを必ず明示する**
+- 14 seed 中 9 seed（64%）が ineligible であった事実も併記する
+
+## main experiment 規模（人間承認待ち）
+
+| 項目 | 値 |
+|---|---|
+| shock_agent_count | 6 |
+| shock_steps | 8 |
+| conditions | A / B / C / D |
+| eligible seeds | 5, 7, 11, 13, 14 |
+| **総 run 数** | **20** |
+| calls/run | 48 |
+| **総 call 数** | **960** |
+| 実測単価 | $0.019035/call |
+| **総費用** | **$18.27** |

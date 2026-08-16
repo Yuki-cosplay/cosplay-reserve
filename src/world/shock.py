@@ -41,6 +41,8 @@ class ShockState:
     # ★研究者専用★ 供給イベント単位の provenance（M3 P0修正時に追加）。
     # Observation にも decide_fn にも渡さない。Agent の意思決定を一切変えない。
     provenance: list[dict] = field(default_factory=list)
+    # agent_id -> [(step, project_id, attr, delta), ...] 変形の履歴（研究者専用）
+    modify_history: dict[str, list] = field(default_factory=dict)
 
     def profile_for(self, agent_id: str, project) -> object:
         shifts = self.variants.get(agent_id, {}).get(project.project_id, {})
@@ -110,6 +112,10 @@ def _resolve_shock(world, agent, intents, state, required: RequiredItem, ledger,
                 attr = min(required.thresholds, key=lambda a: required.thresholds[a])
             shifts = state.variants.setdefault(agent.id, {}).setdefault(project.project_id, {})
             shifts[attr] = shifts.get(attr, 0.0) + shock["modify_delta"]
+            state.modify_history.setdefault(agent.id, []).append(
+                {"step": world.step, "project_id": project.project_id,
+                 "attr": attr, "delta": shock["modify_delta"]}
+            )
             state.modify_count += 1
             agent.practiced_this_step.add(project.primary_skill)
 
@@ -146,10 +152,25 @@ def _resolve_shock(world, agent, intents, state, required: RequiredItem, ledger,
 
             state.provenance.append({
                 "step": world.step,
+                "condition": cfg["condition"],
+                "seed": cfg["run"]["seed"],
                 "agent_id": agent.id,
+                "intent": {
+                    "action": intent.action.value,
+                    "target_project_id": intent.target_project_id,
+                    "target_skill_id": intent.target_skill_id,
+                    "target_agent_id": intent.target_agent_id,
+                    "reason": intent.reason,
+                },
+                "modify_history": list(state.modify_history.get(agent.id, [])),
+                "before_attributes": {
+                    f"attr_{i}": round(getattr(project.target_profile, f"attr_{i}"), 4)
+                    for i in range(7)
+                },
+                "required_attributes": dict(required.thresholds),
                 "source_project_id": project.project_id,
                 "applied_modifications": shifts,
-                "resulting_attribute_vector": {
+                "after_attributes": {
                     f"attr_{i}": round(getattr(profile, f"attr_{i}"), 4) for i in range(7)
                 },
                 "required_asset": project.required_asset,
@@ -160,10 +181,22 @@ def _resolve_shock(world, agent, intents, state, required: RequiredItem, ledger,
                 "make_success": success,
                 "meets_requirement": qualifies,
                 "supplied_units": supplied,
-                "proposed_by_self": state.proposals.get(agent.id),
-                "joined_with": sorted(
+                "proposal_relation": {
+                    "self_proposed": state.proposals.get(agent.id),
+                    "visible_neighbour_proposals": {
+                        pid: proj for pid, proj in state.proposals.items()
+                        if pid in agent.known_agents and pid != agent.id
+                    },
+                },
+                "join_relation": sorted(
                     o for pair in state.joined if agent.id in pair for o in pair if o != agent.id
                 ),
+                "coordination_relation": {
+                    "edges_total": len(state.joined),
+                    "edges_involving_self": sorted(
+                        list(p) for p in state.joined if agent.id in p
+                    ),
+                },
             })
 
         elif intent.action == ActionType.PROPOSE:

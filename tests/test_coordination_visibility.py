@@ -14,7 +14,11 @@ import pytest
 from src.agents.observation import Observation, build_observation
 from src.common.types import ActionType, Intent, RejectionReason
 from src.simulation.transition import TransitionJudge
-from src.world.demand import RequiredItem, SupplyLedger
+from src.world.demand import (
+    RequiredItem,
+    SupplyLedger,
+    external_reference_supply_per_step,
+)
 from src.world.shock import ShockState, shock_step, validate_shock
 from src.world.world import build_world
 
@@ -126,7 +130,7 @@ def test_D_coordination_edges_reachable_end_to_end():
     a, b = _adjacent_pair(w)
     state = ShockState()
     required = RequiredItem.from_config(w.cfg["shock"]["required_item"])
-    ledger = SupplyLedger(baseline_per_step=w.cfg["shock"]["baseline_supply_per_step"])
+    ledger = SupplyLedger(baseline_per_step=external_reference_supply_per_step(w.cfg, 3))
     judge = TransitionJudge.from_config(w.cfg["shock"]["transition"])
     stats = {"actions": {}, "rejections": {}, "proposed": 0, "accepted": 0,
              "qualifying_makes": 0, "nonqualifying_makes": 0}
@@ -200,7 +204,7 @@ def test_provenance_records_every_make_attempt():
     w = build_world(CONFIG_DIR / "condition_a.yaml", seed=42)
     state = ShockState()
     required = RequiredItem.from_config(w.cfg["shock"]["required_item"])
-    ledger = SupplyLedger(baseline_per_step=w.cfg["shock"]["baseline_supply_per_step"])
+    ledger = SupplyLedger(baseline_per_step=external_reference_supply_per_step(w.cfg, 3))
     judge = TransitionJudge.from_config(w.cfg["shock"]["transition"])
     stats = {"actions": {}, "rejections": {}, "proposed": 0, "accepted": 0,
              "qualifying_makes": 0, "nonqualifying_makes": 0}
@@ -218,15 +222,17 @@ def test_provenance_records_every_make_attempt():
     assert len(state.provenance) == 3, "make 試行ごとに1件記録されていない"
     required_keys = {
         "step", "agent_id", "source_project_id", "applied_modifications",
-        "resulting_attribute_vector", "required_asset", "asset_feasible",
+        "after_attributes", "before_attributes", "required_attributes",
+        "intent", "modify_history", "required_asset", "asset_feasible",
         "required_materials", "material_feasible", "make_success",
-        "meets_requirement", "supplied_units", "joined_with",
+        "meets_requirement", "supplied_units", "join_relation",
+        "proposal_relation", "coordination_relation", "condition", "seed",
     }
     for rec in state.provenance:
         assert required_keys <= set(rec), f"provenance に欠落: {required_keys - set(rec)}"
         assert rec["applied_modifications"] == {"attr_0": 0.15, "attr_2": 0.15}
-        assert rec["resulting_attribute_vector"]["attr_0"] == pytest.approx(0.60)
-        assert rec["resulting_attribute_vector"]["attr_2"] == pytest.approx(0.55)
+        assert rec["after_attributes"]["attr_0"] == pytest.approx(0.60)
+        assert rec["after_attributes"]["attr_2"] == pytest.approx(0.55)
         assert rec["meets_requirement"] is True
         # 供給は make 成功時のみ。失敗しても記録は残る
         assert rec["supplied_units"] in (0.0, w.cfg["shock"]["unit_yield"])

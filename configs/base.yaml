@@ -165,12 +165,27 @@ shock:                          # M3 ショック相（SPEC §25: 1 step = 6時�
   modify_delta: 0.15            # modify 1回で動く属性量
   modify_difficulty_penalty: 0.35  # 変形1回ごとに実効難度が上がる係数
 
-  # ★D5 未決（要人間決定）★ Manufacturer のベース生産能力。
-  # community_supply_share の分母を支配する（docs/REVIEW.md §2.4）。暫定値。
-  baseline_supply_per_step: 2.0
+  # === D5: External Supply Parity Reference（人間確定 2026-08-16）===
+  # ★これは現実の外部メーカー能力の実証値ではない★
+  # community supply を無次元比較するための正規化基準である。
+  # 「Manufacturer 能力の推定値」と呼んではならない。
+  #
+  #   external_reference_supply_per_step
+  #     = max_make_per_agent_per_step × shock_agent_count
+  #     = (time_budget / action_time_cost.make) × shock_agent_count
+  #     = 3 × shock_agent_count        （現行構造では 3）
+  #
+  # 意味: shock 対象コミュニティの全 Agent が 1 step の時間予算をすべて make へ
+  # 投入した場合の理論最大供給能力と同量を、比較用 reference capacity とする。
+  # shock_agent_count に依存するため config に固定値を書かず、実行時に導出する。
+  external_reference_mode: derived_from_agent_count
 
   required_item:                # SPEC §18: 名称ではなく要求仕様
     thresholds: {attr_0: 0.60, attr_2: 0.55}
+    # unit_demand は「ショック発生時点で不足している総需要量（stock）」。
+    # per-step flow ではない。M3 では remaining_demand の減少機構を実装せず、
+    # 供給停止条件にも transition 判定にも使用しない（SPEC §20 の4条件のみで判定）。
+    # 用途はショックの不足規模を示す文脈情報の保存のみ。
     unit_demand: 200.0
 
   # ★D4 未決（要人間決定）★ SPEC §20 は「最終値は実験開始前に固定」と指定。暫定値。

@@ -135,3 +135,77 @@ INTENT_LIST_SCHEMA: dict = {
     "required": ["intents"],
     "additionalProperties": False,
 }
+
+
+# ---------------------------------------------------------------------------
+# M3 ショック相
+# ---------------------------------------------------------------------------
+
+SHOCK_SYSTEM_PROMPT = """\
+You are one agent in a simulation. Decide what to do next this step.
+
+You can see only your own state and information that reached you locally.
+You cannot see the world, other agents' true values, or the simulation's purpose.
+
+A requirement has appeared. It is stated only as minimum levels on abstract
+attributes of an item. Nothing tells you what the item is for, and you should not
+assume. Items you already know how to build have their own attribute values.
+
+Actions available:
+- observe: look at one neighbour to update your belief about their skills
+- ask: ask one neighbour about a skill you believe they are better at
+- practice: practise one skill on your own
+- modify: shift one attribute of an item you know how to build
+    (target_project_id = the item, target_skill_id = the attribute name, e.g. attr_0)
+- make: attempt to build one item, as you have currently shaped it
+- share: pass one method you hold to your neighbours
+- propose: propose working together on one item (target_project_id)
+- join: join a neighbour's proposal (target_agent_id)
+- idle: do nothing
+
+Rules:
+- Decide only what you intend. You do not decide quantities, time cost, or whether
+  an attempt succeeds, or whether what you build meets the requirement.
+  Those are determined outside your control.
+- Modifying an item makes it harder to build. There is no free change.
+- Return several intents ordered by how much you want them, most wanted first.
+- Refer to items and attributes only by the identifiers given to you.
+"""
+
+
+def build_shock_user_prompt(obs, required, shortfalls: dict, state=None) -> str:
+    """ショック相の user プロンプト。
+
+    Agent が受け取るのは「要求されている属性の下限」と「自分が作れる物の属性が
+    どれだけ足りないか」だけである。**何を作るべきかは書かない**（SPEC §8）。
+    """
+    base = build_user_prompt(obs)
+
+    req = ", ".join(f"{a} >= {v:.2f}" for a, v in sorted(required.thresholds.items()))
+    lines = []
+    for p in obs.project_catalog:
+        gap = shortfalls.get(p.project_id, {})
+        if not gap:
+            continue
+        missing = ", ".join(f"{a}: short by {v:.2f}" for a, v in sorted(gap.items()) if v > 0)
+        lines.append(f"  {p.project_id}: {missing or 'meets the requirement as-is'}")
+
+    return f"""{base}
+A requirement is currently unmet. Minimum attribute levels required: {req}
+
+How far each item you know is from meeting it, as you have currently shaped it:
+{chr(10).join(lines) if lines else '  (none)'}
+
+You may shift an attribute of an item with `modify`, then `make` it.
+Return your intents, most wanted first.
+"""
+
+
+# ショック相の structured output スキーマ。M2 のスキーマに再構成アクションを足す。
+# 数量フィールドを持たせない制約は変わらない（決定 X1）。
+import copy as _copy
+
+SHOCK_INTENT_LIST_SCHEMA: dict = _copy.deepcopy(INTENT_LIST_SCHEMA)
+SHOCK_INTENT_LIST_SCHEMA["properties"]["intents"]["items"]["properties"]["action"]["enum"] = [
+    "observe", "ask", "practice", "make", "share", "idle", "modify", "propose", "join",
+]

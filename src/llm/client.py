@@ -23,7 +23,10 @@ from src.common.types import ActionType, Intent
 from src.llm.prompts import (
     INTENT_LIST_SCHEMA,
     PROMPT_VERSION,
+    SHOCK_INTENT_LIST_SCHEMA,
+    SHOCK_SYSTEM_PROMPT,
     SYSTEM_PROMPT,
+    build_shock_user_prompt,
     build_user_prompt,
 )
 
@@ -129,16 +132,27 @@ class LLMDecider:
 
     def decide(self, obs, rng=None) -> list[Intent]:
         """M2 条件1+2。rng は未使用（LLM の非決定性は seed で制御できない — SPEC §23）。"""
+        return self._call(SYSTEM_PROMPT, build_user_prompt(obs), INTENT_LIST_SCHEMA)
+
+    def decide_shock(self, obs, required, shortfalls: dict) -> list[Intent]:
+        """M3 ショック相。需要は属性の下限としてのみ渡す（SPEC §18）。"""
+        return self._call(
+            SHOCK_SYSTEM_PROMPT,
+            build_shock_user_prompt(obs, required, shortfalls),
+            SHOCK_INTENT_LIST_SCHEMA,
+        )
+
+    def _call(self, system: str, user: str, schema: dict) -> list[Intent]:
         self.guard.check_before_call()
 
         response = self._client.messages.create(
             model=self.model,
             max_tokens=self.max_tokens,
-            system=SYSTEM_PROMPT,
-            messages=[{"role": "user", "content": build_user_prompt(obs)}],
+            system=system,
+            messages=[{"role": "user", "content": user}],
             output_config={
                 "effort": self.effort,
-                "format": {"type": "json_schema", "schema": INTENT_LIST_SCHEMA},
+                "format": {"type": "json_schema", "schema": schema},
             },
         )
         self.guard.record(response.usage)

@@ -88,6 +88,9 @@ action_time_cost:               # 決定 Y3: make の時間コストはここだ
   make: 1.0
   share: 0.2
   idle: 0.0                     # 決定 Y5
+  modify: 0.8                   # M3: 既存制作物を別用途へ振り向ける
+  propose: 0.2                  # M3
+  join: 0.2                     # M3
 
 time:
   max_actions_per_step: 6       # time_budget は agent_init.traits.time_budget
@@ -117,39 +120,62 @@ projects:                       # 決定 W1: 6件を固定値で列挙。分布�
     base_difficulty: 0.25       # 低難度だが材料3種（単調性を崩す）
     required_asset: asset_2     # 最も一般的な設備(p=0.70)が最易 project を門番する
     material_cost: {mat_0: 1.0, mat_2: 1.0, mat_4: 2.0}
-    target_profile: {attr_0: 0.0, attr_1: 0.0, attr_2: 0.0, attr_3: 0.0, attr_4: 0.0, attr_5: 0.0, attr_6: 0.0}
+    target_profile: {attr_0: 0.55, attr_1: 0.2, attr_2: 0.3, attr_3: 0.1, attr_4: 0.4, attr_5: 0.15, attr_6: 0.25}
 
   - project_id: proj_1
     primary_skill: skill_1
     base_difficulty: 0.70       # 高難度だが設備不要・材料1種（単調性を崩す）
     required_asset: null
     material_cost: {mat_3: 2.0}
-    target_profile: {attr_0: 0.0, attr_1: 0.0, attr_2: 0.0, attr_3: 0.0, attr_4: 0.0, attr_5: 0.0, attr_6: 0.0}
+    target_profile: {attr_0: 0.2, attr_1: 0.6, attr_2: 0.15, attr_3: 0.35, attr_4: 0.1, attr_5: 0.45, attr_6: 0.2}
 
   - project_id: proj_2
     primary_skill: skill_0
     base_difficulty: 0.40
     required_asset: null
     material_cost: {mat_1: 1.0, mat_4: 1.0}
-    target_profile: {attr_0: 0.0, attr_1: 0.0, attr_2: 0.0, attr_3: 0.0, attr_4: 0.0, attr_5: 0.0, attr_6: 0.0}
+    target_profile: {attr_0: 0.45, attr_1: 0.25, attr_2: 0.4, attr_3: 0.2, attr_4: 0.3, attr_5: 0.1, attr_6: 0.35}
 
   - project_id: proj_3
     primary_skill: skill_3
     base_difficulty: 0.80
     required_asset: asset_1     # 最も希少な設備(p=0.15)が最難 project を門番する
     material_cost: {mat_0: 2.0, mat_1: 1.0}
-    target_profile: {attr_0: 0.0, attr_1: 0.0, attr_2: 0.0, attr_3: 0.0, attr_4: 0.0, attr_5: 0.0, attr_6: 0.0}
+    target_profile: {attr_0: 0.3, attr_1: 0.4, attr_2: 0.25, attr_3: 0.55, attr_4: 0.2, attr_5: 0.3, attr_6: 0.15}
 
   - project_id: proj_4
     primary_skill: skill_5
     base_difficulty: 0.30
     required_asset: asset_0     # p=0.35
     material_cost: {mat_2: 2.0}
-    target_profile: {attr_0: 0.0, attr_1: 0.0, attr_2: 0.0, attr_3: 0.0, attr_4: 0.0, attr_5: 0.0, attr_6: 0.0}
+    target_profile: {attr_0: 0.35, attr_1: 0.15, attr_2: 0.5, attr_3: 0.25, attr_4: 0.45, attr_5: 0.2, attr_6: 0.1}
 
   - project_id: proj_5
     primary_skill: skill_4
     base_difficulty: 0.55
     required_asset: asset_3     # p=0.25
     material_cost: {mat_1: 2.0, mat_2: 1.0, mat_3: 1.0}
-    target_profile: {attr_0: 0.0, attr_1: 0.0, attr_2: 0.0, attr_3: 0.0, attr_4: 0.0, attr_5: 0.0, attr_6: 0.0}
+    target_profile: {attr_0: 0.25, attr_1: 0.5, attr_2: 0.35, attr_3: 0.15, attr_4: 0.25, attr_5: 0.55, attr_6: 0.4}
+
+shock:                          # M3 ショック相（SPEC §25: 1 step = 6時間）
+  step_hours: 6
+  steps: 120                    # 4 steps = 1日, 120 steps = 30日（初回runは大幅に縮小）
+  onset_step: 0
+  unit_yield: 1.0               # 要求を満たす make 1回あたりの供給量
+  modify_delta: 0.15            # modify 1回で動く属性量
+  modify_difficulty_penalty: 0.35  # 変形1回ごとに実効難度が上がる係数
+
+  # ★D5 未決（要人間決定）★ Manufacturer のベース生産能力。
+  # community_supply_share の分母を支配する（docs/REVIEW.md §2.4）。暫定値。
+  baseline_supply_per_step: 2.0
+
+  required_item:                # SPEC §18: 名称ではなく要求仕様
+    thresholds: {attr_0: 0.60, attr_2: 0.55}
+    unit_demand: 200.0
+
+  # ★D4 未決（要人間決定）★ SPEC §20 は「最終値は実験開始前に固定」と指定。暫定値。
+  transition:
+    community_supply_share: 0.20
+    active_supplier_count: 3
+    supply_duration_steps: 3
+    coordination_edges: 2

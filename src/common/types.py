@@ -141,6 +141,11 @@ class ActionType(str, Enum):
     MAKE = "make"
     SHARE = "share"
     IDLE = "idle"
+    # M3（ショック相）で追加。SPEC §12 の一般化された行動。
+    # 蓄積相の決定ルール（§5.1）はこれらを提案しないため、A/B/C/D の結果は不変。
+    MODIFY = "modify"    # 既存の制作物の属性を別方向へ振り向ける
+    PROPOSE = "propose"  # 協調を提案する
+    JOIN = "join"        # 他Agentの提案に加わる
 
 
 @dataclass(frozen=True)

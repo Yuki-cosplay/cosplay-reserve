@@ -20,7 +20,7 @@ from src.llm.prompts import INTENT_LIST_SCHEMA, SYSTEM_PROMPT, build_user_prompt
 from src.world.world import build_world
 
 CONFIG_DIR = Path(__file__).resolve().parents[1] / "configs"
-FORBIDDEN = ("コスプレ", "cosplay", "ppe", "マスク", "mask", "covid", "医療", "medical")
+from tests.forbidden import assert_clean, find_forbidden
 
 
 @pytest.fixture(scope="module")
@@ -32,16 +32,12 @@ def world():
 
 
 def test_system_prompt_has_no_forbidden_terms():
-    low = SYSTEM_PROMPT.lower()
-    for term in FORBIDDEN:
-        assert term.lower() not in low, f"system prompt に禁止語 {term!r}"
+    assert_clean(SYSTEM_PROMPT, "system prompt")
 
 
 def test_user_prompt_has_no_forbidden_terms(world):
     for agent in world.agents.values():
-        prompt = build_user_prompt(build_observation(world, agent)).lower()
-        for term in FORBIDDEN:
-            assert term.lower() not in prompt, f"user prompt に禁止語 {term!r}"
+        assert_clean(build_user_prompt(build_observation(world, agent)), f"user prompt {agent.id}")
 
 
 def test_prompt_gives_no_answer(world):
@@ -85,9 +81,16 @@ def test_schema_has_no_quantity_fields():
     assert INTENT_LIST_SCHEMA["properties"]["intents"]["items"]["additionalProperties"] is False
 
 
-def test_schema_actions_match_action_type():
+def test_schema_actions_are_the_accumulation_subset():
+    """蓄積相のスキーマは M3 の再構成アクションを含まない（意図的な部分集合）。
+
+    modify / propose / join はショック相専用であり、蓄積相の LLM へ提示しない。
+    提示すると蓄積相の挙動が M1 と変わり、A/B/C/D の比較が壊れる。
+    """
     enum = set(INTENT_LIST_SCHEMA["properties"]["intents"]["items"]["properties"]["action"]["enum"])
-    assert enum == {a.value for a in ActionType}
+    assert enum == {"observe", "ask", "practice", "make", "share", "idle"}
+    assert enum < {a.value for a in ActionType}
+    assert {"modify", "propose", "join"}.isdisjoint(enum)
 
 
 def test_parse_intents_from_structured_output():

@@ -73,3 +73,38 @@ RESULTS.md の Limitations へ転記する候補を、発生時点で記録す�
 > 本結論は特定のパラメータ設定下でのものであり、learn_rate と decay_rate の比に対する頑健性は未検証である。
 
 **記録日**: 2026-08-16
+
+---
+
+## L5. Method → production success は成立するが、production success → Maker stage への伝播が弱い
+
+**内容**: M1 の因果連鎖を段階ごとに見ると、上流は作動しているが下流で効果が失われる。
+
+| 段階 | 状態 | 証拠 |
+|---|---|---|
+| peer Method transfer | ✅ 作動 | A/B で約50件、C/D で厳密に 0 |
+| Method → 制作成功確率 | ✅ 作動 | +0.161〜+0.223（解析評価） |
+| 制作成功 → **Maker stage 到達** | ⚠️ **弱い** | mean_time_to_maker の差 −0.387（sd 0.447 に埋もれる） |
+
+**ボトルネックの所在**: scaffolding 機構そのものではなく、**production success から Maker stage 指標への伝播**にある（L3 分類 Case C）。
+
+**考えられる要因**（検証していない・パラメータ変更もしていない）:
+- `maker_projects = 3` が低く、Method の有無にかかわらず短期間で満たされる
+- `maker_count` が上限 30 の離散指標であり、step 30 で飽和する（L3）
+- 自己発見 Method が peer 由来 Method を大きく上回り（自己発見が支配的）、peer 経路の限界寄与が小さい
+
+**未検証**: 上記要因の切り分けは行っていない。**天井効果を解消する目的での閾値変更は禁止されている。**
+
+**記録日**: 2026-08-16
+
+---
+
+## L6. `mean_time_to_maker` が集計値からの推定であること
+
+**内容**: primary metric の `mean_time_to_maker` は、per-agent の初到達 step ログを持たないため、**集計 `maker_count` の増分から推定**している。
+
+**制約**: `maker_count` は MAKER が可逆（技能減衰で降格しうる、決定 Z1）なため単調でない run がある（seed 1〜20 で 54/80、seed 21〜40 で 53/80 が単調）。**非単調な run では推定値に誤差が入る。**
+
+**影響**: 効果量が seed 間ばらつきに埋もれる規模（−0.39 vs sd 0.45）であるため、この推定誤差は結論に影響しうる。per-agent の到達 step を直接記録する計装は M1 では実施していない。
+
+**記録日**: 2026-08-16

@@ -32,7 +32,7 @@ from src.world.demand import (
     SupplyLedger,
     external_reference_supply_per_step,
 )
-from src.world.shock import ShockState, shock_step
+from src.world.shock import ShockState, select_shock_agents, shock_step
 from src.world.step import step as accumulation_step
 from src.world.world import build_world
 from src.common.config import config_sha256
@@ -126,12 +126,8 @@ def main() -> int:
         print(f"[FAIL] LLM クライアントを作成できません: {exc}")
         return 2
 
-    # LLM を呼ぶ Agent は participant のうち技能上位（コスト制御、SPEC §24）
-    participants = sorted(
-        (a for a in world.agents.values() if a.is_participant),
-        key=lambda a: -max(a.skills.values()),
-    )
-    llm_ids = [a.id for a in participants[: args.llm_agents]]
+    # P0修正: 条件と独立に、同一 seed につき1回だけ選出する（select_shock_agents）
+    llm_ids = select_shock_agents(world, args.llm_agents)
 
     # 構造量: 選出集合内に隣接ペアが何組あるか。Agent の行動とは独立（§10.5）
     structural = structural_coordination_capacity(

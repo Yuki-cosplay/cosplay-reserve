@@ -21,6 +21,7 @@ import json
 from pathlib import Path
 
 from src.simulation.transition import structural_coordination_capacity
+from src.world.shock import select_shock_agents
 from src.world.step import step as accumulation_step
 from src.world.world import build_world
 
@@ -34,18 +35,22 @@ def capacity_for(condition: str, seed: int, agents: int, accum_steps: int) -> di
     Agent 選出規則は本実験の runner と同一（participant の技能上位 n 名）。
     LLM は一切呼ばない。
     """
+    import hashlib
+
     w = build_world(f"configs/condition_{condition.lower()}.yaml", seed=seed)
-    for _ in range(accum_steps):
-        accumulation_step(w)
-    participants = sorted(
-        (a for a in w.agents.values() if a.is_participant),
-        key=lambda a: -max(a.skills.values()),
-    )
-    ids = [a.id for a in participants[:agents]]
+    # 蓄積相を回す必要はない。選出は条件・技能と独立になった（P0修正）。
+    ids = select_shock_agents(w, agents)
     threshold = w.cfg["shock"]["transition"]["coordination_edges"]
     cap = structural_coordination_capacity(w.graph, ids, threshold)
-    cap["condition"] = condition
-    cap["topology"] = TOPOLOGY_OF[condition]
+    sub = sorted(sorted(e) for e in w.graph.subgraph(ids).edges())
+    cap.update(
+        condition=condition,
+        topology=TOPOLOGY_OF[condition],
+        base_graph_sha256=w.provenance["base_graph_sha256"],
+        agent_initial_states_sha256=w.provenance["agent_initial_states_sha256"],
+        induced_subgraph_sha256=hashlib.sha256(repr(sub).encode()).hexdigest(),
+        shock_agent_ids=ids,
+    )
     return cap
 
 
@@ -54,7 +59,6 @@ def main() -> int:
     ap.add_argument("--need", type=int, default=5, help="必要な eligible seed 数")
     ap.add_argument("--max-seed", type=int, default=40, help="scan する seed の上限")
     ap.add_argument("--agents", type=int, default=6, help="shock_agent_count")
-    ap.add_argument("--accum-steps", type=int, default=156)
     ap.add_argument("--out", default="outputs/seed_eligibility.json")
     args = ap.parse_args()
 
@@ -62,7 +66,7 @@ def main() -> int:
     scanned = 0
     for seed in range(1, args.max_seed + 1):
         scanned += 1
-        caps = {c: capacity_for(c, seed, args.agents, args.accum_steps) for c in CONDITIONS}
+        caps = {c: capacity_for(c, seed, args.agents, 0) for c in CONDITIONS}
         # structured / rewired の双方で到達可能であることを要求する
         ok = all(caps[c]["structurally_reachable"] for c in CONDITIONS)
         rec = {
@@ -98,7 +102,6 @@ def main() -> int:
             "coordination_edges_threshold"
         ],
         "shock_agent_count": args.agents,
-        "accumulation_steps": args.accum_steps,
         "seeds_scanned": scanned,
         "scan_range": [1, records[-1]["seed"]],
         "eligible_seeds": eligible[: args.need],

@@ -131,38 +131,54 @@ community supply を無次元比較するための**正規化基準**である�
 
 ## 使用 seed（構造的 eligibility に基づく事前選定）
 
+> ### ⚠️ 旧 scan は無効（pairing inconsistency）
+>
+> 最初の scan（固定 seed 5, 7, 11, 13, 14）は **P0 の不整合により無効**である。
+> ショック対象 Agent を「蓄積相 156 step 後の技能上位 n 名」で選出していたため、
+> peer_learning の有無で技能が分岐し、**同一 seed でも A≠C / B≠D の Agent 集合**になっていた。
+> 結果として `structural_coordination_capacity` がペアで一致せず、
+> SPEC §19 の完全ペアリングが実質的に破れていた。
+>
+> 旧 scan は `outputs/seed_eligibility_INVALIDATED_prescan.json` に
+> `STATUS: INVALIDATED` として保存し、削除していない。**main experiment には使用しない。**
+>
+> **修正**: ショック対象 Agent は専用 RNG ストリーム（index 4 `shock_agents`）から
+> **条件と独立に、同一 seed につき1回だけ**選出し、同じ ID 集合を A/B/C/D すべてへ配布する。
+> 技能で選ばないのは、技能による選出自体が条件依存の選択効果を持ち込むためである。
+
+### 確定 seed（P0修正後の再スキャン）
+
 | 項目 | 内容 |
 |---|---|
-| **固定 seed** | **5, 7, 11, 13, 14** |
-| scan した seed 範囲 | 1 〜 14 |
-| scan 総数 | **14** |
-| ineligible seed | 1, 2, 3, 4, 6, 8, 9, 10, 12 |
-| eligibility 判定規則 | **structured(A,C) と rewired(B,D) の4条件すべてで `structurally_available_pairs >= 2`** |
+| **固定 seed** | **2, 4, 6, 7, 9** |
+| scan した seed 範囲 | 1 〜 9 |
+| scan 総数 | **9** |
+| ineligible seed | 1, 3, 5, 8 |
+| eligibility 判定規則 | **structured(A,C) と rewired(B,D) の双方で `structurally_available_pairs >= 2`** |
 | shock_agent_count | 6 |
-| 蓄積相 | 156 steps |
 
-### 各 seed の構造的 capacity（隣接ペア数）
+| seed | shock_agent_ids（A/B/C/D 共通） | structured (A=C) | rewired (B=D) | graph A/C | graph B/D | eligible |
+|---|---|---|---|---|---|---|
+| 1 | `agent_0, agent_23, agent_25, agent_29, agent_5, agent_8` | 1 | 3 | `eb94db93a6` | `4a789dc592` | ✗ |
+| 2 | `agent_1, agent_16, agent_25, agent_27, agent_5, agent_9` | 3 | 3 | `245427cb1e` | `7e7ecb5c90` | **✓** |
+| 3 | `agent_13, agent_18, agent_27, agent_3, agent_35, agent_36` | 1 | 0 | `8557bc5b31` | `3be606ea64` | ✗ |
+| 4 | `agent_1, agent_11, agent_18, agent_19, agent_21, agent_32` | 5 | 2 | `ef94a13460` | `ba909369ba` | **✓** |
+| 5 | `agent_10, agent_16, agent_18, agent_22, agent_24, agent_31` | 1 | 2 | `73f960676f` | `814b833686` | ✗ |
+| 6 | `agent_10, agent_13, agent_26, agent_33, agent_4, agent_8` | 2 | 2 | `fa8cd0a3dc` | `352dd17bd7` | **✓** |
+| 7 | `agent_0, agent_19, agent_22, agent_37, agent_8, agent_9` | 3 | 2 | `fd67df54c6` | `23da7f988d` | **✓** |
+| 8 | `agent_10, agent_11, agent_15, agent_22, agent_31, agent_6` | 0 | 2 | `b48aafb17d` | `7226bb5332` | ✗ |
+| 9 | `agent_19, agent_27, agent_28, agent_3, agent_33, agent_35` | 3 | 2 | `3672ad3777` | `1665156089` | **✓** |
 
-| seed | structured A | structured C | rewired B | rewired D | eligible |
-|---|---|---|---|---|---|
-| 1 | 0 | 1 | 2 | 2 | ✗ |
-| 2 | 4 | 1 | 3 | 4 | ✗ |
-| 3 | 2 | 2 | 1 | 1 | ✗ |
-| 4 | 2 | 1 | 2 | 3 | ✗ |
-| **5** | **5** | **3** | **4** | **4** | **✓** |
-| 6 | 3 | 1 | 2 | 3 | ✗ |
-| **7** | **4** | **3** | **3** | **2** | **✓** |
-| 8 | 1 | 1 | 1 | 2 | ✗ |
-| 9 | 1 | 1 | 2 | 3 | ✗ |
-| 10 | 0 | 1 | 2 | 2 | ✗ |
-| **11** | **5** | **5** | **2** | **3** | **✓** |
-| 12 | 3 | 3 | 1 | 1 | ✗ |
-| **13** | **4** | **2** | **3** | **3** | **✓** |
-| **14** | **2** | **2** | **5** | **3** | **✓** |
+**ペアリング同一性はすべての seed で検証済み**（`tests/test_shock_agent_pairing.py`）:
+`shock_agent_ids(A)==(B)==(C)==(D)`、`capacity(A)==capacity(C)`、`capacity(B)==capacity(D)`、
+`graph_hash(A)==graph_hash(C)`、`graph_hash(B)==graph_hash(D)`、
+`induced_subgraph_hash` も同様に一致、pre-network 初期状態ハッシュも4条件一致。
 
 ### seed 選定に使用していないもの
 
-**LLM の Intent / community supply / supplier count / transition 結果 / emergence level / その他 Agent 行動結果を一切参照していない。** 参照したのはネットワーク構造と Agent 選出規則（participant の技能上位 n 名）のみである。
+**LLM の Intent / community supply / supplier count / transition 結果 / emergence level /
+その他 Agent 行動結果を一切参照していない。** 参照したのはネットワーク構造と、
+条件非依存の Agent 選出のみである。蓄積相を回す必要すらなくなった。
 
 **これは outcome selection ではなく、測定可能性に基づく pre-experiment eligibility check である。**
 
@@ -170,14 +186,15 @@ community supply を無次元比較するための**正規化基準**である�
 
 main experiment の推論対象は、
 
-> **「coordination_edges >= 2 が構造的に測定可能なネットワーク realization」**
+> **「coordination_edges >= 2 が structured / rewired の双方で構造的に測定可能なネットワーク realization」**
 
 に**限定される**。
 
 - 結果を「**すべての network realization で成立する**」と一般化してはならない
-- ineligible seed を除外したこと自体は、LLM outcome を観測する**前**の構造的 eligibility 判定であり outcome-based cherry picking ではない
+- ineligible seed を除外したこと自体は、LLM outcome を観測する**前**の構造的 eligibility 判定であり
+  outcome-based cherry picking ではない
 - ただし **conditional sample であることを必ず明示する**
-- 14 seed 中 9 seed（64%）が ineligible であった事実も併記する
+- **9 seed 中 4 seed（44%）が ineligible** であった事実も併記する
 
 ## main experiment 規模（人間承認待ち）
 

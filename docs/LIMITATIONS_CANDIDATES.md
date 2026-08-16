@@ -140,3 +140,35 @@ RESULTS.md の Limitations へ転記する候補を、発生時点で記録す�
 **推奨**: D5 を固定定数として確定するのではなく、**感度分析の因子**として扱い、`community_supply_total`（絶対量）を主指標、`community_supply_share` を副指標とする。
 
 **記録日**: 2026-08-16
+
+---
+
+## L9. 【P0】ショック対象 Agent 選出が条件依存だった（pairing inconsistency）
+
+**発見日**: 2026-08-16（seed eligibility report の査読中、人間が検出）
+
+**根本原因**: ショック対象 Agent を「蓄積相 156 step 後の participant 技能上位 n 名」で選出していた。peer_learning の有無で技能が分岐するため、**同一 seed でも A≠C / B≠D の Agent 集合**になっていた。
+
+`base_graph_sha256` と pre-network 初期状態ハッシュは4条件で一致していたが、**選出された Agent 集合が違うため誘導部分グラフが異なり**、`structural_coordination_capacity` が A/C・B/D で一致しなかった（例: seed 1 で A=0 / C=1、seed 2 で A=4 / C=1）。
+
+**帰結**: SPEC §19 の完全ペアリング（A/C・B/D が同一 Graph object 由来）が、**構造量の測定レベルで実質的に破れていた**。この状態で得た seed 固定（5, 7, 11, 13, 14）は無効。
+
+**修正**: 専用 RNG ストリーム（index 4 `shock_agents`）を末尾に追加し、**条件と独立に同一 seed につき1回だけ**選出して同じ ID 集合を A/B/C/D へ配布する。末尾追加のため index 0〜3 の子ストリームは不変で、既存 run の再現性は保たれる（テストで検証）。
+
+**選出規則を「技能上位」から無作為へ変更した理由**: 技能で選ぶこと自体が条件依存の選択効果を持ち込む。無作為選出は条件間で構造的に同一になる。
+
+**無効化した scan**: `outputs/seed_eligibility_INVALIDATED_prescan.json`（削除せず `STATUS: INVALIDATED` で保存）
+
+**記録日**: 2026-08-16
+
+---
+
+## L10. External Supply Parity Reference により share の上限が 0.5 に固定されること
+
+**内容**: D5 = `3 × shock_agent_count` は community の理論最大供給能力と同量であるため、`community_supply_share` の上限は **agent 数によらず 0.5 に固定**される。
+
+**帰結**: share はコミュニティ供給の**規模**ではなく「理論最大能力に対する達成率」を測る指標になる。閾値 0.25 は「理論最大の半分を達成」と等価である。
+
+**これは設計上の選択であり欠陥ではない**（人間確定 2026-08-16）。ただし RESULTS.md で share を論じる際は、**この上限が構造的に 0.5 であること**を明示し、絶対的な供給規模の比較には `community_supply_total` を併用すること。
+
+**記録日**: 2026-08-16

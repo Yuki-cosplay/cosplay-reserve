@@ -26,6 +26,12 @@ ROOT_STREAM_ORDER: tuple[str, ...] = (
     "project_catalog",
     "network",
     "simulation",
+    # index 4: M3 のショック対象 Agent 選出専用（P0修正 2026-08-16）。
+    # 【重要】**末尾への追加**であるため index 0〜3 の子ストリームは一切変化しない
+    # （SeedSequence.spawn は spawn_key=(i,) で決まるため、spawn(5) の先頭4件は
+    #   spawn(4) と完全に同一）。既存 run の再現性は保たれる。
+    # 条件（A/B/C/D）から独立させるために専用ストリームを設ける。
+    "shock_agents",
 )
 
 

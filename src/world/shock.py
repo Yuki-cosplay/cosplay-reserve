@@ -214,6 +214,28 @@ def _resolve_shock(world, agent, intents, state, required: RequiredItem, ledger,
 _ATTRS = tuple(f"attr_{i}" for i in range(7))
 
 
+def select_shock_agents(world, n: int) -> list[str]:
+    """ショック対象 Agent を選出する（P0修正 2026-08-16）。
+
+    【禁止】条件ごとに選出してはならない。
+    修正前は「蓄積相 156 step 後の技能上位 n 名」で選んでいたため、
+    peer_learning の有無で技能が分岐し A≠C / B≠D となっていた。
+    その結果 structural_coordination_capacity が A/C・B/D で一致せず、
+    完全ペアリング（SPEC §19）が実質的に破れていた。
+
+    修正後は **専用 RNG ストリーム（index 4）から条件と独立に1回だけ**選ぶ。
+    participant 集合は pre-network 状態で4条件一致するため（T5）、
+    同一 seed なら A/B/C/D で必ず同じ ID 集合になる。
+
+    選出規則を「技能上位」ではなく無作為にしたのは、技能で選ぶこと自体が
+    条件依存の選択効果を持ち込むためである。
+    """
+    participants = sorted(a.id for a in world.agents.values() if a.is_participant)
+    rng = world.rng["shock_agents"]
+    idx = rng.permutation(len(participants))[:n]
+    return sorted(participants[int(i)] for i in idx)
+
+
 def shock_step(world, state, required, ledger, judge, decide_fn, llm_agent_ids, stats) -> dict:
     """ショック相の1 step（= 6時間）。
 

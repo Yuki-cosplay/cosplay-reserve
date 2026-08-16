@@ -38,6 +38,10 @@ class ShockState:
     joined: set[tuple[str, str]] = field(default_factory=set)
     modify_count: int = 0
 
+    # ★研究者専用★ 供給イベント単位の provenance（M3 P0修正時に追加）。
+    # Observation にも decide_fn にも渡さない。Agent の意思決定を一切変えない。
+    provenance: list[dict] = field(default_factory=list)
+
     def profile_for(self, agent_id: str, project) -> object:
         shifts = self.variants.get(agent_id, {}).get(project.project_id, {})
         return apply_shifts(project.target_profile, shifts) if shifts else project.target_profile
@@ -111,9 +115,13 @@ def _resolve_shock(world, agent, intents, state, required: RequiredItem, ledger,
 
         elif intent.action == ActionType.MAKE:
             project = projects[intent.target_project_id]
+            shifts = dict(state.variants.get(agent.id, {}).get(project.project_id, {}))
+            # feasibility は validate_shock で判定済み。ここでは記録のため再評価する
+            asset_ok = has_required_asset(agent, project, cfg)
+            mat_ok = has_materials(agent, project)
             consume_materials(agent, project)
             profile = state.profile_for(agent.id, project)
-            n_shifts = len(state.variants.get(agent.id, {}).get(project.project_id, {}))
+            n_shifts = len(shifts)
             # 変形した分だけ実効難度が上がる（ただ乗りできない）
             penalty = 1.0 + shock["modify_difficulty_penalty"] * n_shifts
             from src.world.production import success_probability
@@ -123,14 +131,40 @@ def _resolve_shock(world, agent, intents, state, required: RequiredItem, ledger,
             success = bool(rng.random() < p)
             agent.practiced_this_step.add(project.primary_skill)
             apply_skill_gain(agent, project.primary_skill, success, cfg)
+
+            qualifies = required.satisfied_by(profile)
+            supplied = 0.0
             if success:
                 agent.completed_projects.append((world.step, project.project_id))
                 # ★充足判定はコード側★ 名称照合はしない（SPEC §18）
-                if required.satisfied_by(profile):
-                    ledger.record_supply(agent.id, shock["unit_yield"], world.step)
+                if qualifies:
+                    supplied = shock["unit_yield"]
+                    ledger.record_supply(agent.id, supplied, world.step)
                     stats["qualifying_makes"] += 1
                 else:
                     stats["nonqualifying_makes"] += 1
+
+            state.provenance.append({
+                "step": world.step,
+                "agent_id": agent.id,
+                "source_project_id": project.project_id,
+                "applied_modifications": shifts,
+                "resulting_attribute_vector": {
+                    f"attr_{i}": round(getattr(profile, f"attr_{i}"), 4) for i in range(7)
+                },
+                "required_asset": project.required_asset,
+                "asset_feasible": asset_ok,
+                "required_materials": dict(project.material_cost),
+                "material_feasible": mat_ok,
+                "effective_success_probability": round(p, 6),
+                "make_success": success,
+                "meets_requirement": qualifies,
+                "supplied_units": supplied,
+                "proposed_by_self": state.proposals.get(agent.id),
+                "joined_with": sorted(
+                    o for pair in state.joined if agent.id in pair for o in pair if o != agent.id
+                ),
+            })
 
         elif intent.action == ActionType.PROPOSE:
             state.proposals[agent.id] = intent.target_project_id
@@ -167,7 +201,7 @@ def shock_step(world, state, required, ledger, judge, decide_fn, llm_agent_ids, 
 
     for aid in sorted(llm_agent_ids):
         agent = world.agents[aid]
-        obs = build_observation(world, agent)
+        obs = build_observation(world, agent, proposals=state.proposals)
         intents = decide_fn(obs)
         accepted = validate_shock(agent, intents, projects, cfg, state)
         stats["proposed"] += len(intents)

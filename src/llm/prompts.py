@@ -190,7 +190,14 @@ def build_shock_user_prompt(obs, required, shortfalls: dict, state=None) -> str:
         missing = ", ".join(f"{a}: short by {v:.2f}" for a, v in sorted(gap.items()) if v > 0)
         lines.append(f"  {p.project_id}: {missing or 'meets the requirement as-is'}")
 
+    proposals = (
+        chr(10).join(f"  {pid} proposed working on {proj}" for pid, proj in obs.neighbor_proposals)
+        or "  (none)"
+    )
     return f"""{base}
+Open proposals from your neighbours (you may join one with `join`):
+{proposals}
+
 A requirement is currently unmet. Minimum attribute levels required: {req}
 
 How far each item you know is from meeting it, as you have currently shaped it:

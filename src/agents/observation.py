@@ -60,14 +60,31 @@ class Observation:
     inbox: tuple
     recent_events: tuple
 
+    # P0修正（M3）: 近傍が出した提案。(proposer_id, project_id) の組。
+    # known_agents に含まれる Agent の提案のみを載せる。global proposal list は渡さない。
+    # 蓄積相では常に空（build_observation に proposals を渡さないため）。
+    # デフォルト付きのため、必ず全ての非デフォルトフィールドより後ろに置くこと。
+    neighbor_proposals: tuple[tuple[str, str], ...] = ()
+
     # M3 で追加: observable_market（観測可能な市場情報のみ）
 
 
-def build_observation(world, agent) -> Observation:
+def build_observation(world, agent, proposals: dict[str, str] | None = None) -> Observation:
     """World -> Observation の唯一の変換点。
 
     ここ以外で Agent が World を参照するコードを書いてはならない。
+
+    proposals は {proposer_id: project_id} の全体辞書。**ここで近傍に絞り込む。**
+    絞り込みをこの1箇所に集約するのは、build_observation が神の視点の唯一の
+    遮断点だからである（§3.3）。呼び出し側で絞ると漏洩経路が分散する。
     """
+    visible_proposals: tuple[tuple[str, str], ...] = ()
+    if proposals:
+        visible_proposals = tuple(
+            (pid, proj)
+            for pid, proj in sorted(proposals.items())
+            if pid in agent.known_agents and pid != agent.id
+        )
     return Observation(
         step=world.step,
         self_id=agent.id,
@@ -89,4 +106,5 @@ def build_observation(world, agent) -> Observation:
         trust=dict(agent.trust),
         inbox=tuple(agent.inbox),
         recent_events=tuple(agent.recent_events),
+        neighbor_proposals=visible_proposals,
     )

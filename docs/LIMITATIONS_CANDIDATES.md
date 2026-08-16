@@ -108,3 +108,35 @@ RESULTS.md の Limitations へ転記する候補を、発生時点で記録す�
 **影響**: 効果量が seed 間ばらつきに埋もれる規模（−0.39 vs sd 0.45）であるため、この推定誤差は結論に影響しうる。per-agent の到達 step を直接記録する計装は M1 では実施していない。
 
 **記録日**: 2026-08-16
+
+---
+
+## L7. 【P0・freeze解除事由】coordination_edges が原理的に到達不能だった実装欠陥
+
+**発見日**: 2026-08-16（M3 PIPELINE_VALIDATION の解析中）
+
+**根本原因**: `propose` は `ShockState.proposals` に記録されるだけで、他Agentの `Observation` にも `inbox` にも到達していなかった。`join` の前提条件は「対象が近傍であること」かつ「対象が提案済みであること」だが、**Agent には誰が提案したかを知る経路が存在しなかった**。
+
+**帰結**: `coordination_edges` は agent 数を増やしても構造的に常に 0。転化4条件の1つが永久に偽となるため、**転化は原理的に TRUE になりえなかった**。
+
+**これはパラメータ調整ではない。** 結果を改善するための閾値変更ではなく、評価指標が定義上到達不能だった欠陥の修正である（freeze 規約の P0「実行不能」「条件交絡」に該当）。
+
+**修正**: `Observation.neighbor_proposals` を追加し、`build_observation` 内で `known_agents` に限定して絞り込む。global proposal list は渡さない。
+
+**修正時刻**: 2026-08-16 15:0x JST / **修正前 commit**: `e53c908`
+
+**結果への影響**: PIPELINE_VALIDATION run（seed 42）の `coordination_edges=0` は、この欠陥下での観測値である。**本実験の根拠にも D4 の calibration にも使用しない**（既に除外指定済み）。
+
+---
+
+## L8. D5（baseline_supply_per_step）に外部の実証的根拠が存在しない
+
+**内容**: `community_supply_share` の分母を決める `baseline_supply_per_step`（既存供給能力）について、**現実データに基づく値が存在しない**。COVID期のメイカー活動に対応する定量データは存在しないか極めて限定的である（`docs/REVIEW.md` §12.1【要承認3】と同じ理由）。
+
+**帰結**: `community_supply_share` の絶対値は D5 の選び方に完全に依存する。閾値 0.25 が「無視できない供給」を意味するかどうかは、D5 が何を表すかで変わる。
+
+**候補「3 × agent数」の問題点**: モデル上の最大 make 回数から導いた値であり、**外部供給の意味と一致しない**。詳細は報告参照。
+
+**推奨**: D5 を固定定数として確定するのではなく、**感度分析の因子**として扱い、`community_supply_total`（絶対量）を主指標、`community_supply_share` を副指標とする。
+
+**記録日**: 2026-08-16

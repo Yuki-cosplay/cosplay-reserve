@@ -112,3 +112,26 @@ def reconfiguration_time(onset_step: int, ledger, judge: TransitionJudge) -> dic
         "steps_to_first_community_supply": to_first,
         "steps_to_transition": to_transition,
     }
+
+
+def structural_coordination_capacity(graph, agent_ids, edges_threshold: int) -> dict:
+    """選出された Agent 集合内に、隣接ペアが構造的に何組存在するか。
+
+    **これは Agent の行動とは無関係な構造量である。**
+
+    coordination_edges 条件が偽だったとき、
+      - structurally_reachable=False → そもそも物理的に到達不能（測定不能）
+      - structurally_reachable=True  → 構造的には可能だが Agent が join に至らなかった
+    を区別するために必要。前者を「Agent が協調しなかった」と読むのは誤りである。
+    """
+    import itertools
+
+    ids = sorted(agent_ids)
+    pairs = [(a, b) for a, b in itertools.combinations(ids, 2) if graph.has_edge(a, b)]
+    return {
+        "selected_agent_ids": ids,
+        "structurally_available_pairs": len(pairs),
+        "structurally_available_pair_list": [list(p) for p in pairs],
+        "coordination_edges_threshold": edges_threshold,
+        "structurally_reachable": len(pairs) >= edges_threshold,
+    }

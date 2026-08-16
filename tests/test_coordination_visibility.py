@@ -244,3 +244,50 @@ def test_provenance_does_not_reach_observation():
     state = ShockState(provenance=[{"secret": "must not leak"}])
     obs = build_observation(w, w.agents["agent_0"], proposals=state.proposals)
     assert "secret" not in str(obs)
+
+
+# --- 構造的到達可能性の記録（§10.5）------------------------------------------
+
+
+def test_structural_capacity_counts_adjacent_pairs(world):
+    from src.simulation.transition import structural_coordination_capacity
+
+    a, b = _adjacent_pair(world)
+    c = _non_neighbor(world, a)
+
+    r = structural_coordination_capacity(world.graph, [a, b], edges_threshold=1)
+    assert r["structurally_available_pairs"] == 1
+    assert r["structurally_reachable"] is True
+    assert r["selected_agent_ids"] == sorted([a, b])
+
+    r2 = structural_coordination_capacity(world.graph, [a, b], edges_threshold=2)
+    assert r2["structurally_reachable"] is False, "閾値2に対し1組しかないのに reachable"
+
+
+def test_structural_capacity_is_independent_of_agent_behaviour(world):
+    """行動を一切起こさなくても同じ値になる（構造量であることの確認）。"""
+    from src.simulation.transition import structural_coordination_capacity
+
+    ids = sorted(world.agents)[:6]
+    before = structural_coordination_capacity(world.graph, ids, 2)
+    for aid in ids:  # 提案・参加を発生させる
+        world.agents[aid].rejected_intents.append((None, None))
+    after = structural_coordination_capacity(world.graph, ids, 2)
+    for aid in ids:
+        world.agents[aid].rejected_intents.clear()
+    assert before == after
+
+
+def test_structural_capacity_distinguishes_unmeasurable_from_no_join(world):
+    """§10.5 の2状態が区別できること。"""
+    from src.simulation.transition import structural_coordination_capacity
+
+    a, _ = _adjacent_pair(world)
+    c = _non_neighbor(world, a)
+    unmeasurable = structural_coordination_capacity(world.graph, [a, c], edges_threshold=1)
+    assert unmeasurable["structurally_available_pairs"] == 0
+    assert unmeasurable["structurally_reachable"] is False  # -> 測定不能
+
+    a2, b2 = _adjacent_pair(world)
+    reachable = structural_coordination_capacity(world.graph, [a2, b2], edges_threshold=1)
+    assert reachable["structurally_reachable"] is True     # -> 行動の知見として報告可

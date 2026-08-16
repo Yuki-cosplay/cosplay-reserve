@@ -1128,6 +1128,25 @@ SPEC §22 は `latent_capacity` を概念的に `Distributed Resources × Networ
 
 **理由**: 3成分のうち1つが定数、1つが不在という状態で積を取ると、得られるスコアは実質「分散資源量の定数倍」にすぎない。それを `latent_capacity` と名付けると、**Latent Capability を測っているように見えて資源量しか測っていない**という誤読を生む。定数成分を含んだ合成スコアは M1 では解釈できない。
 
+### 10.5 coordination_edges の報告規約（M3、人間承認済み 2026-08-16）
+
+`coordination_edges` 条件が偽だった run については、**次の2つを必ず区別して報告する。**
+
+| 状態 | 意味 | 報告のしかた |
+|---|---|---|
+| `structurally_reachable = False` | 選出された Agent 集合内に、閾値を満たすだけの**隣接ペアがそもそも存在しなかった** | **測定不能**。Agent の行動に関する知見ではない。「協調しなかった」と書いてはならない |
+| `structurally_reachable = True` | 構造的には可能だったが、**Agent が join に至らなかった** | Agent の行動に関する観測。報告してよい |
+
+**記録項目**（全 run の `metadata` に必須）:
+
+- `selected_agent_ids` — LLM を呼んだ Agent 集合
+- `structurally_available_pairs` — その集合内に存在する隣接ペア数
+- `structurally_reachable` — 上記が `coordination_edges` 閾値以上か
+
+`structural_coordination_capacity()`（`src/simulation/transition.py`）が算出する。**これは Agent の行動とは無関係な構造量**であり、ネットワーク生成と Agent 選出だけで決まる。
+
+**なぜ必要か**: participant 部分グラフの density は約 0.16 であり、n=6 で `P(隣接ペア≥2) = 0.768`、n=3 では `0.062` にすぎない。区別せずに集計すると、**構造的に測定不能だった run を「Agent が協調しなかった run」として数えてしまい、条件効果を過小評価する**。これは交絡である。
+
 **`latent_capacity` は積の形で単一スコア化しない**（`docs/REVIEW.md` §12.3）。構成指標を別々に保存する。
 
 M1 で算出しないもの: `active_supplier_count`, `community_supply_share`, `transition_time`, `coordination_edges`, `coordination_complexity`（いずれも需要の発生が前提）。

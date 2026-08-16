@@ -22,7 +22,11 @@ from pathlib import Path
 from src.agents.observation import build_observation
 from src.llm.client import BudgetExceeded, LLMDecider
 from src.llm.prompts import SHOCK_SYSTEM_PROMPT, build_shock_user_prompt
-from src.simulation.transition import TransitionJudge, reconfiguration_time
+from src.simulation.transition import (
+    TransitionJudge,
+    reconfiguration_time,
+    structural_coordination_capacity,
+)
 from src.world.demand import RequiredItem, SupplyLedger
 from src.world.shock import ShockState, shock_step
 from src.world.step import step as accumulation_step
@@ -124,6 +128,14 @@ def main() -> int:
     )
     llm_ids = [a.id for a in participants[: args.llm_agents]]
 
+    # 構造量: 選出集合内に隣接ペアが何組あるか。Agent の行動とは独立（§10.5）
+    structural = structural_coordination_capacity(
+        world.graph, llm_ids, shock_cfg["transition"]["coordination_edges"]
+    )
+    print(f"[2b] 構造的到達可能性: 隣接ペア={structural['structurally_available_pairs']}組 "
+          f"閾値={structural['coordination_edges_threshold']} "
+          f"reachable={structural['structurally_reachable']}")
+
     stats = {"actions": {}, "rejections": {}, "proposed": 0, "accepted": 0,
              "qualifying_makes": 0, "nonqualifying_makes": 0}
     rows, stopped = [], None
@@ -184,6 +196,7 @@ def main() -> int:
         "shock_step_hours": shock_cfg["step_hours"],
         "required_item": {"thresholds": required.thresholds, "unit_demand": required.unit_demand},
         "llm_agent_ids": llm_ids,
+        "structural_coordination": structural,
         "community_supply_total": ledger.community_total,
         "baseline_supply_total": ledger.baseline_total,
         "community_supply_share": round(ledger.community_supply_share(), 6),

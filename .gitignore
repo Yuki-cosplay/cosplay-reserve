@@ -43,3 +43,11 @@ output/
 outputs/
 results/
 *.log
+
+# 可視化専用の観測 trace（研究成果物ではない。80 run で約 882MB）
+# 再生成: python -m experiments.m1_trace_and_verify --seeds 20
+# 決定論の検証レポートだけは追跡する（下の否定パターン）
+# （ディレクトリ自体を ignore すると配下の否定パターンが効かないため、
+#   ファイル種別で除外する）
+figures/demo_video/data/**/*.jsonl
+figures/demo_video/data/**/meta.json

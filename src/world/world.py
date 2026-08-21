@@ -42,6 +42,11 @@ class World:
     graph: nx.Graph
     rng: RngStreams
     metrics: object | None = None
+    # 【観測専用・シミュレーションの一部ではない】per-agent trace の記録先。
+    # 既定 None。None のとき step() の hook は一切呼ばれず、実行は
+    # この機能の追加前と bit 単位で同一（80 run の final_state_sha256 で検証）。
+    # RNG を消費しない／状態を書き換えない（src/simulation/trace.py）。
+    trace: object | None = None
     peer_learning_enabled: bool = True
 
     # 再現性メタデータ（§10.3）。S12 で metadata.json へ書き出す。

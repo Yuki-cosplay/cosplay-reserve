@@ -40,6 +40,8 @@ def _resolve(world, agent, intents, stats: StepStats):
     cfg = world.cfg
     projects = {p.project_id: p for p in world.projects}
     rng = world.rng["simulation"]
+    # 【観測専用】既定 None。RNG も状態も触らない（src/simulation/trace.py）。
+    trace = world.trace
 
     for intent in intents:
         act = intent.action.value
@@ -52,6 +54,12 @@ def _resolve(world, agent, intents, stats: StepStats):
         elif intent.action in (ActionType.OBSERVE, ActionType.ASK, ActionType.SHARE):
             stats.social_time += cost
 
+        # 【観測専用】idle は下の elif 連鎖に分岐を持たない（何も起きないため）。
+        # シミュレーションの分岐を増やさずに記録するため、ここで拾う。
+        # trace が None のとき短絡評価で即 False になり、追加前と同一。
+        if trace and intent.action == ActionType.IDLE:
+            trace.on_action(world.step, agent, act)
+
         if intent.action == ActionType.PRACTICE:
             sid = intent.target_skill_id
             gain = apply_skill_gain(agent, sid, success=False, cfg=cfg)
@@ -61,6 +69,8 @@ def _resolve(world, agent, intents, stats: StepStats):
             stats.per_agent_skill_gain[agent.id] = (
                 stats.per_agent_skill_gain.get(agent.id, 0.0) + gain
             )
+            if trace:  # 観測のみ
+                trace.on_action(world.step, agent, act, target_skill_id=sid)
 
         elif intent.action == ActionType.MAKE:
             project = projects[intent.target_project_id]
@@ -82,8 +92,15 @@ def _resolve(world, agent, intents, stats: StepStats):
                     m = discover_method(agent, project.project_id, sid, world.step, cfg)
                     agent.methods[m.method_id] = m
                     stats.self_discovered += 1
+                    if trace:  # 観測のみ（RNG 呼び出しの後に置く）
+                        trace.on_method(world.step, agent, m.method_id, "self_discovery")
             else:
                 agent.failure_count[sid] += 1
+            if trace:  # 観測のみ
+                trace.on_action(world.step, agent, act,
+                                target_project_id=project.project_id,
+                                target_skill_id=sid, make_success=success,
+                                completed_project_added=success)
 
         elif intent.action == ActionType.OBSERVE:
             target = world.agents[intent.target_agent_id]
@@ -97,6 +114,8 @@ def _resolve(world, agent, intents, stats: StepStats):
                     last_updated_step=world.step,
                     observation_count=(prev.observation_count + 1) if prev else 1,
                 )
+            if trace:  # 観測のみ（rng.normal ループの後）
+                trace.on_action(world.step, agent, act, target_agent_id=target.id)
 
         elif intent.action == ActionType.ASK:
             target = world.agents[intent.target_agent_id]
@@ -115,6 +134,9 @@ def _resolve(world, agent, intents, stats: StepStats):
             for m in target.methods.values():
                 agent.inbox.append((m, target.id))
                 break
+            if trace:  # 観測のみ（rng.normal の後）
+                trace.on_action(world.step, agent, act, target_agent_id=target.id,
+                                target_skill_id=sid)
 
         elif intent.action == ActionType.SHARE:
             m = agent.methods.get(intent.target_method_id)
@@ -123,18 +145,25 @@ def _resolve(world, agent, intents, stats: StepStats):
                 # Method が実際に渡るかは受容ゲートが決める（§7.2 / §8.3）。
                 for n in sorted(agent.known_agents):
                     world.agents[n].inbox.append((m, agent.id))
+            if trace:  # 観測のみ。m が None でも share は実行された事実として残す
+                trace.on_action(world.step, agent, act,
+                                target_method_id=(m.method_id if m is not None else None))
 
 
 def _deliver(world, stats: StepStats) -> None:
     """inbox の Method offer を受容判定にかける。遮断点は accept_peer_method のみ。"""
     rng = world.rng["simulation"]
     cfg = world.cfg
+    trace = world.trace  # 【観測専用】既定 None
     for aid in sorted(world.agents):
         agent = world.agents[aid]
         for method, sender_id in agent.inbox:
             if accept_peer_method(agent, method, sender_id, cfg, rng):
                 receive_method(agent, method, sender_id, world.step)
                 stats.peer_acquired += 1
+                if trace:  # 観測のみ（rng.random の後）
+                    trace.on_method(world.step, agent, method.method_id,
+                                    "peer_acquisition", from_agent_id=sender_id)
         agent.inbox.clear()
 
 
@@ -175,6 +204,11 @@ def step(world) -> StepStats:
         for _, reason in agent.rejected_intents[-20:]:
             stats.rejections[reason.value] = stats.rejections.get(reason.value, 0) + 1
         agent.rejected_intents.clear()
+
+    # 【観測専用】decay_skills / update_maker_stages / _deliver の後に取る。
+    # world.step のインクリメント前なので、この step の最終状態が記録される。
+    if world.trace:
+        world.trace.on_step_end(world.step, world.agents)
 
     world.step += 1
     return stats

@@ -71,8 +71,15 @@ def run_one(
     steps: int | None = None,
     output_dir: str | Path | None = None,
     overrides: dict | None = None,
+    trace_dir: str | Path | None = None,
 ) -> dict:
-    """1条件 × 1seed を実行し、結果サマリを返す。"""
+    """1条件 × 1seed を実行し、結果サマリを返す。
+
+    trace_dir は**可視化専用の観測記録**の出力先（既定 None = 記録しない）。
+    正典 outputs とは別ディレクトリを指定すること。
+    trace は RNG も状態も触らないため、指定の有無で結果は変わらない
+    （`tests/test_trace_does_not_change_results.py` が検証）。
+    """
     world = build_world(condition_path, seed=seed)
     if overrides:
         for section, values in overrides.items():
@@ -82,6 +89,13 @@ def run_one(
     recorder = MetricsRecorder()
     world.metrics = recorder
     recorder.record_reachability(world)
+
+    tracer = None
+    if trace_dir is not None:
+        from src.simulation.trace import TraceRecorder
+
+        tracer = TraceRecorder()
+        world.trace = tracer
 
     for _ in range(n_steps):
         stats = step(world)
@@ -97,6 +111,20 @@ def run_one(
 
     if output_dir is not None:
         _write_outputs(world, recorder, summary, Path(output_dir), n_steps)
+    if tracer is not None:
+        tracer.write(
+            Path(trace_dir) / f"{world.cfg['condition']}_seed{seed}",
+            {
+                "purpose": "visualization-only observation trace (not a research artifact)",
+                "condition": world.cfg["condition"],
+                "seed": seed,
+                "steps": n_steps,
+                "final_state_sha256": summary["final_state_sha256"],
+                "base_graph_sha256": world.provenance["base_graph_sha256"],
+                "agent_initial_states_sha256": world.provenance["agent_initial_states_sha256"],
+                "note": "trace は RNG を消費せず状態も変更しない。結果は trace 無効時と同一。",
+            },
+        )
     return summary
 
 

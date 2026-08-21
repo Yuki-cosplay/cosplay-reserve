@@ -1,0 +1,23 @@
+{
+  "purpose": "M1 trace 追加後の決定論検証（LLM/API 0 call）",
+  "canonical_source": "outputs\\m1_main_summary.csv",
+  "runs": 80,
+  "final_state_sha256_match": "80 / 80",
+  "compare_keys": [
+    "final_state_sha256",
+    "agent_initial_states_sha256",
+    "base_graph_sha256",
+    "participant_ids_sha256",
+    "cultural_edge_count",
+    "network_density",
+    "assortativity_achieved_structured",
+    "assortativity_achieved_rewired",
+    "assortativity_target_reached",
+    "steps"
+  ],
+  "mismatches": [],
+  "verdict": "PASS",
+  "trace_dir": "figures\\demo_video\\data\\m1_trace",
+  "wall_seconds": 105.5,
+  "api_calls_made": 0
+}

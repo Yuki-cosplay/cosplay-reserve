@@ -172,3 +172,282 @@ RESULTS.md の Limitations へ転記する候補を、発生時点で記録す�
 **これは設計上の選択であり欠陥ではない**（人間確定 2026-08-16）。ただし RESULTS.md で share を論じる際は、**この上限が構造的に 0.5 であること**を明示し、絶対的な供給規模の比較には `community_supply_total` を併用すること。
 
 **記録日**: 2026-08-16
+
+---
+
+## L11. 【P0・freeze解除事由】事前登録 D4 が runtime config へ同期されないまま main experiment を実行した
+
+**発見日**: 2026-08-16（main experiment 20/20 完了報告を人間が査読した際に指摘）
+
+**問題**: 人間承認済みの正式事前登録 D4 は
+`share >= 0.25` / `suppliers >= ceil(n/2) = 3` / `duration >= 4` / `edges >= 2`
+であるのに対し、20 run は
+`share >= 0.20` / `suppliers >= 3` / `duration >= 3` / `edges >= 2`
+で実行された。**share と duration の2項目が不一致**。
+
+**根本原因**: commit `573be42` で導入された PIPELINE_VALIDATION 用の暫定値
+（config 内に `★D4 未決（要人間決定）★ … 暫定値。` と自己申告されていた）が、
+D4 を確定した commit `2de6b52` で更新されなかった。
+同 commit は `configs/base.yaml` の **D5 ブロックだけを書き換え、直下の D4 ブロックを素通り**している
+（`git show 2de6b52 -- configs/base.yaml` の diff 末尾に旧 D4 コメントが context 行として残っている）。
+確定値は `docs/PREREGISTRATION_H1.md` §D4 と `experiments/m3_main.py` の docstring にのみ記録され、
+**runtime が実際に読む config には到達しなかった**。
+
+**なぜ検出されなかったか**: 実行後の逸脱チェックが
+「20 run で同じ値だったか」という**内部整合性**しか検査しておらず、
+「事前登録値と一致しているか」という**外部基準との照合**を行っていなかった。
+`config_sha256` は seed 由来で 20 種類、`prompt_sha256` は 1 種類、
+`D4_transition` は全 run 同一 — これらはすべて通過してしまう。
+`m3_main.py` に D4 のモジュール定数が存在せず、
+`test_frozen_spec_matches_approved_values` も D4 を一切 assert していなかった。
+
+**分類**: config synchronization error（+ frozen-spec test の検査漏れ）。
+preregistration document は正しい値を保持しており、runtime 実装ロジックにも報告にも誤りはない。
+
+**結果への影響**: runtime 判定では 6/20 run が転化 TRUE。
+事前登録値で既存ログを再判定（corrected adjudication）すると **0/20 run**。
+6 run すべてが FALSE へ変わる。律速は全 run で `community_supply_share`
+（観測 max 0.154〜0.250 に対し閾値 0.25）。
+
+**対応**:
+- runtime 判定（a）は各 run ファイルに保持し、削除・上書きしない
+- 事前登録値による再判定（b）を `outputs/main_experiment/transition_recomputed_preregistered.json` へ**新規**保存
+- 再判定は既存の `TransitionJudge.evaluate()` を再利用（判定ロジックを再実装していない）。
+  runtime 閾値で replay すると 20 run × 8 step の `met_*` / `all_met` / `transition_step` が
+  ログと完全一致することを自己検証済み
+- 検証を `experiments/audit_preregistration.py`（事前登録 / config / run metadata の三者突合）と
+  `tests/test_preregistration_sync.py` へ変更
+- **(b) を最終主結果とすることを人間が確定した（2026-08-16）。**
+  事前登録値による corrected adjudication（転化 **0/20**）が主結果である。
+  runtime config の暫定値による判定（転化 6/20）は、**事前登録との不一致を示す副次的記録**として
+  各 run ファイルに保持する。削除も上書きもしないが、結果の主張には使用しない。
+
+**config の是正（2026-08-16、人間承認済み）**:
+
+1. 実行時 config を `configs/as_executed/main_experiment_20260816.yaml` へ**歴史的記録として保存**した
+   （commit `0976cf2` の `configs/base.yaml` とバイト単位で同一。冒頭に不一致の経緯を明記）。
+   **編集禁止・再実行の起点に使わないこと。**
+2. `configs/base.yaml` の D4 を**正式事前登録値 0.25 / 3 / 4 / 2 へ同期**し、
+   `★D4 未決（要人間決定）★ … 暫定値。` のコメントを削除した。
+   **第三者が現在の `configs/base.yaml` から実行すれば、正式事前登録値による判定になる。**
+3. `tests/test_preregistration_sync.py` の xfail 2件を解消し、通常 PASS へ移行した
+   （config↔事前登録の一致 / run metadata↔as_executed の一致 / as_executed が事前登録と
+   異なることの固定 / 主結果ファイルが事前登録値であることの確認）。
+
+**既存 20 run の metadata と output は一切変更していない。** run metadata の `D4_transition` は
+実行時の値（0.20/3/3/2）のまま保持され、`as_executed` と一致することをテストが保証する。
+
+**API 再実行は行っていない。** corrected adjudication は既存ログのみを用いた再判定であり、
+LLM 呼び出し数は 0 である。
+
+**記録日**: 2026-08-16
+
+---
+
+## L12. 技能が蓄積相で飽和し、ショック相の success_probability の技能項が情報を持たない
+
+**発見日**: 2026-08-16（`modify_difficulty_penalty` 感度分析の replay 可否検証中）
+
+**内容**: 蓄積相 156 step 後、供給経路の主要技能は **0.9976〜0.9985** に飽和している
+（seed 2 / 条件A / shock 対象 6 agent で実測）。その結果、`success_probability()` が返す
+`p_base` は **全 make 試行 1110 件の 99.6%（1106件）で上限 0.98 にクリップ**されている。
+
+| n_shifts | p_base | 件数 |
+|---|---|---|
+| 0 | 0.9636〜0.9694 | 4 |
+| 0 | 0.9800（クリップ上限） | 31 |
+| 1 | 0.9800 | 6 |
+| 2 | 0.9800 | 1069 |
+
+`p_base = 0.98` に必要な raw は 0.5838（temperature 0.15）であるのに対し、実際の raw は 0.898
+（**余裕 +0.314**）。一方、1 run で1 agent が行う make の最大回数は 15 回であり、
+収穫逓減 `gain = base × (1 − skill)` を考慮すると、15回すべて成功した場合とすべて失敗した場合の
+技能乖離は **0.0008**（余裕 0.314 の約 1/400）にすぎない。
+
+**帰結**: **`success_probability` の技能項は、ショック相において情報を持っていない。**
+したがって「技能を上げる介入が効かない」という B8 の診断は、
+**現実についての発見ではなく、モデルの構成上の帰結である。**
+
+**同型の先行事例**: この飽和は M1 の `maker_count` 天井効果（全条件 30/30、L3）と同型である。
+**本モデルには、蓄積量が上限に達したあとの差異が観測されにくい構造がある。**
+L3 は Case C（中間機構は動くが下流への伝播が弱い）として記録済みであり、
+L12 はその構造がショック相にも及んでいることを示す。
+
+**結果への影響**:
+- `modify_difficulty_penalty` の感度分析において、`penalty = 0.00` のケースは
+  「ほぼ全 agent が `p_eff = 0.98`」となる。これは意図した構造的上限だが、
+  **技能分布の違いが上限側でまったく効かない**ことも同時に意味する。
+- A/B/C/D の条件間比較でショック相の供給量に差が出にくい一因である可能性がある
+  （**未検証。断定しない**）。
+
+**是正の候補（いずれも未実施・未承認）**: 蓄積相 step 数の短縮（52 / 104 週は config 済み）、
+`learn_rate` / `decay_rate` の見直し、`success_probability` のクリップ上限の再検討。
+**ただし結果を見た後のパラメータ調整は禁止（SPEC §30）**であり、実施する場合は
+事前登録を伴う独立した実験として行うこと。
+
+**記録日**: 2026-08-16
+
+---
+
+## L13. penalty 感度分析は partial-equilibrium（意思決定を固定した感度）である
+
+**内容**: `modify_difficulty_penalty` の感度分析は、既存 main experiment の provenance から
+`p_base` を復元し、production layer のみを再計算する deterministic replay で行う（API 0 call）。
+この設計では **Agent の意思決定を main experiment のログに固定する。**
+
+**帰結**: penalty が実際に異なれば、Agent は modify 回数や make / practice / share の
+行動配分を変えた可能性があるが、**それは捉えていない。**
+
+> 得られるのは「**意思決定が同じままなら、penalty がどれだけ供給量を動かすか**」であり、
+> 「**penalty が違う世界での供給量**」ではない。
+
+**この設計を選んだ理由**: LLM を再実行すると penalty 差と LLM 応答差が混ざり、
+どちらが供給量を動かしたのか帰属できなくなる。分離を優先した。
+
+**この限界を限界のまま残さないための対応**: 条件A・seed 2 / 4 について
+`penalty = 0.00` の live run を **2本だけ**実行し、replay 予測値との差を
+**「意思決定応答の効果」として定量化する**（事前登録は `docs/PREREGISTRATION_SENSITIVITY.md`）。
+**n=2 のため、この2 run から条件間比較や仮説検証は行わない。**
+
+**記録日**: 2026-08-16
+
+---
+
+## L14. D5 正規化により、shock_agent_count の効果が share から相殺されやすい
+
+**記録日**: 2026-08-16（API 不使用のコード構造確認による）
+
+### 代数的な部分（厳密に成立）
+
+`community_supply_share = C / (C + B)`、`B = external_reference_supply_per_step`。
+
+`src/world/demand.py:65-80` より、**B は n に厳密に比例する**:
+
+```
+B = (time_budget // action_time_cost.make) × shock_agent_count = 3 × n
+```
+
+ここで 1 agent・1 step あたりの平均供給量を `q = C / (n × T)`（T = step 数）と置くと、
+`C = n q T`、`B = 3 n T` であるから
+
+```
+share = nqT / (nqT + 3nT) = q / (q + 3)
+```
+
+となり **n が代数的に消える**。この恒等式は数値的にも確認済み（誤差 < 1e-12）:
+
+| penalty | C (units/step) | q = C/6 | C/(C+18) | q/(q+3) |
+|---|---|---|---|---|
+| 0.00 | 6.5109 | 1.0851 | 0.265632 | 0.265632 |
+| 0.35 | 3.8299 | 0.6383 | 0.175444 | 0.175444 |
+
+### ★ただし `C = n q T` と置けるのは、q が n に依存しない場合に限る★
+
+コード構造を確認した結果、**q の n 非依存性は production 層では成立するが、
+decision 層では保証されない。**
+
+**n 非依存が構造的に成立する経路**:
+
+| 経路 | 確認結果 |
+|---|---|
+| 材料 | `agent.materials` は **agent ごとの私有在庫**。`replenish_materials` は agent ごとに独立補充、`consume_materials` は当該 agent のみ減算。**共有プールなし → 競合なし**（`src/world/resources.py:17-26`） |
+| 設備 | `_owns(agent, asset_id, cfg)` は `agent.assets[asset_id]` を見る **agent ごとの保有**。共有プールなし（`src/world/production.py:11-19`） |
+| 時間予算 | agent ごと、step ごとにリセット |
+| 成功確率 | `success_probability` は当該 agent の技能・method・設備のみに依存 |
+| `unit_yield` | 定数 1.0 |
+| `active_supplier_count` | **production へ帰還しない**。`TransitionJudge.evaluate()` が読むだけで、供給量に非線形な影響を与えない |
+| coordination | `state.coordination_edges()` も judge が読むだけで、`_resolve_shock` の成功確率計算に入らない |
+
+**n 依存が残る経路（3件、いずれも decision 層）**:
+
+1. **`neighbor_proposals`**: `build_observation` は全体の proposal 辞書を `agent.known_agents`
+   で絞り込む（`src/agents/observation.py:81-86`）。ショック相で行動するのは
+   `llm_agent_ids` の n 名のみ（`shock_step` のループが `for aid in sorted(llm_agent_ids)`）
+   であるため、**n が増えるほど各 agent に見える提案が増え、LLM の意思決定が変わりうる。**
+2. **`select_shock_agents`**: 30 名の participant から n 名を一様無作為抽出する。
+   n が変われば選ばれる agent 集合が変わり、技能・設備・材料の実現値が変わる。
+   **期待値としては n 非依存だが、実現値としては保証されない。**
+3. **誘導部分グラフの密度**: 選出された n 名の間の隣接ペア数は n に対して組合せ的に増える。
+   propose / join の機会が変わり、時間配分が make から移動しうる。
+
+### したがって L14 の記述は次に限定する
+
+> **「人数そのものの効果は、D5 正規化（B = 3n）によって share から相殺されやすい。」**
+
+**「n は完全に消える」と書いてはならない。** 消えるのは代数的な部分だけであり、
+`q` が n に依存しないことは production 層でのみ構造的に保証され、decision 層では保証されない。
+
+**未検証**: 実際に n を変えて q が動くかは測定していない（本確認は API 不使用の構造確認のみ）。
+n を変えた実験は実施しておらず、実施する場合は事前登録を伴う独立した実験とする。
+
+---
+
+## L15. community_supply_share と parity utilization ratio は別量である
+
+**記録日**: 2026-08-16
+
+**内容**: 2つの比を混同してはならない。
+
+| 指標 | 定義 | current model (C=3.830, B=18) |
+|---|---|---|
+| `community_supply_share`（**転化判定に使う正式指標**） | `C / (C + B)` | **0.1754** |
+| parity utilization ratio（**分析上の補助指標**） | `C / B` | **0.2128** |
+
+D4 の閾値を両方の尺度で書くと:
+
+```
+community_supply_share = 0.25
+  ⇔ C / (C + 18) = 0.25
+  ⇔ C = 6.0
+  ⇔ parity utilization ratio = 6 / 18 = 0.3333
+```
+
+**禁止する表現**:
+- ~~「share = コミュニティが理論最大供給能力の何 % で稼働しているか」~~
+- ~~「share = 21%」~~（21.3% は parity utilization ratio であって share ではない）
+
+**RESULTS.md での正式な書き方**:
+
+> current model の期待供給率は External Supply Parity Reference の**約 21%** に相当し、
+> D4 の share 閾値 0.25 を満たすには**約 33% 相当**が必要だった。
+
+**「稼働率」という語を使う場合は、必ず "Parity Reference 比" であることを明記する。**
+D5 は現実の外部メーカー能力の実証値ではなく正規化基準であるため（L8 / L10）、
+現実の設備稼働率と誤認されてはならない。
+
+penalty 別の両指標:
+
+| penalty | C (units/step) | share = C/(C+B) | parity utilization = C/B |
+|---|---|---|---|
+| 0.00 | 6.511 | 0.2656 | 0.3617 |
+| 0.15 | 5.008 | 0.2177 | 0.2782 |
+| 0.35 (current) | 3.830 | **0.1754** | **0.2128** |
+| 0.50 | 3.255 | 0.1532 | 0.1809 |
+
+---
+
+## L16. penalty = 0.00 の位置づけ（解釈の固定）
+
+**記録日**: 2026-08-16
+
+**正式な位置づけ**:
+
+> **`penalty = 0.00` は、modify による追加の成功確率ペナルティをゼロと仮定した
+> モデル上の構造的上限ケースである。**
+
+この上限ケースでのみ、期待供給率 **6.511 units/step** が必要供給率 **6.0 units/step** を
+**約 8.5% 上回った**。
+
+**RESULTS.md での正式な書き方**:
+
+> **仕様適応による追加ペナルティをゼロと仮定する上限ケースでのみ、D4 の量的条件を超えた。**
+
+**禁止する表現**（いずれも書いてはならない）:
+- ~~penalty を下げれば転化する~~
+- ~~熟練を高めれば転化する~~
+- ~~penalty = 0 が現実に達成可能である~~
+- ~~penalty = 0 が物理的に絶対不可能である~~
+
+**「物理的にありえない」と断定してはならない。** `modify_difficulty_penalty` は実データで
+校正されていない（L13 / 感度分析の前提）。現実の値が 0 に近いか遠いかは**未知**であり、
+その決定は実地 Pilot（Specification Adaptation Challenge）の測定課題である。

@@ -1,3 +1,49 @@
+####################################################################
+# HISTORICAL RUNTIME ARTIFACT — 編集禁止 / 実行に使用しないこと
+####################################################################
+#
+# これは **M3 main experiment（2026-08-16、20 run）が実際に使用した
+# runtime config** の完全な複製である。
+#
+#   実行 commit : 0976cf27dd79153212473532a1dc4fb40ebe9076
+#   複製元      : 同 commit の configs/base.yaml（バイト単位で同一）
+#   条件別上書き: configs/condition_{a,b,c,d}.yaml が
+#                 topology / peer_learning_enabled の2キーのみを上書きした
+#   seed        : 実行時に run.seed へ 2 / 4 / 6 / 7 / 9 が注入された
+#                 （下の run.seed: 42 は使用されていない）
+#   出力        : outputs/main_experiment/{A,B,C,D}_seed{2,4,6,7,9}.json
+#
+# ─────────────────────────────────────────────────────────────────
+# ★重要 — D4 が事前登録値と同期していなかった★
+# ─────────────────────────────────────────────────────────────────
+# 本 config の shock.transition（下部）は、人間承認済みの正式事前登録値
+# （docs/PREREGISTRATION_H1.md §D4）と **2項目が一致していない**。
+#
+#   閾値                       | 本 config（実行時） | 正式事前登録値
+#   ---------------------------|--------------------|----------------
+#   community_supply_share     | 0.20  ←不一致       | 0.25
+#   active_supplier_count      | 3                  | 3  (= ceil(6/2))
+#   supply_duration_steps      | 3     ←不一致       | 4  (= 24h)
+#   coordination_edges         | 2                  | 2
+#
+# 原因: commit 573be42 が PIPELINE_VALIDATION 用の暫定値を導入し、
+#       D4 を確定した commit 2de6b52 が base.yaml の D5 ブロックのみを
+#       更新して D4 ブロックを素通りした（同 commit の diff で確認可能）。
+#       確定値は PREREGISTRATION_H1.md と m3_main.py の docstring にのみ
+#       記録され、runtime が読む config には到達しなかった。
+#       経緯の全記録は docs/LIMITATIONS_CANDIDATES.md L11。
+#
+# 結果の扱い:
+#   主結果   = 事前登録値による corrected adjudication（転化 0/20、人間確定）
+#              outputs/main_experiment/transition_recomputed_preregistered.json
+#   副次記録 = 本 config で実行された判定（転化 6/20）
+#              各 run ファイルの transitioned / transition_history
+#
+# 現行の configs/base.yaml は正式事前登録値 0.25 / 3 / 4 / 2 へ同期済みである。
+# **本ファイルはその同期前の状態を歴史的記録として保存したものであり、
+#   再実行・再現の起点として使ってはならない。**
+####################################################################
+
 # Milestone 1 共通パラメータ（docs/DESIGN_M1.md §14.1 / §14.2）
 # このファイルの値は 4条件（A/B/C/D）で完全に同一である。
 # 条件別 YAML で上書きしてよいのは topology / peer_learning_enabled の2キーのみ。
@@ -188,25 +234,9 @@ shock:                          # M3 ショック相（SPEC §25: 1 step = 6時�
     # 用途はショックの不足規模を示す文脈情報の保存のみ。
     unit_demand: 200.0
 
-  # === D4: Transition Threshold（人間確定 2026-08-16）===
-  # 正典は docs/PREREGISTRATION_H1.md §D4。値を変更する場合は必ず同時に更新すること
-  # （tests/test_preregistration_sync.py が両者の一致を検査する）。
-  #
-  #   share    >= 0.25  community = external_reference / 3。外部比較基準の
-  #                     少なくとも1/3を追加した状態を「無視できない供給」とする
-  #   suppliers>= 3     ceil(shock_agent_count / 2) = ceil(6/2)。少数の突出ではなく
-  #                     対象コミュニティの少なくとも半数が供給主体になること
-  #   duration >= 4     ショック相は 1 step = 6時間。4 step = 24時間を
-  #                     「継続的供給」の最小単位とする
-  #   edges    >= 2     単発の二者協力1件ではなく最低2本の協調関係
-  #
-  # ★これら4閾値は PIPELINE_VALIDATION の観測値から選んだものではない★
-  # 【履歴】main experiment（2026-08-16、20 run）は同期漏れにより暫定値
-  # 0.20 / 3 / 3 / 2 で実行された。実行時 config は
-  # configs/as_executed/main_experiment_20260816.yaml に保存。詳細は
-  # docs/LIMITATIONS_CANDIDATES.md L11。
+  # ★D4 未決（要人間決定）★ SPEC §20 は「最終値は実験開始前に固定」と指定。暫定値。
   transition:
-    community_supply_share: 0.25
+    community_supply_share: 0.20
     active_supplier_count: 3
-    supply_duration_steps: 4
+    supply_duration_steps: 3
     coordination_edges: 2

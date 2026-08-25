@@ -76,3 +76,9 @@ figures/demo_video/data/**/meta.json
 #       このパターンは「今後 git add し直さない」ことだけを保証する。
 figures/demo_video/cosplay_reserve_demo_v1.mp4
 figures/demo_video/prototype/
+
+# 内部の制作管理資料（公開する研究成果物ではない。ローカルには残す）
+# 動画修正の作業指示書であり、RESULTS.md のどの主張も支えない。
+# 生ログ・解析結果・再現コード・最終動画はすべて公開しているので、
+# これを外しても再現性には影響しない。
+DEMO_VIDEO_FIX_SPEC.md

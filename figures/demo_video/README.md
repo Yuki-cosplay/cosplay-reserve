@@ -2,7 +2,7 @@
 
 `cosplay_reserve_demo.mp4`（1920×1080 / 30fps / **167.5秒** / h264 / **無音**）
 
-旧版は `cosplay_reserve_demo_v1.mp4`（180.0秒）として保存。
+旧版は `cosplay_reserve_demo_v1.mp4`（180.0秒）としてローカルに保存（**公開対象外**、§7）。
 修正内容は `DEMO_VIDEO_FIX_SPEC.md` に対する対応（P0 全件 + P1 の一部）。
 
 **この動画は概念アニメーションではなく、確定済みログの再生です。**
@@ -167,14 +167,28 @@ python figures/demo_video/make_video.py
 
 | ファイル | 内容 | git |
 |---|---|---|
-| `cosplay_reserve_demo.mp4` | 最終版（167.5秒） | 追跡 |
-| `cosplay_reserve_demo_v1.mp4` | 修正前の旧版（180.0秒） | 追跡 |
+| **`cosplay_reserve_demo.mp4`** | **提出版（167.5秒）。このリポジトリで公開している唯一のデモ動画** | 追跡 |
 | `make_video.py` | 生成スクリプト | 追跡 |
 | `make_prototype.py` | 初期プロトタイプ（設計検討用） | 追跡 |
 | `README.md` | 本ファイル | 追跡 |
-| `prototype/` | 確認用サンプル（各フェーズ5秒 + 静止画 + 検証フレーム） | 追跡 |
-| `data/m1_trace/*/**.jsonl` | M1 trace 本体（約882MB） | **除外**（再生成可能） |
 | `data/m1_trace/hash_verification.json` | 80 run の hash 検証レポート | 追跡 |
+| `data/m1_trace/*/**.jsonl` | M1 trace 本体（約882MB） | **除外**（再生成可能） |
+| `cosplay_reserve_demo_v1.mp4` | 修正前の旧版（180.0秒） | **除外**（下記） |
+| `prototype/` | 確認用サンプル（各フェーズ5秒 + 静止画 + 検証フレーム） | **除外**（下記） |
+
+### 旧版とプロトタイプを公開していない理由
+
+`cosplay_reserve_demo_v1.mp4` と `prototype/` は**ローカルには残してあるが、
+git の追跡対象から外してある**（`.gitignore` に指定済み）。
+
+- **旧版**: `cosplay_reserve_demo.mp4` と `_v1` が並んでいると、
+  `_v1` を「最新改訂版」と読み違える。提出物のうち最も重要な成果物で
+  どちらが本番か分からない状態を避けるため。
+- **`prototype/`**: 設計検討とレイアウト検証の中間生成物であり、成果物ではない。
+
+なお両者は commit `b38705b` で一度追跡されているため、**blob は git 履歴に残っている**。
+`git rm --cached` は履歴を書き換えないので、履歴を辿れば取得できる。
+履歴書き換え（`filter-repo` 等）は、既存の commit hash がすべて変わるため行っていない。
 
 ---
 

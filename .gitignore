@@ -67,3 +67,12 @@ results/
 # どのパターンにも一致せず、結果として追跡される（決定論の検証レポート）。
 figures/demo_video/data/**/*.jsonl
 figures/demo_video/data/**/meta.json
+
+# 制作過程の資産（公開対象外。ローカルには残す）
+# 提出版は figures/demo_video/cosplay_reserve_demo.mp4 ただ 1 本。
+# 旧版 _v1 が並んでいると「_v1 が最新改訂版」と誤読されるため公開しない。
+# prototype/ は設計検討とレイアウト検証の中間生成物であり、成果物ではない。
+# 注意: これらは commit b38705b で追加済みなので、blob は履歴に残ったままである。
+#       このパターンは「今後 git add し直さない」ことだけを保証する。
+figures/demo_video/cosplay_reserve_demo_v1.mp4
+figures/demo_video/prototype/

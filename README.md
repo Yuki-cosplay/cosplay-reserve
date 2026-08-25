@@ -9,6 +9,23 @@
 
 正典は `SPEC.md`（研究仕様書）。結果は `RESULTS.md`。
 
+## 提出物
+
+| 種別 | ファイル |
+|---|---|
+| **デモ動画（提出版）** | **`figures/demo_video/cosplay_reserve_demo.mp4`** — 167.5秒 / 1920×1080 / 30fps / 音声なし |
+| 研究結果 | `RESULTS.md` |
+| 発表スライド | `slides/cosplay_reserve_final.pptx` |
+| 図 | `figures/F1`–`F5_*.png` |
+| 主結果の生データ | `outputs/main_experiment/transition_recomputed_preregistered.json` |
+
+> **デモ動画は `cosplay_reserve_demo.mp4` の 1 本のみである。**
+> ナレーションはなく、実ログに基づく Agent の状態遷移を連続して可視化している。
+> 表示される数値はすべて `outputs/` と M1 trace の実測値で、
+> 見栄えのための丸めや強調は行っていない（`figures/demo_video/README.md` §4 に
+> データと視覚補間の境界を列挙してある）。
+> 制作過程で生成した旧版・プロトタイプはリポジトリに含めていない。
+
 ---
 
 ## 主結果

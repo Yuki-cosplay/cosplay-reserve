@@ -1,0 +1,1718 @@
+{
+  "STATUS": "INVALIDATED",
+  "invalidated_at": "2026-08-16",
+  "reason": "pairing inconsistency: shock agent 選出が蓄積相後の技能上位だったため peer_learning の有無で A != C / B != D となり、structural capacity が ペアで一致しなかった。SPEC §19 の完全ペアリングが実質的に破れていた。",
+  "do_not_use_for": "main experiment / seed 固定 / D4 calibration",
+  "superseded_by": "outputs/seed_eligibility.json (P0 修正後の再スキャン)",
+  "invalidated_seeds_previously_fixed": [
+    5,
+    7,
+    11,
+    13,
+    14
+  ],
+  "purpose": "coordination_edges >= 2 が構造的に測定可能な seed のみを事前選定する。LLM / Agent 行動結果は一切参照していない（outcome selection ではない）。",
+  "eligibility_rule": "structured(A,C) と rewired(B,D) の4条件すべてで structurally_available_pairs >= coordination_edges 閾値 であること",
+  "coordination_edges_threshold": 2,
+  "shock_agent_count": 6,
+  "accumulation_steps": 156,
+  "seeds_scanned": 14,
+  "scan_range": [
+    1,
+    14
+  ],
+  "eligible_seeds": [
+    5,
+    7,
+    11,
+    13,
+    14
+  ],
+  "ineligible_seeds": [
+    1,
+    2,
+    3,
+    4,
+    6,
+    8,
+    9,
+    10,
+    12
+  ],
+  "records": [
+    {
+      "seed": 1,
+      "eligible": false,
+      "structured": {
+        "A": 0,
+        "C": 1
+      },
+      "rewired": {
+        "B": 2,
+        "D": 2
+      },
+      "per_condition": {
+        "A": {
+          "selected_agent_ids": [
+            "agent_20",
+            "agent_29",
+            "agent_36",
+            "agent_38",
+            "agent_7",
+            "agent_9"
+          ],
+          "structurally_available_pairs": 0,
+          "structurally_available_pair_list": [],
+          "coordination_edges_threshold": 2,
+          "structurally_reachable": false,
+          "condition": "A",
+          "topology": "structured"
+        },
+        "B": {
+          "selected_agent_ids": [
+            "agent_12",
+            "agent_20",
+            "agent_36",
+            "agent_38",
+            "agent_7",
+            "agent_9"
+          ],
+          "structurally_available_pairs": 2,
+          "structurally_available_pair_list": [
+            [
+              "agent_12",
+              "agent_38"
+            ],
+            [
+              "agent_20",
+              "agent_7"
+            ]
+          ],
+          "coordination_edges_threshold": 2,
+          "structurally_reachable": true,
+          "condition": "B",
+          "topology": "rewired"
+        },
+        "C": {
+          "selected_agent_ids": [
+            "agent_20",
+            "agent_21",
+            "agent_29",
+            "agent_36",
+            "agent_38",
+            "agent_9"
+          ],
+          "structurally_available_pairs": 1,
+          "structurally_available_pair_list": [
+            [
+              "agent_20",
+              "agent_21"
+            ]
+          ],
+          "coordination_edges_threshold": 2,
+          "structurally_reachable": false,
+          "condition": "C",
+          "topology": "structured"
+        },
+        "D": {
+          "selected_agent_ids": [
+            "agent_1",
+            "agent_13",
+            "agent_20",
+            "agent_36",
+            "agent_7",
+            "agent_9"
+          ],
+          "structurally_available_pairs": 2,
+          "structurally_available_pair_list": [
+            [
+              "agent_1",
+              "agent_20"
+            ],
+            [
+              "agent_20",
+              "agent_7"
+            ]
+          ],
+          "coordination_edges_threshold": 2,
+          "structurally_reachable": true,
+          "condition": "D",
+          "topology": "rewired"
+        }
+      }
+    },
+    {
+      "seed": 2,
+      "eligible": false,
+      "structured": {
+        "A": 4,
+        "C": 1
+      },
+      "rewired": {
+        "B": 3,
+        "D": 4
+      },
+      "per_condition": {
+        "A": {
+          "selected_agent_ids": [
+            "agent_0",
+            "agent_19",
+            "agent_28",
+            "agent_3",
+            "agent_4",
+            "agent_9"
+          ],
+          "structurally_available_pairs": 4,
+          "structurally_available_pair_list": [
+            [
+              "agent_0",
+              "agent_19"
+            ],
+            [
+              "agent_0",
+              "agent_3"
+            ],
+            [
+              "agent_28",
+              "agent_9"
+            ],
+            [
+              "agent_4",
+              "agent_9"
+            ]
+          ],
+          "coordination_edges_threshold": 2,
+          "structurally_reachable": true,
+          "condition": "A",
+          "topology": "structured"
+        },
+        "B": {
+          "selected_agent_ids": [
+            "agent_0",
+            "agent_23",
+            "agent_28",
+            "agent_3",
+            "agent_4",
+            "agent_7"
+          ],
+          "structurally_available_pairs": 3,
+          "structurally_available_pair_list": [
+            [
+              "agent_23",
+              "agent_4"
+            ],
+            [
+              "agent_23",
+              "agent_7"
+            ],
+            [
+              "agent_3",
+              "agent_4"
+            ]
+          ],
+          "coordination_edges_threshold": 2,
+          "structurally_reachable": true,
+          "condition": "B",
+          "topology": "rewired"
+        },
+        "C": {
+          "selected_agent_ids": [
+            "agent_0",
+            "agent_20",
+            "agent_28",
+            "agent_3",
+            "agent_39",
+            "agent_4"
+          ],
+          "structurally_available_pairs": 1,
+          "structurally_available_pair_list": [
+            [
+              "agent_0",
+              "agent_3"
+            ]
+          ],
+          "coordination_edges_threshold": 2,
+          "structurally_reachable": false,
+          "condition": "C",
+          "topology": "structured"
+        },
+        "D": {
+          "selected_agent_ids": [
+            "agent_0",
+            "agent_19",
+            "agent_28",
+            "agent_3",
+            "agent_5",
+            "agent_7"
+          ],
+          "structurally_available_pairs": 4,
+          "structurally_available_pair_list": [
+            [
+              "agent_0",
+              "agent_19"
+            ],
+            [
+              "agent_19",
+              "agent_3"
+            ],
+            [
+              "agent_19",
+              "agent_5"
+            ],
+            [
+              "agent_5",
+              "agent_7"
+            ]
+          ],
+          "coordination_edges_threshold": 2,
+          "structurally_reachable": true,
+          "condition": "D",
+          "topology": "rewired"
+        }
+      }
+    },
+    {
+      "seed": 3,
+      "eligible": false,
+      "structured": {
+        "A": 2,
+        "C": 2
+      },
+      "rewired": {
+        "B": 1,
+        "D": 1
+      },
+      "per_condition": {
+        "A": {
+          "selected_agent_ids": [
+            "agent_16",
+            "agent_18",
+            "agent_23",
+            "agent_30",
+            "agent_34",
+            "agent_36"
+          ],
+          "structurally_available_pairs": 2,
+          "structurally_available_pair_list": [
+            [
+              "agent_16",
+              "agent_30"
+            ],
+            [
+              "agent_34",
+              "agent_36"
+            ]
+          ],
+          "coordination_edges_threshold": 2,
+          "structurally_reachable": true,
+          "condition": "A",
+          "topology": "structured"
+        },
+        "B": {
+          "selected_agent_ids": [
+            "agent_16",
+            "agent_18",
+            "agent_23",
+            "agent_30",
+            "agent_34",
+            "agent_39"
+          ],
+          "structurally_available_pairs": 1,
+          "structurally_available_pair_list": [
+            [
+              "agent_23",
+              "agent_30"
+            ]
+          ],
+          "coordination_edges_threshold": 2,
+          "structurally_reachable": false,
+          "condition": "B",
+          "topology": "rewired"
+        },
+        "C": {
+          "selected_agent_ids": [
+            "agent_16",
+            "agent_23",
+            "agent_24",
+            "agent_30",
+            "agent_34",
+            "agent_39"
+          ],
+          "structurally_available_pairs": 2,
+          "structurally_available_pair_list": [
+            [
+              "agent_16",
+              "agent_30"
+            ],
+            [
+              "agent_23",
+              "agent_24"
+            ]
+          ],
+          "coordination_edges_threshold": 2,
+          "structurally_reachable": true,
+          "condition": "C",
+          "topology": "structured"
+        },
+        "D": {
+          "selected_agent_ids": [
+            "agent_16",
+            "agent_18",
+            "agent_23",
+            "agent_30",
+            "agent_34",
+            "agent_36"
+          ],
+          "structurally_available_pairs": 1,
+          "structurally_available_pair_list": [
+            [
+              "agent_23",
+              "agent_30"
+            ]
+          ],
+          "coordination_edges_threshold": 2,
+          "structurally_reachable": false,
+          "condition": "D",
+          "topology": "rewired"
+        }
+      }
+    },
+    {
+      "seed": 4,
+      "eligible": false,
+      "structured": {
+        "A": 2,
+        "C": 1
+      },
+      "rewired": {
+        "B": 2,
+        "D": 3
+      },
+      "per_condition": {
+        "A": {
+          "selected_agent_ids": [
+            "agent_10",
+            "agent_14",
+            "agent_16",
+            "agent_22",
+            "agent_32",
+            "agent_39"
+          ],
+          "structurally_available_pairs": 2,
+          "structurally_available_pair_list": [
+            [
+              "agent_14",
+              "agent_16"
+            ],
+            [
+              "agent_16",
+              "agent_32"
+            ]
+          ],
+          "coordination_edges_threshold": 2,
+          "structurally_reachable": true,
+          "condition": "A",
+          "topology": "structured"
+        },
+        "B": {
+          "selected_agent_ids": [
+            "agent_10",
+            "agent_14",
+            "agent_16",
+            "agent_22",
+            "agent_32",
+            "agent_39"
+          ],
+          "structurally_available_pairs": 2,
+          "structurally_available_pair_list": [
+            [
+              "agent_10",
+              "agent_22"
+            ],
+            [
+              "agent_10",
+              "agent_39"
+            ]
+          ],
+          "coordination_edges_threshold": 2,
+          "structurally_reachable": true,
+          "condition": "B",
+          "topology": "rewired"
+        },
+        "C": {
+          "selected_agent_ids": [
+            "agent_13",
+            "agent_16",
+            "agent_22",
+            "agent_32",
+            "agent_39",
+            "agent_7"
+          ],
+          "structurally_available_pairs": 1,
+          "structurally_available_pair_list": [
+            [
+              "agent_16",
+              "agent_32"
+            ]
+          ],
+          "coordination_edges_threshold": 2,
+          "structurally_reachable": false,
+          "condition": "C",
+          "topology": "structured"
+        },
+        "D": {
+          "selected_agent_ids": [
+            "agent_16",
+            "agent_22",
+            "agent_32",
+            "agent_39",
+            "agent_7",
+            "agent_9"
+          ],
+          "structurally_available_pairs": 3,
+          "structurally_available_pair_list": [
+            [
+              "agent_16",
+              "agent_9"
+            ],
+            [
+              "agent_32",
+              "agent_7"
+            ],
+            [
+              "agent_39",
+              "agent_7"
+            ]
+          ],
+          "coordination_edges_threshold": 2,
+          "structurally_reachable": true,
+          "condition": "D",
+          "topology": "rewired"
+        }
+      }
+    },
+    {
+      "seed": 5,
+      "eligible": true,
+      "structured": {
+        "A": 5,
+        "C": 3
+      },
+      "rewired": {
+        "B": 4,
+        "D": 4
+      },
+      "per_condition": {
+        "A": {
+          "selected_agent_ids": [
+            "agent_13",
+            "agent_17",
+            "agent_19",
+            "agent_33",
+            "agent_36",
+            "agent_6"
+          ],
+          "structurally_available_pairs": 5,
+          "structurally_available_pair_list": [
+            [
+              "agent_17",
+              "agent_19"
+            ],
+            [
+              "agent_17",
+              "agent_36"
+            ],
+            [
+              "agent_17",
+              "agent_6"
+            ],
+            [
+              "agent_19",
+              "agent_6"
+            ],
+            [
+              "agent_36",
+              "agent_6"
+            ]
+          ],
+          "coordination_edges_threshold": 2,
+          "structurally_reachable": true,
+          "condition": "A",
+          "topology": "structured"
+        },
+        "B": {
+          "selected_agent_ids": [
+            "agent_17",
+            "agent_19",
+            "agent_24",
+            "agent_31",
+            "agent_36",
+            "agent_6"
+          ],
+          "structurally_available_pairs": 4,
+          "structurally_available_pair_list": [
+            [
+              "agent_19",
+              "agent_24"
+            ],
+            [
+              "agent_24",
+              "agent_31"
+            ],
+            [
+              "agent_24",
+              "agent_36"
+            ],
+            [
+              "agent_31",
+              "agent_36"
+            ]
+          ],
+          "coordination_edges_threshold": 2,
+          "structurally_reachable": true,
+          "condition": "B",
+          "topology": "rewired"
+        },
+        "C": {
+          "selected_agent_ids": [
+            "agent_19",
+            "agent_24",
+            "agent_31",
+            "agent_33",
+            "agent_36",
+            "agent_6"
+          ],
+          "structurally_available_pairs": 3,
+          "structurally_available_pair_list": [
+            [
+              "agent_19",
+              "agent_6"
+            ],
+            [
+              "agent_31",
+              "agent_33"
+            ],
+            [
+              "agent_36",
+              "agent_6"
+            ]
+          ],
+          "coordination_edges_threshold": 2,
+          "structurally_reachable": true,
+          "condition": "C",
+          "topology": "structured"
+        },
+        "D": {
+          "selected_agent_ids": [
+            "agent_19",
+            "agent_31",
+            "agent_33",
+            "agent_36",
+            "agent_5",
+            "agent_6"
+          ],
+          "structurally_available_pairs": 4,
+          "structurally_available_pair_list": [
+            [
+              "agent_31",
+              "agent_36"
+            ],
+            [
+              "agent_31",
+              "agent_5"
+            ],
+            [
+              "agent_36",
+              "agent_5"
+            ],
+            [
+              "agent_5",
+              "agent_6"
+            ]
+          ],
+          "coordination_edges_threshold": 2,
+          "structurally_reachable": true,
+          "condition": "D",
+          "topology": "rewired"
+        }
+      }
+    },
+    {
+      "seed": 6,
+      "eligible": false,
+      "structured": {
+        "A": 3,
+        "C": 1
+      },
+      "rewired": {
+        "B": 2,
+        "D": 3
+      },
+      "per_condition": {
+        "A": {
+          "selected_agent_ids": [
+            "agent_0",
+            "agent_10",
+            "agent_13",
+            "agent_18",
+            "agent_33",
+            "agent_38"
+          ],
+          "structurally_available_pairs": 3,
+          "structurally_available_pair_list": [
+            [
+              "agent_0",
+              "agent_33"
+            ],
+            [
+              "agent_10",
+              "agent_13"
+            ],
+            [
+              "agent_33",
+              "agent_38"
+            ]
+          ],
+          "coordination_edges_threshold": 2,
+          "structurally_reachable": true,
+          "condition": "A",
+          "topology": "structured"
+        },
+        "B": {
+          "selected_agent_ids": [
+            "agent_0",
+            "agent_10",
+            "agent_13",
+            "agent_21",
+            "agent_29",
+            "agent_38"
+          ],
+          "structurally_available_pairs": 2,
+          "structurally_available_pair_list": [
+            [
+              "agent_0",
+              "agent_21"
+            ],
+            [
+              "agent_10",
+              "agent_21"
+            ]
+          ],
+          "coordination_edges_threshold": 2,
+          "structurally_reachable": true,
+          "condition": "B",
+          "topology": "rewired"
+        },
+        "C": {
+          "selected_agent_ids": [
+            "agent_0",
+            "agent_10",
+            "agent_13",
+            "agent_21",
+            "agent_29",
+            "agent_38"
+          ],
+          "structurally_available_pairs": 1,
+          "structurally_available_pair_list": [
+            [
+              "agent_10",
+              "agent_13"
+            ]
+          ],
+          "coordination_edges_threshold": 2,
+          "structurally_reachable": false,
+          "condition": "C",
+          "topology": "structured"
+        },
+        "D": {
+          "selected_agent_ids": [
+            "agent_0",
+            "agent_10",
+            "agent_13",
+            "agent_21",
+            "agent_31",
+            "agent_38"
+          ],
+          "structurally_available_pairs": 3,
+          "structurally_available_pair_list": [
+            [
+              "agent_0",
+              "agent_21"
+            ],
+            [
+              "agent_10",
+              "agent_21"
+            ],
+            [
+              "agent_31",
+              "agent_38"
+            ]
+          ],
+          "coordination_edges_threshold": 2,
+          "structurally_reachable": true,
+          "condition": "D",
+          "topology": "rewired"
+        }
+      }
+    },
+    {
+      "seed": 7,
+      "eligible": true,
+      "structured": {
+        "A": 4,
+        "C": 3
+      },
+      "rewired": {
+        "B": 3,
+        "D": 2
+      },
+      "per_condition": {
+        "A": {
+          "selected_agent_ids": [
+            "agent_0",
+            "agent_15",
+            "agent_17",
+            "agent_18",
+            "agent_33",
+            "agent_35"
+          ],
+          "structurally_available_pairs": 4,
+          "structurally_available_pair_list": [
+            [
+              "agent_0",
+              "agent_15"
+            ],
+            [
+              "agent_0",
+              "agent_17"
+            ],
+            [
+              "agent_15",
+              "agent_17"
+            ],
+            [
+              "agent_33",
+              "agent_35"
+            ]
+          ],
+          "coordination_edges_threshold": 2,
+          "structurally_reachable": true,
+          "condition": "A",
+          "topology": "structured"
+        },
+        "B": {
+          "selected_agent_ids": [
+            "agent_15",
+            "agent_17",
+            "agent_18",
+            "agent_26",
+            "agent_33",
+            "agent_35"
+          ],
+          "structurally_available_pairs": 3,
+          "structurally_available_pair_list": [
+            [
+              "agent_15",
+              "agent_18"
+            ],
+            [
+              "agent_15",
+              "agent_35"
+            ],
+            [
+              "agent_18",
+              "agent_26"
+            ]
+          ],
+          "coordination_edges_threshold": 2,
+          "structurally_reachable": true,
+          "condition": "B",
+          "topology": "rewired"
+        },
+        "C": {
+          "selected_agent_ids": [
+            "agent_0",
+            "agent_15",
+            "agent_18",
+            "agent_33",
+            "agent_35",
+            "agent_39"
+          ],
+          "structurally_available_pairs": 3,
+          "structurally_available_pair_list": [
+            [
+              "agent_0",
+              "agent_15"
+            ],
+            [
+              "agent_0",
+              "agent_39"
+            ],
+            [
+              "agent_33",
+              "agent_35"
+            ]
+          ],
+          "coordination_edges_threshold": 2,
+          "structurally_reachable": true,
+          "condition": "C",
+          "topology": "structured"
+        },
+        "D": {
+          "selected_agent_ids": [
+            "agent_15",
+            "agent_17",
+            "agent_26",
+            "agent_33",
+            "agent_35",
+            "agent_39"
+          ],
+          "structurally_available_pairs": 2,
+          "structurally_available_pair_list": [
+            [
+              "agent_15",
+              "agent_35"
+            ],
+            [
+              "agent_35",
+              "agent_39"
+            ]
+          ],
+          "coordination_edges_threshold": 2,
+          "structurally_reachable": true,
+          "condition": "D",
+          "topology": "rewired"
+        }
+      }
+    },
+    {
+      "seed": 8,
+      "eligible": false,
+      "structured": {
+        "A": 1,
+        "C": 1
+      },
+      "rewired": {
+        "B": 1,
+        "D": 2
+      },
+      "per_condition": {
+        "A": {
+          "selected_agent_ids": [
+            "agent_11",
+            "agent_19",
+            "agent_20",
+            "agent_31",
+            "agent_34",
+            "agent_39"
+          ],
+          "structurally_available_pairs": 1,
+          "structurally_available_pair_list": [
+            [
+              "agent_20",
+              "agent_39"
+            ]
+          ],
+          "coordination_edges_threshold": 2,
+          "structurally_reachable": false,
+          "condition": "A",
+          "topology": "structured"
+        },
+        "B": {
+          "selected_agent_ids": [
+            "agent_11",
+            "agent_16",
+            "agent_20",
+            "agent_31",
+            "agent_34",
+            "agent_39"
+          ],
+          "structurally_available_pairs": 1,
+          "structurally_available_pair_list": [
+            [
+              "agent_16",
+              "agent_31"
+            ]
+          ],
+          "coordination_edges_threshold": 2,
+          "structurally_reachable": false,
+          "condition": "B",
+          "topology": "rewired"
+        },
+        "C": {
+          "selected_agent_ids": [
+            "agent_11",
+            "agent_19",
+            "agent_20",
+            "agent_31",
+            "agent_34",
+            "agent_39"
+          ],
+          "structurally_available_pairs": 1,
+          "structurally_available_pair_list": [
+            [
+              "agent_20",
+              "agent_39"
+            ]
+          ],
+          "coordination_edges_threshold": 2,
+          "structurally_reachable": false,
+          "condition": "C",
+          "topology": "structured"
+        },
+        "D": {
+          "selected_agent_ids": [
+            "agent_11",
+            "agent_16",
+            "agent_19",
+            "agent_20",
+            "agent_31",
+            "agent_39"
+          ],
+          "structurally_available_pairs": 2,
+          "structurally_available_pair_list": [
+            [
+              "agent_16",
+              "agent_19"
+            ],
+            [
+              "agent_16",
+              "agent_31"
+            ]
+          ],
+          "coordination_edges_threshold": 2,
+          "structurally_reachable": true,
+          "condition": "D",
+          "topology": "rewired"
+        }
+      }
+    },
+    {
+      "seed": 9,
+      "eligible": false,
+      "structured": {
+        "A": 1,
+        "C": 1
+      },
+      "rewired": {
+        "B": 2,
+        "D": 3
+      },
+      "per_condition": {
+        "A": {
+          "selected_agent_ids": [
+            "agent_0",
+            "agent_1",
+            "agent_13",
+            "agent_17",
+            "agent_21",
+            "agent_29"
+          ],
+          "structurally_available_pairs": 1,
+          "structurally_available_pair_list": [
+            [
+              "agent_0",
+              "agent_1"
+            ]
+          ],
+          "coordination_edges_threshold": 2,
+          "structurally_reachable": false,
+          "condition": "A",
+          "topology": "structured"
+        },
+        "B": {
+          "selected_agent_ids": [
+            "agent_0",
+            "agent_1",
+            "agent_13",
+            "agent_17",
+            "agent_21",
+            "agent_29"
+          ],
+          "structurally_available_pairs": 2,
+          "structurally_available_pair_list": [
+            [
+              "agent_0",
+              "agent_17"
+            ],
+            [
+              "agent_1",
+              "agent_17"
+            ]
+          ],
+          "coordination_edges_threshold": 2,
+          "structurally_reachable": true,
+          "condition": "B",
+          "topology": "rewired"
+        },
+        "C": {
+          "selected_agent_ids": [
+            "agent_1",
+            "agent_13",
+            "agent_17",
+            "agent_21",
+            "agent_24",
+            "agent_34"
+          ],
+          "structurally_available_pairs": 1,
+          "structurally_available_pair_list": [
+            [
+              "agent_21",
+              "agent_24"
+            ]
+          ],
+          "coordination_edges_threshold": 2,
+          "structurally_reachable": false,
+          "condition": "C",
+          "topology": "structured"
+        },
+        "D": {
+          "selected_agent_ids": [
+            "agent_0",
+            "agent_1",
+            "agent_17",
+            "agent_21",
+            "agent_24",
+            "agent_25"
+          ],
+          "structurally_available_pairs": 3,
+          "structurally_available_pair_list": [
+            [
+              "agent_0",
+              "agent_17"
+            ],
+            [
+              "agent_1",
+              "agent_17"
+            ],
+            [
+              "agent_21",
+              "agent_25"
+            ]
+          ],
+          "coordination_edges_threshold": 2,
+          "structurally_reachable": true,
+          "condition": "D",
+          "topology": "rewired"
+        }
+      }
+    },
+    {
+      "seed": 10,
+      "eligible": false,
+      "structured": {
+        "A": 0,
+        "C": 1
+      },
+      "rewired": {
+        "B": 2,
+        "D": 2
+      },
+      "per_condition": {
+        "A": {
+          "selected_agent_ids": [
+            "agent_16",
+            "agent_17",
+            "agent_29",
+            "agent_3",
+            "agent_34",
+            "agent_8"
+          ],
+          "structurally_available_pairs": 0,
+          "structurally_available_pair_list": [],
+          "coordination_edges_threshold": 2,
+          "structurally_reachable": false,
+          "condition": "A",
+          "topology": "structured"
+        },
+        "B": {
+          "selected_agent_ids": [
+            "agent_0",
+            "agent_10",
+            "agent_29",
+            "agent_3",
+            "agent_34",
+            "agent_8"
+          ],
+          "structurally_available_pairs": 2,
+          "structurally_available_pair_list": [
+            [
+              "agent_10",
+              "agent_34"
+            ],
+            [
+              "agent_29",
+              "agent_8"
+            ]
+          ],
+          "coordination_edges_threshold": 2,
+          "structurally_reachable": true,
+          "condition": "B",
+          "topology": "rewired"
+        },
+        "C": {
+          "selected_agent_ids": [
+            "agent_0",
+            "agent_10",
+            "agent_17",
+            "agent_3",
+            "agent_34",
+            "agent_8"
+          ],
+          "structurally_available_pairs": 1,
+          "structurally_available_pair_list": [
+            [
+              "agent_10",
+              "agent_8"
+            ]
+          ],
+          "coordination_edges_threshold": 2,
+          "structurally_reachable": false,
+          "condition": "C",
+          "topology": "structured"
+        },
+        "D": {
+          "selected_agent_ids": [
+            "agent_0",
+            "agent_10",
+            "agent_16",
+            "agent_17",
+            "agent_29",
+            "agent_3"
+          ],
+          "structurally_available_pairs": 2,
+          "structurally_available_pair_list": [
+            [
+              "agent_10",
+              "agent_16"
+            ],
+            [
+              "agent_16",
+              "agent_29"
+            ]
+          ],
+          "coordination_edges_threshold": 2,
+          "structurally_reachable": true,
+          "condition": "D",
+          "topology": "rewired"
+        }
+      }
+    },
+    {
+      "seed": 11,
+      "eligible": true,
+      "structured": {
+        "A": 5,
+        "C": 5
+      },
+      "rewired": {
+        "B": 2,
+        "D": 3
+      },
+      "per_condition": {
+        "A": {
+          "selected_agent_ids": [
+            "agent_0",
+            "agent_14",
+            "agent_15",
+            "agent_16",
+            "agent_25",
+            "agent_34"
+          ],
+          "structurally_available_pairs": 5,
+          "structurally_available_pair_list": [
+            [
+              "agent_14",
+              "agent_15"
+            ],
+            [
+              "agent_14",
+              "agent_16"
+            ],
+            [
+              "agent_15",
+              "agent_34"
+            ],
+            [
+              "agent_16",
+              "agent_25"
+            ],
+            [
+              "agent_25",
+              "agent_34"
+            ]
+          ],
+          "coordination_edges_threshold": 2,
+          "structurally_reachable": true,
+          "condition": "A",
+          "topology": "structured"
+        },
+        "B": {
+          "selected_agent_ids": [
+            "agent_0",
+            "agent_14",
+            "agent_16",
+            "agent_29",
+            "agent_33",
+            "agent_34"
+          ],
+          "structurally_available_pairs": 2,
+          "structurally_available_pair_list": [
+            [
+              "agent_0",
+              "agent_14"
+            ],
+            [
+              "agent_0",
+              "agent_16"
+            ]
+          ],
+          "coordination_edges_threshold": 2,
+          "structurally_reachable": true,
+          "condition": "B",
+          "topology": "rewired"
+        },
+        "C": {
+          "selected_agent_ids": [
+            "agent_14",
+            "agent_15",
+            "agent_16",
+            "agent_25",
+            "agent_29",
+            "agent_34"
+          ],
+          "structurally_available_pairs": 5,
+          "structurally_available_pair_list": [
+            [
+              "agent_14",
+              "agent_15"
+            ],
+            [
+              "agent_14",
+              "agent_16"
+            ],
+            [
+              "agent_15",
+              "agent_34"
+            ],
+            [
+              "agent_16",
+              "agent_25"
+            ],
+            [
+              "agent_25",
+              "agent_34"
+            ]
+          ],
+          "coordination_edges_threshold": 2,
+          "structurally_reachable": true,
+          "condition": "C",
+          "topology": "structured"
+        },
+        "D": {
+          "selected_agent_ids": [
+            "agent_0",
+            "agent_14",
+            "agent_15",
+            "agent_16",
+            "agent_25",
+            "agent_34"
+          ],
+          "structurally_available_pairs": 3,
+          "structurally_available_pair_list": [
+            [
+              "agent_0",
+              "agent_14"
+            ],
+            [
+              "agent_0",
+              "agent_16"
+            ],
+            [
+              "agent_14",
+              "agent_15"
+            ]
+          ],
+          "coordination_edges_threshold": 2,
+          "structurally_reachable": true,
+          "condition": "D",
+          "topology": "rewired"
+        }
+      }
+    },
+    {
+      "seed": 12,
+      "eligible": false,
+      "structured": {
+        "A": 3,
+        "C": 3
+      },
+      "rewired": {
+        "B": 1,
+        "D": 1
+      },
+      "per_condition": {
+        "A": {
+          "selected_agent_ids": [
+            "agent_20",
+            "agent_24",
+            "agent_26",
+            "agent_37",
+            "agent_4",
+            "agent_7"
+          ],
+          "structurally_available_pairs": 3,
+          "structurally_available_pair_list": [
+            [
+              "agent_20",
+              "agent_24"
+            ],
+            [
+              "agent_20",
+              "agent_7"
+            ],
+            [
+              "agent_4",
+              "agent_7"
+            ]
+          ],
+          "coordination_edges_threshold": 2,
+          "structurally_reachable": true,
+          "condition": "A",
+          "topology": "structured"
+        },
+        "B": {
+          "selected_agent_ids": [
+            "agent_17",
+            "agent_24",
+            "agent_26",
+            "agent_37",
+            "agent_4",
+            "agent_7"
+          ],
+          "structurally_available_pairs": 1,
+          "structurally_available_pair_list": [
+            [
+              "agent_17",
+              "agent_26"
+            ]
+          ],
+          "coordination_edges_threshold": 2,
+          "structurally_reachable": false,
+          "condition": "B",
+          "topology": "rewired"
+        },
+        "C": {
+          "selected_agent_ids": [
+            "agent_24",
+            "agent_26",
+            "agent_27",
+            "agent_37",
+            "agent_4",
+            "agent_7"
+          ],
+          "structurally_available_pairs": 3,
+          "structurally_available_pair_list": [
+            [
+              "agent_24",
+              "agent_27"
+            ],
+            [
+              "agent_27",
+              "agent_37"
+            ],
+            [
+              "agent_4",
+              "agent_7"
+            ]
+          ],
+          "coordination_edges_threshold": 2,
+          "structurally_reachable": true,
+          "condition": "C",
+          "topology": "structured"
+        },
+        "D": {
+          "selected_agent_ids": [
+            "agent_12",
+            "agent_24",
+            "agent_27",
+            "agent_30",
+            "agent_37",
+            "agent_4"
+          ],
+          "structurally_available_pairs": 1,
+          "structurally_available_pair_list": [
+            [
+              "agent_27",
+              "agent_4"
+            ]
+          ],
+          "coordination_edges_threshold": 2,
+          "structurally_reachable": false,
+          "condition": "D",
+          "topology": "rewired"
+        }
+      }
+    },
+    {
+      "seed": 13,
+      "eligible": true,
+      "structured": {
+        "A": 4,
+        "C": 2
+      },
+      "rewired": {
+        "B": 3,
+        "D": 3
+      },
+      "per_condition": {
+        "A": {
+          "selected_agent_ids": [
+            "agent_10",
+            "agent_30",
+            "agent_32",
+            "agent_35",
+            "agent_37",
+            "agent_9"
+          ],
+          "structurally_available_pairs": 4,
+          "structurally_available_pair_list": [
+            [
+              "agent_10",
+              "agent_9"
+            ],
+            [
+              "agent_30",
+              "agent_37"
+            ],
+            [
+              "agent_32",
+              "agent_35"
+            ],
+            [
+              "agent_35",
+              "agent_37"
+            ]
+          ],
+          "coordination_edges_threshold": 2,
+          "structurally_reachable": true,
+          "condition": "A",
+          "topology": "structured"
+        },
+        "B": {
+          "selected_agent_ids": [
+            "agent_1",
+            "agent_10",
+            "agent_32",
+            "agent_35",
+            "agent_37",
+            "agent_9"
+          ],
+          "structurally_available_pairs": 3,
+          "structurally_available_pair_list": [
+            [
+              "agent_1",
+              "agent_32"
+            ],
+            [
+              "agent_35",
+              "agent_37"
+            ],
+            [
+              "agent_35",
+              "agent_9"
+            ]
+          ],
+          "coordination_edges_threshold": 2,
+          "structurally_reachable": true,
+          "condition": "B",
+          "topology": "rewired"
+        },
+        "C": {
+          "selected_agent_ids": [
+            "agent_10",
+            "agent_26",
+            "agent_30",
+            "agent_32",
+            "agent_35",
+            "agent_9"
+          ],
+          "structurally_available_pairs": 2,
+          "structurally_available_pair_list": [
+            [
+              "agent_10",
+              "agent_9"
+            ],
+            [
+              "agent_32",
+              "agent_35"
+            ]
+          ],
+          "coordination_edges_threshold": 2,
+          "structurally_reachable": true,
+          "condition": "C",
+          "topology": "structured"
+        },
+        "D": {
+          "selected_agent_ids": [
+            "agent_10",
+            "agent_30",
+            "agent_32",
+            "agent_35",
+            "agent_37",
+            "agent_9"
+          ],
+          "structurally_available_pairs": 3,
+          "structurally_available_pair_list": [
+            [
+              "agent_30",
+              "agent_35"
+            ],
+            [
+              "agent_35",
+              "agent_37"
+            ],
+            [
+              "agent_35",
+              "agent_9"
+            ]
+          ],
+          "coordination_edges_threshold": 2,
+          "structurally_reachable": true,
+          "condition": "D",
+          "topology": "rewired"
+        }
+      }
+    },
+    {
+      "seed": 14,
+      "eligible": true,
+      "structured": {
+        "A": 2,
+        "C": 2
+      },
+      "rewired": {
+        "B": 5,
+        "D": 3
+      },
+      "per_condition": {
+        "A": {
+          "selected_agent_ids": [
+            "agent_18",
+            "agent_2",
+            "agent_21",
+            "agent_27",
+            "agent_5",
+            "agent_9"
+          ],
+          "structurally_available_pairs": 2,
+          "structurally_available_pair_list": [
+            [
+              "agent_2",
+              "agent_5"
+            ],
+            [
+              "agent_21",
+              "agent_9"
+            ]
+          ],
+          "coordination_edges_threshold": 2,
+          "structurally_reachable": true,
+          "condition": "A",
+          "topology": "structured"
+        },
+        "B": {
+          "selected_agent_ids": [
+            "agent_18",
+            "agent_2",
+            "agent_21",
+            "agent_27",
+            "agent_5",
+            "agent_9"
+          ],
+          "structurally_available_pairs": 5,
+          "structurally_available_pair_list": [
+            [
+              "agent_18",
+              "agent_5"
+            ],
+            [
+              "agent_2",
+              "agent_21"
+            ],
+            [
+              "agent_2",
+              "agent_9"
+            ],
+            [
+              "agent_21",
+              "agent_9"
+            ],
+            [
+              "agent_27",
+              "agent_9"
+            ]
+          ],
+          "coordination_edges_threshold": 2,
+          "structurally_reachable": true,
+          "condition": "B",
+          "topology": "rewired"
+        },
+        "C": {
+          "selected_agent_ids": [
+            "agent_18",
+            "agent_2",
+            "agent_21",
+            "agent_27",
+            "agent_5",
+            "agent_9"
+          ],
+          "structurally_available_pairs": 2,
+          "structurally_available_pair_list": [
+            [
+              "agent_2",
+              "agent_5"
+            ],
+            [
+              "agent_21",
+              "agent_9"
+            ]
+          ],
+          "coordination_edges_threshold": 2,
+          "structurally_reachable": true,
+          "condition": "C",
+          "topology": "structured"
+        },
+        "D": {
+          "selected_agent_ids": [
+            "agent_0",
+            "agent_18",
+            "agent_2",
+            "agent_27",
+            "agent_5",
+            "agent_9"
+          ],
+          "structurally_available_pairs": 3,
+          "structurally_available_pair_list": [
+            [
+              "agent_18",
+              "agent_5"
+            ],
+            [
+              "agent_2",
+              "agent_9"
+            ],
+            [
+              "agent_27",
+              "agent_9"
+            ]
+          ],
+          "coordination_edges_threshold": 2,
+          "structurally_reachable": true,
+          "condition": "D",
+          "topology": "rewired"
+        }
+      }
+    }
+  ]
+}

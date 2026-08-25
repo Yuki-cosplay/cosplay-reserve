@@ -39,15 +39,31 @@ Desktop.ini
 *.swp
 
 # Project outputs
+# 既定は除外。公開対象だけを ! で戻す（許可リスト方式）。
+# outputs/ 全体の ignore を解除しないこと — 解除すると今後の run が無言で
+# 追跡対象に入り、提出後の実行結果が意図せず公開される。
 output/
-outputs/
+outputs/*
+!outputs/main_experiment/
+!outputs/live_penalty_zero/
+!outputs/sensitivity_replay/
+!outputs/holdout/
+!outputs/20260816T*_seed*/
+!outputs/seed_eligibility.json
+!outputs/seed_eligibility_INVALIDATED_prescan.json
+!outputs/m1_main_summary.csv
+!outputs/m1_holdout_summary.csv
 results/
+# 注意: *.log はリポジトリ全体に効く。今後 .log 拡張子で生ログを置くと、
+# outputs/ の許可リストに入れていても無言で除外される。
+# 公開したい生ログは .json / .csv / .jsonl で出力すること。
 *.log
 
 # 可視化専用の観測 trace（研究成果物ではない。80 run で約 882MB）
 # 再生成: python -m experiments.m1_trace_and_verify --seeds 20
-# 決定論の検証レポートだけは追跡する（下の否定パターン）
-# （ディレクトリ自体を ignore すると配下の否定パターンが効かないため、
-#   ファイル種別で除外する）
+# ここは許可リスト方式ではなくファイル種別での除外。
+# ディレクトリごと ignore するのではなく *.jsonl と meta.json だけを外すので、
+# figures/demo_video/data/m1_trace/hash_verification.json は
+# どのパターンにも一致せず、結果として追跡される（決定論の検証レポート）。
 figures/demo_video/data/**/*.jsonl
 figures/demo_video/data/**/meta.json

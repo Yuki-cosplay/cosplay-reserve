@@ -1,0 +1,302 @@
+{
+  "action_time_cost": {
+    "ask": 0.2,
+    "idle": 0.0,
+    "make": 1.0,
+    "observe": 0.1,
+    "practice": 0.5,
+    "share": 0.2
+  },
+  "agent_init": {
+    "assets": {
+      "asset_0": {
+        "p": 0.35,
+        "type": "bernoulli"
+      },
+      "asset_1": {
+        "p": 0.15,
+        "type": "bernoulli"
+      },
+      "asset_2": {
+        "probs": [
+          0.3,
+          0.4,
+          0.2,
+          0.1
+        ],
+        "type": "categorical",
+        "values": [
+          0,
+          1,
+          2,
+          3
+        ]
+      },
+      "asset_3": {
+        "p": 0.25,
+        "type": "bernoulli"
+      }
+    },
+    "skills": {
+      "skill_0": {
+        "a": 1.5,
+        "b": 8.0,
+        "type": "beta"
+      },
+      "skill_1": {
+        "a": 1.5,
+        "b": 8.0,
+        "type": "beta"
+      },
+      "skill_2": {
+        "a": 1.5,
+        "b": 8.0,
+        "type": "beta"
+      },
+      "skill_3": {
+        "a": 1.5,
+        "b": 8.0,
+        "type": "beta"
+      },
+      "skill_4": {
+        "a": 1.5,
+        "b": 8.0,
+        "type": "beta"
+      },
+      "skill_5": {
+        "a": 1.5,
+        "b": 8.0,
+        "type": "beta"
+      }
+    },
+    "traits": {
+      "helping_norm": {
+        "a": 2.5,
+        "b": 2.5,
+        "type": "beta"
+      },
+      "imitation_tendency": {
+        "a": 2.5,
+        "b": 2.5,
+        "type": "beta"
+      },
+      "nonparticipant_participation_level": {
+        "type": "constant",
+        "value": 0.0
+      },
+      "participation_level": {
+        "a": 2.0,
+        "b": 3.0,
+        "type": "beta"
+      },
+      "sharing_tendency": {
+        "a": 2.5,
+        "b": 2.5,
+        "type": "beta"
+      },
+      "time_budget": {
+        "type": "constant",
+        "value": 3.0
+      },
+      "trust_fixed": {
+        "type": "constant",
+        "value": 0.5
+      }
+    }
+  },
+  "condition": "A",
+  "decision": {
+    "observation_noise": 0.05
+  },
+  "decision_weights": {
+    "ask": 0.5,
+    "idle": 0.1,
+    "make": 0.7,
+    "observe": 0.3,
+    "practice": 0.4,
+    "share": 0.35
+  },
+  "learning": {
+    "asset_bonus": 0.2,
+    "base_reduction": 0.25,
+    "decay_rate": 0.005,
+    "learn_rate_failure_ratio": 0.25,
+    "learn_rate_success": 0.04,
+    "method_discovery_prob": 0.15,
+    "temperature": 0.15
+  },
+  "materials": {
+    "initial": {
+      "mat_0": 5.0,
+      "mat_1": 5.0,
+      "mat_2": 5.0,
+      "mat_3": 5.0,
+      "mat_4": 5.0
+    },
+    "inventory_cap": {
+      "mat_0": 10.0,
+      "mat_1": 10.0,
+      "mat_2": 10.0,
+      "mat_3": 10.0,
+      "mat_4": 10.0
+    },
+    "replenish_rate": {
+      "mat_0": 1.0,
+      "mat_1": 1.0,
+      "mat_2": 1.0,
+      "mat_3": 1.0,
+      "mat_4": 1.0
+    }
+  },
+  "network": {
+    "assortativity": 0.3,
+    "assortativity_swaps": 5,
+    "mean_degree": 6,
+    "rewire_p": 0.1,
+    "swap_multiplier": 10
+  },
+  "peer_learning_enabled": true,
+  "projects": [
+    {
+      "base_difficulty": 0.25,
+      "material_cost": {
+        "mat_0": 1.0,
+        "mat_2": 1.0,
+        "mat_4": 2.0
+      },
+      "primary_skill": "skill_2",
+      "project_id": "proj_0",
+      "required_asset": "asset_2",
+      "target_profile": {
+        "attr_0": 0.0,
+        "attr_1": 0.0,
+        "attr_2": 0.0,
+        "attr_3": 0.0,
+        "attr_4": 0.0,
+        "attr_5": 0.0,
+        "attr_6": 0.0
+      }
+    },
+    {
+      "base_difficulty": 0.7,
+      "material_cost": {
+        "mat_3": 2.0
+      },
+      "primary_skill": "skill_1",
+      "project_id": "proj_1",
+      "required_asset": null,
+      "target_profile": {
+        "attr_0": 0.0,
+        "attr_1": 0.0,
+        "attr_2": 0.0,
+        "attr_3": 0.0,
+        "attr_4": 0.0,
+        "attr_5": 0.0,
+        "attr_6": 0.0
+      }
+    },
+    {
+      "base_difficulty": 0.4,
+      "material_cost": {
+        "mat_1": 1.0,
+        "mat_4": 1.0
+      },
+      "primary_skill": "skill_0",
+      "project_id": "proj_2",
+      "required_asset": null,
+      "target_profile": {
+        "attr_0": 0.0,
+        "attr_1": 0.0,
+        "attr_2": 0.0,
+        "attr_3": 0.0,
+        "attr_4": 0.0,
+        "attr_5": 0.0,
+        "attr_6": 0.0
+      }
+    },
+    {
+      "base_difficulty": 0.8,
+      "material_cost": {
+        "mat_0": 2.0,
+        "mat_1": 1.0
+      },
+      "primary_skill": "skill_3",
+      "project_id": "proj_3",
+      "required_asset": "asset_1",
+      "target_profile": {
+        "attr_0": 0.0,
+        "attr_1": 0.0,
+        "attr_2": 0.0,
+        "attr_3": 0.0,
+        "attr_4": 0.0,
+        "attr_5": 0.0,
+        "attr_6": 0.0
+      }
+    },
+    {
+      "base_difficulty": 0.3,
+      "material_cost": {
+        "mat_2": 2.0
+      },
+      "primary_skill": "skill_5",
+      "project_id": "proj_4",
+      "required_asset": "asset_0",
+      "target_profile": {
+        "attr_0": 0.0,
+        "attr_1": 0.0,
+        "attr_2": 0.0,
+        "attr_3": 0.0,
+        "attr_4": 0.0,
+        "attr_5": 0.0,
+        "attr_6": 0.0
+      }
+    },
+    {
+      "base_difficulty": 0.55,
+      "material_cost": {
+        "mat_1": 2.0,
+        "mat_2": 1.0,
+        "mat_3": 1.0
+      },
+      "primary_skill": "skill_4",
+      "project_id": "proj_5",
+      "required_asset": "asset_3",
+      "target_profile": {
+        "attr_0": 0.0,
+        "attr_1": 0.0,
+        "attr_2": 0.0,
+        "attr_3": 0.0,
+        "attr_4": 0.0,
+        "attr_5": 0.0,
+        "attr_6": 0.0
+      }
+    }
+  ],
+  "run": {
+    "output_dir": "outputs/",
+    "phase": "accumulation",
+    "seed": 16,
+    "step_hours": 168,
+    "steps": 156
+  },
+  "stage_thresholds": {
+    "advanced_assets": 2,
+    "advanced_breadth": 3,
+    "advanced_projects": 10,
+    "advanced_skill": 0.7,
+    "breadth_threshold": 0.35,
+    "maker_projects": 3,
+    "maker_skill": 0.45
+  },
+  "time": {
+    "max_actions_per_step": 6
+  },
+  "topology": "structured",
+  "world": {
+    "n_assets": 4,
+    "n_materials": 5,
+    "n_nonparticipant_agents": 10,
+    "n_participant_agents": 30,
+    "n_skills": 6
+  }
+}

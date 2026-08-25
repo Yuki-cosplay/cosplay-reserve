@@ -1,0 +1,1242 @@
+[
+  {
+    "id": "agent_0",
+    "is_participant": true,
+    "skills": {
+      "skill_0": "0.9980783248282133",
+      "skill_1": "0.8636965415979123",
+      "skill_2": "0.0998343485776579",
+      "skill_3": "0.08216038955948207",
+      "skill_4": "0.08549809239461587",
+      "skill_5": "0.8681386890205437"
+    },
+    "assets": {
+      "asset_0": "True",
+      "asset_1": "False",
+      "asset_2": "2",
+      "asset_3": "False"
+    },
+    "materials": {
+      "mat_0": "10.0",
+      "mat_1": "8.0",
+      "mat_2": "0.0",
+      "mat_3": "9.0",
+      "mat_4": "0.0"
+    },
+    "time_budget": "3.0",
+    "participation_level": "0.41031824909553155",
+    "sharing_tendency": "0.23942553560378702",
+    "imitation_tendency": "0.653079919081435",
+    "helping_norm": "0.48833321931816626",
+    "maker_stage": "advanced_maker"
+  },
+  {
+    "id": "agent_1",
+    "is_participant": false,
+    "skills": {
+      "skill_0": "0.23956262733645933",
+      "skill_1": "0.24414200252185098",
+      "skill_2": "0.24332206005620807",
+      "skill_3": "0.24208712276287433",
+      "skill_4": "0.23856099238818643",
+      "skill_5": "0.2461328460616006"
+    },
+    "assets": {
+      "asset_0": "False",
+      "asset_1": "False",
+      "asset_2": "0",
+      "asset_3": "True"
+    },
+    "materials": {
+      "mat_0": "10.0",
+      "mat_1": "10.0",
+      "mat_2": "10.0",
+      "mat_3": "10.0",
+      "mat_4": "10.0"
+    },
+    "time_budget": "3.0",
+    "participation_level": "0.0",
+    "sharing_tendency": "0.2963597209481301",
+    "imitation_tendency": "0.4080204504682199",
+    "helping_norm": "0.5780512879645578",
+    "maker_stage": "consumer"
+  },
+  {
+    "id": "agent_10",
+    "is_participant": false,
+    "skills": {
+      "skill_0": "0.2645991501352166",
+      "skill_1": "0.26601065261823365",
+      "skill_2": "0.2604219958062914",
+      "skill_3": "0.26356863869815933",
+      "skill_4": "0.2587777643527694",
+      "skill_5": "0.26239262485124487"
+    },
+    "assets": {
+      "asset_0": "False",
+      "asset_1": "True",
+      "asset_2": "1",
+      "asset_3": "False"
+    },
+    "materials": {
+      "mat_0": "10.0",
+      "mat_1": "10.0",
+      "mat_2": "10.0",
+      "mat_3": "10.0",
+      "mat_4": "10.0"
+    },
+    "time_budget": "3.0",
+    "participation_level": "0.0",
+    "sharing_tendency": "0.766393589142631",
+    "imitation_tendency": "0.3237627106813944",
+    "helping_norm": "0.297705923891818",
+    "maker_stage": "consumer"
+  },
+  {
+    "id": "agent_11",
+    "is_participant": true,
+    "skills": {
+      "skill_0": "0.9976682265937802",
+      "skill_1": "0.7990660156519386",
+      "skill_2": "0.19663533588158166",
+      "skill_3": "0.19982458687593355",
+      "skill_4": "0.19601106220782674",
+      "skill_5": "0.8645703437829824"
+    },
+    "assets": {
+      "asset_0": "True",
+      "asset_1": "False",
+      "asset_2": "1",
+      "asset_3": "True"
+    },
+    "materials": {
+      "mat_0": "10.0",
+      "mat_1": "0.0",
+      "mat_2": "0.0",
+      "mat_3": "9.0",
+      "mat_4": "0.0"
+    },
+    "time_budget": "3.0",
+    "participation_level": "0.421840728177646",
+    "sharing_tendency": "0.3431000997198389",
+    "imitation_tendency": "0.7617130920916604",
+    "helping_norm": "0.5986546214071253",
+    "maker_stage": "advanced_maker"
+  },
+  {
+    "id": "agent_12",
+    "is_participant": true,
+    "skills": {
+      "skill_0": "0.9977714631290014",
+      "skill_1": "0.8021071072129753",
+      "skill_2": "0.2270250329605521",
+      "skill_3": "0.22902272007242677",
+      "skill_4": "0.23079872025864384",
+      "skill_5": "0.23401972379593267"
+    },
+    "assets": {
+      "asset_0": "False",
+      "asset_1": "False",
+      "asset_2": "2",
+      "asset_3": "False"
+    },
+    "materials": {
+      "mat_0": "10.0",
+      "mat_1": "5.0",
+      "mat_2": "10.0",
+      "mat_3": "1.0",
+      "mat_4": "0.0"
+    },
+    "time_budget": "3.0",
+    "participation_level": "0.30146949462870376",
+    "sharing_tendency": "0.7599913164973683",
+    "imitation_tendency": "0.5217005108902575",
+    "helping_norm": "0.8003873046608913",
+    "maker_stage": "maker"
+  },
+  {
+    "id": "agent_13",
+    "is_participant": false,
+    "skills": {
+      "skill_0": "0.26497579660600973",
+      "skill_1": "0.2614105052510249",
+      "skill_2": "0.2658592355045465",
+      "skill_3": "0.2630016828822876",
+      "skill_4": "0.26734468811101514",
+      "skill_5": "0.2596709939943707"
+    },
+    "assets": {
+      "asset_0": "True",
+      "asset_1": "False",
+      "asset_2": "0",
+      "asset_3": "True"
+    },
+    "materials": {
+      "mat_0": "10.0",
+      "mat_1": "10.0",
+      "mat_2": "10.0",
+      "mat_3": "10.0",
+      "mat_4": "10.0"
+    },
+    "time_budget": "3.0",
+    "participation_level": "0.0",
+    "sharing_tendency": "0.13379178606833766",
+    "imitation_tendency": "0.24469685560337454",
+    "helping_norm": "0.6951664141822618",
+    "maker_stage": "consumer"
+  },
+  {
+    "id": "agent_14",
+    "is_participant": true,
+    "skills": {
+      "skill_0": "0.997985781420155",
+      "skill_1": "0.8171935783313994",
+      "skill_2": "0.18987409941611028",
+      "skill_3": "0.1946787882782006",
+      "skill_4": "0.19203805166762483",
+      "skill_5": "0.18671346757828589"
+    },
+    "assets": {
+      "asset_0": "False",
+      "asset_1": "False",
+      "asset_2": "1",
+      "asset_3": "True"
+    },
+    "materials": {
+      "mat_0": "10.0",
+      "mat_1": "0.0",
+      "mat_2": "10.0",
+      "mat_3": "0.0",
+      "mat_4": "0.0"
+    },
+    "time_budget": "3.0",
+    "participation_level": "0.6257359507371578",
+    "sharing_tendency": "0.18136193221180105",
+    "imitation_tendency": "0.5772526869774806",
+    "helping_norm": "0.16538170547982764",
+    "maker_stage": "maker"
+  },
+  {
+    "id": "agent_15",
+    "is_participant": true,
+    "skills": {
+      "skill_0": "0.9979536788133723",
+      "skill_1": "0.8520273117144975",
+      "skill_2": "0.12617577349780046",
+      "skill_3": "0.10299260040593537",
+      "skill_4": "0.09929999488696956",
+      "skill_5": "0.8610847545118282"
+    },
+    "assets": {
+      "asset_0": "True",
+      "asset_1": "False",
+      "asset_2": "0",
+      "asset_3": "False"
+    },
+    "materials": {
+      "mat_0": "10.0",
+      "mat_1": "5.0",
+      "mat_2": "1.0",
+      "mat_3": "8.0",
+      "mat_4": "5.0"
+    },
+    "time_budget": "3.0",
+    "participation_level": "0.7711445838129631",
+    "sharing_tendency": "0.8653454973749233",
+    "imitation_tendency": "0.4418963096937143",
+    "helping_norm": "0.2961104308355981",
+    "maker_stage": "maker"
+  },
+  {
+    "id": "agent_16",
+    "is_participant": true,
+    "skills": {
+      "skill_0": "0.9984790130710092",
+      "skill_1": "0.8413030664833631",
+      "skill_2": "0.19924258548687976",
+      "skill_3": "0.1974339067798455",
+      "skill_4": "0.20390341984860064",
+      "skill_5": "0.20173804241461446"
+    },
+    "assets": {
+      "asset_0": "False",
+      "asset_1": "False",
+      "asset_2": "2",
+      "asset_3": "False"
+    },
+    "materials": {
+      "mat_0": "10.0",
+      "mat_1": "5.0",
+      "mat_2": "10.0",
+      "mat_3": "1.0",
+      "mat_4": "0.0"
+    },
+    "time_budget": "3.0",
+    "participation_level": "0.2881705762232936",
+    "sharing_tendency": "0.5876121609063015",
+    "imitation_tendency": "0.2537882022962091",
+    "helping_norm": "0.8053986300646585",
+    "maker_stage": "maker"
+  },
+  {
+    "id": "agent_17",
+    "is_participant": true,
+    "skills": {
+      "skill_0": "0.9973625304650242",
+      "skill_1": "0.8363287988718346",
+      "skill_2": "0.09906920903721039",
+      "skill_3": "0.10322927378357875",
+      "skill_4": "0.10230477443484462",
+      "skill_5": "0.860420069228349"
+    },
+    "assets": {
+      "asset_0": "True",
+      "asset_1": "False",
+      "asset_2": "1",
+      "asset_3": "False"
+    },
+    "materials": {
+      "mat_0": "10.0",
+      "mat_1": "8.0",
+      "mat_2": "0.0",
+      "mat_3": "9.0",
+      "mat_4": "0.0"
+    },
+    "time_budget": "3.0",
+    "participation_level": "0.8917661898383138",
+    "sharing_tendency": "0.5837997436159154",
+    "imitation_tendency": "0.18937478449822345",
+    "helping_norm": "0.6423753117903874",
+    "maker_stage": "advanced_maker"
+  },
+  {
+    "id": "agent_18",
+    "is_participant": true,
+    "skills": {
+      "skill_0": "0.9979079145138114",
+      "skill_1": "0.8177486989555901",
+      "skill_2": "0.17546343906988354",
+      "skill_3": "0.1664389111568119",
+      "skill_4": "0.17067997186640563",
+      "skill_5": "0.8614555438009259"
+    },
+    "assets": {
+      "asset_0": "True",
+      "asset_1": "False",
+      "asset_2": "1",
+      "asset_3": "False"
+    },
+    "materials": {
+      "mat_0": "10.0",
+      "mat_1": "8.0",
+      "mat_2": "0.0",
+      "mat_3": "9.0",
+      "mat_4": "0.0"
+    },
+    "time_budget": "3.0",
+    "participation_level": "0.2824171460200317",
+    "sharing_tendency": "0.4687070399687212",
+    "imitation_tendency": "0.4860738464186593",
+    "helping_norm": "0.5626217461525272",
+    "maker_stage": "advanced_maker"
+  },
+  {
+    "id": "agent_19",
+    "is_participant": true,
+    "skills": {
+      "skill_0": "0.9969281369680161",
+      "skill_1": "0.869067112204879",
+      "skill_2": "0.20946490359585657",
+      "skill_3": "0.20811769753346313",
+      "skill_4": "0.2100944166411783",
+      "skill_5": "0.8655474012463568"
+    },
+    "assets": {
+      "asset_0": "True",
+      "asset_1": "False",
+      "asset_2": "3",
+      "asset_3": "False"
+    },
+    "materials": {
+      "mat_0": "10.0",
+      "mat_1": "9.0",
+      "mat_2": "0.0",
+      "mat_3": "1.0",
+      "mat_4": "0.0"
+    },
+    "time_budget": "3.0",
+    "participation_level": "0.16631241487534665",
+    "sharing_tendency": "0.6000697480638915",
+    "imitation_tendency": "0.23956031310307777",
+    "helping_norm": "0.29597209713900935",
+    "maker_stage": "advanced_maker"
+  },
+  {
+    "id": "agent_2",
+    "is_participant": true,
+    "skills": {
+      "skill_0": "0.9976729671970002",
+      "skill_1": "0.8643909287042494",
+      "skill_2": "0.25280296867611657",
+      "skill_3": "0.25873285942404933",
+      "skill_4": "0.2568374457406632",
+      "skill_5": "0.2550050587245118"
+    },
+    "assets": {
+      "asset_0": "False",
+      "asset_1": "False",
+      "asset_2": "2",
+      "asset_3": "False"
+    },
+    "materials": {
+      "mat_0": "10.0",
+      "mat_1": "9.0",
+      "mat_2": "10.0",
+      "mat_3": "1.0",
+      "mat_4": "0.0"
+    },
+    "time_budget": "3.0",
+    "participation_level": "0.38213065236975263",
+    "sharing_tendency": "0.31618842117725626",
+    "imitation_tendency": "0.6786578737315281",
+    "helping_norm": "0.7222641655358781",
+    "maker_stage": "maker"
+  },
+  {
+    "id": "agent_20",
+    "is_participant": true,
+    "skills": {
+      "skill_0": "0.99783742714953",
+      "skill_1": "0.8275593673178462",
+      "skill_2": "0.20330726721805992",
+      "skill_3": "0.20772854763073412",
+      "skill_4": "0.20024509205853294",
+      "skill_5": "0.2057009080444883"
+    },
+    "assets": {
+      "asset_0": "False",
+      "asset_1": "False",
+      "asset_2": "3",
+      "asset_3": "False"
+    },
+    "materials": {
+      "mat_0": "10.0",
+      "mat_1": "5.0",
+      "mat_2": "10.0",
+      "mat_3": "1.0",
+      "mat_4": "0.0"
+    },
+    "time_budget": "3.0",
+    "participation_level": "0.5525538725084023",
+    "sharing_tendency": "0.8018022215247878",
+    "imitation_tendency": "0.6054541930810604",
+    "helping_norm": "0.15456680514616383",
+    "maker_stage": "maker"
+  },
+  {
+    "id": "agent_21",
+    "is_participant": true,
+    "skills": {
+      "skill_0": "0.997962238270628",
+      "skill_1": "0.833657685945614",
+      "skill_2": "0.10557772588102474",
+      "skill_3": "0.10803896856250371",
+      "skill_4": "0.10842728200821815",
+      "skill_5": "0.8691486534931937"
+    },
+    "assets": {
+      "asset_0": "True",
+      "asset_1": "False",
+      "asset_2": "0",
+      "asset_3": "True"
+    },
+    "materials": {
+      "mat_0": "10.0",
+      "mat_1": "0.0",
+      "mat_2": "0.0",
+      "mat_3": "9.0",
+      "mat_4": "5.0"
+    },
+    "time_budget": "3.0",
+    "participation_level": "0.43903755666378796",
+    "sharing_tendency": "0.6164542022704437",
+    "imitation_tendency": "0.23780963423541523",
+    "helping_norm": "0.3430853399578438",
+    "maker_stage": "advanced_maker"
+  },
+  {
+    "id": "agent_22",
+    "is_participant": true,
+    "skills": {
+      "skill_0": "0.9985799552962484",
+      "skill_1": "0.8354370264882345",
+      "skill_2": "0.1772896181902281",
+      "skill_3": "0.182863991559877",
+      "skill_4": "0.1791157140201352",
+      "skill_5": "0.17567567547688318"
+    },
+    "assets": {
+      "asset_0": "False",
+      "asset_1": "False",
+      "asset_2": "0",
+      "asset_3": "False"
+    },
+    "materials": {
+      "mat_0": "10.0",
+      "mat_1": "5.0",
+      "mat_2": "10.0",
+      "mat_3": "1.0",
+      "mat_4": "5.0"
+    },
+    "time_budget": "3.0",
+    "participation_level": "0.3360651815989643",
+    "sharing_tendency": "0.802953955623576",
+    "imitation_tendency": "0.8018398977744192",
+    "helping_norm": "0.42235646869976057",
+    "maker_stage": "maker"
+  },
+  {
+    "id": "agent_23",
+    "is_participant": true,
+    "skills": {
+      "skill_0": "0.9981199011014286",
+      "skill_1": "0.8449682810286622",
+      "skill_2": "0.17077472239869187",
+      "skill_3": "0.16621851194922535",
+      "skill_4": "0.17004680928070176",
+      "skill_5": "0.8667967993438078"
+    },
+    "assets": {
+      "asset_0": "True",
+      "asset_1": "False",
+      "asset_2": "1",
+      "asset_3": "False"
+    },
+    "materials": {
+      "mat_0": "10.0",
+      "mat_1": "8.0",
+      "mat_2": "0.0",
+      "mat_3": "9.0",
+      "mat_4": "0.0"
+    },
+    "time_budget": "3.0",
+    "participation_level": "0.16275129124184298",
+    "sharing_tendency": "0.6640719904585709",
+    "imitation_tendency": "0.5335738394655889",
+    "helping_norm": "0.7212890691914384",
+    "maker_stage": "advanced_maker"
+  },
+  {
+    "id": "agent_24",
+    "is_participant": true,
+    "skills": {
+      "skill_0": "0.997958232587106",
+      "skill_1": "0.7769046137203132",
+      "skill_2": "0.1297967130096906",
+      "skill_3": "0.13169150487039213",
+      "skill_4": "0.18197075288205342",
+      "skill_5": "0.8686682974695237"
+    },
+    "assets": {
+      "asset_0": "True",
+      "asset_1": "False",
+      "asset_2": "1",
+      "asset_3": "False"
+    },
+    "materials": {
+      "mat_0": "10.0",
+      "mat_1": "8.0",
+      "mat_2": "0.0",
+      "mat_3": "9.0",
+      "mat_4": "0.0"
+    },
+    "time_budget": "3.0",
+    "participation_level": "0.544332604184453",
+    "sharing_tendency": "0.706391885170882",
+    "imitation_tendency": "0.6030149344500124",
+    "helping_norm": "0.7211336510501856",
+    "maker_stage": "advanced_maker"
+  },
+  {
+    "id": "agent_25",
+    "is_participant": true,
+    "skills": {
+      "skill_0": "0.9980381262912669",
+      "skill_1": "0.8667820016245766",
+      "skill_2": "0.21134745348474163",
+      "skill_3": "0.2051419761079938",
+      "skill_4": "0.20690553867920003",
+      "skill_5": "0.20950766892242764"
+    },
+    "assets": {
+      "asset_0": "False",
+      "asset_1": "False",
+      "asset_2": "0",
+      "asset_3": "False"
+    },
+    "materials": {
+      "mat_0": "10.0",
+      "mat_1": "5.0",
+      "mat_2": "10.0",
+      "mat_3": "1.0",
+      "mat_4": "5.0"
+    },
+    "time_budget": "3.0",
+    "participation_level": "0.3937270217391817",
+    "sharing_tendency": "0.6069431003739043",
+    "imitation_tendency": "0.7678414877510389",
+    "helping_norm": "0.8076356644725627",
+    "maker_stage": "maker"
+  },
+  {
+    "id": "agent_26",
+    "is_participant": true,
+    "skills": {
+      "skill_0": "0.9980835112302626",
+      "skill_1": "0.8288964957390444",
+      "skill_2": "0.1966183130570203",
+      "skill_3": "0.19868143565097818",
+      "skill_4": "0.19420791469949852",
+      "skill_5": "0.20071921234760046"
+    },
+    "assets": {
+      "asset_0": "False",
+      "asset_1": "False",
+      "asset_2": "1",
+      "asset_3": "True"
+    },
+    "materials": {
+      "mat_0": "10.0",
+      "mat_1": "0.0",
+      "mat_2": "10.0",
+      "mat_3": "0.0",
+      "mat_4": "0.0"
+    },
+    "time_budget": "3.0",
+    "participation_level": "0.3046101339520392",
+    "sharing_tendency": "0.6016221319452327",
+    "imitation_tendency": "0.655412082836694",
+    "helping_norm": "0.6690767258285881",
+    "maker_stage": "maker"
+  },
+  {
+    "id": "agent_27",
+    "is_participant": true,
+    "skills": {
+      "skill_0": "0.998078453983325",
+      "skill_1": "0.8268036975664037",
+      "skill_2": "0.1686619606833266",
+      "skill_3": "0.16987132161165744",
+      "skill_4": "0.16729233672104168",
+      "skill_5": "0.8679169280858645"
+    },
+    "assets": {
+      "asset_0": "True",
+      "asset_1": "False",
+      "asset_2": "2",
+      "asset_3": "True"
+    },
+    "materials": {
+      "mat_0": "10.0",
+      "mat_1": "0.0",
+      "mat_2": "0.0",
+      "mat_3": "9.0",
+      "mat_4": "0.0"
+    },
+    "time_budget": "3.0",
+    "participation_level": "0.16489842234617347",
+    "sharing_tendency": "0.5536007068631976",
+    "imitation_tendency": "0.569315849555587",
+    "helping_norm": "0.13274063905084987",
+    "maker_stage": "advanced_maker"
+  },
+  {
+    "id": "agent_28",
+    "is_participant": true,
+    "skills": {
+      "skill_0": "0.9981426661144179",
+      "skill_1": "0.8481234227432074",
+      "skill_2": "0.21792096964902777",
+      "skill_3": "0.21575193374136709",
+      "skill_4": "0.21135095089222516",
+      "skill_5": "0.21339062982336363"
+    },
+    "assets": {
+      "asset_0": "False",
+      "asset_1": "False",
+      "asset_2": "1",
+      "asset_3": "False"
+    },
+    "materials": {
+      "mat_0": "10.0",
+      "mat_1": "5.0",
+      "mat_2": "10.0",
+      "mat_3": "1.0",
+      "mat_4": "0.0"
+    },
+    "time_budget": "3.0",
+    "participation_level": "0.539820593503799",
+    "sharing_tendency": "0.7082085017478601",
+    "imitation_tendency": "0.1781537916524513",
+    "helping_norm": "0.6513100761648366",
+    "maker_stage": "maker"
+  },
+  {
+    "id": "agent_29",
+    "is_participant": true,
+    "skills": {
+      "skill_0": "0.9985045641362233",
+      "skill_1": "0.849041036616261",
+      "skill_2": "0.14844423437738932",
+      "skill_3": "0.8438658571239166",
+      "skill_4": "0.14337816764859987",
+      "skill_5": "0.14666608664081393"
+    },
+    "assets": {
+      "asset_0": "False",
+      "asset_1": "True",
+      "asset_2": "1",
+      "asset_3": "False"
+    },
+    "materials": {
+      "mat_0": "8.0",
+      "mat_1": "0.0",
+      "mat_2": "10.0",
+      "mat_3": "1.0",
+      "mat_4": "0.0"
+    },
+    "time_budget": "3.0",
+    "participation_level": "0.2387127376402051",
+    "sharing_tendency": "0.6963317815302861",
+    "imitation_tendency": "0.4742392617409233",
+    "helping_norm": "0.24173897867207067",
+    "maker_stage": "advanced_maker"
+  },
+  {
+    "id": "agent_3",
+    "is_participant": true,
+    "skills": {
+      "skill_0": "0.9983844291863966",
+      "skill_1": "0.8402740083370798",
+      "skill_2": "0.2070245467280142",
+      "skill_3": "0.21154471493222518",
+      "skill_4": "0.2129899373065202",
+      "skill_5": "0.21018330848714473"
+    },
+    "assets": {
+      "asset_0": "False",
+      "asset_1": "False",
+      "asset_2": "1",
+      "asset_3": "False"
+    },
+    "materials": {
+      "mat_0": "10.0",
+      "mat_1": "5.0",
+      "mat_2": "10.0",
+      "mat_3": "0.0",
+      "mat_4": "0.0"
+    },
+    "time_budget": "3.0",
+    "participation_level": "0.6065640842776898",
+    "sharing_tendency": "0.5721283692148118",
+    "imitation_tendency": "0.4991556793240499",
+    "helping_norm": "0.35343137784622863",
+    "maker_stage": "maker"
+  },
+  {
+    "id": "agent_30",
+    "is_participant": true,
+    "skills": {
+      "skill_0": "0.9977035737114216",
+      "skill_1": "0.8461145405669325",
+      "skill_2": "0.20049554106239423",
+      "skill_3": "0.19922850146553428",
+      "skill_4": "0.19308691896346217",
+      "skill_5": "0.1958691250121351"
+    },
+    "assets": {
+      "asset_0": "False",
+      "asset_1": "False",
+      "asset_2": "1",
+      "asset_3": "False"
+    },
+    "materials": {
+      "mat_0": "10.0",
+      "mat_1": "5.0",
+      "mat_2": "10.0",
+      "mat_3": "1.0",
+      "mat_4": "0.0"
+    },
+    "time_budget": "3.0",
+    "participation_level": "0.3486940005575144",
+    "sharing_tendency": "0.6110744772723947",
+    "imitation_tendency": "0.25119608721014147",
+    "helping_norm": "0.3678953184252987",
+    "maker_stage": "maker"
+  },
+  {
+    "id": "agent_31",
+    "is_participant": false,
+    "skills": {
+      "skill_0": "0.2855869224018838",
+      "skill_1": "0.29163272487011843",
+      "skill_2": "0.2888806781889267",
+      "skill_3": "0.290913389110567",
+      "skill_4": "0.29221959685784976",
+      "skill_5": "0.2870642220195352"
+    },
+    "assets": {
+      "asset_0": "False",
+      "asset_1": "False",
+      "asset_2": "1",
+      "asset_3": "False"
+    },
+    "materials": {
+      "mat_0": "10.0",
+      "mat_1": "10.0",
+      "mat_2": "10.0",
+      "mat_3": "10.0",
+      "mat_4": "10.0"
+    },
+    "time_budget": "3.0",
+    "participation_level": "0.0",
+    "sharing_tendency": "0.41830494439877236",
+    "imitation_tendency": "0.5262336994105915",
+    "helping_norm": "0.6187451390948033",
+    "maker_stage": "consumer"
+  },
+  {
+    "id": "agent_32",
+    "is_participant": true,
+    "skills": {
+      "skill_0": "0.9979137214875372",
+      "skill_1": "0.8354680638793672",
+      "skill_2": "0.16537491691876594",
+      "skill_3": "0.1665745912442952",
+      "skill_4": "0.16996032577264245",
+      "skill_5": "0.8585933894681528"
+    },
+    "assets": {
+      "asset_0": "True",
+      "asset_1": "False",
+      "asset_2": "1",
+      "asset_3": "True"
+    },
+    "materials": {
+      "mat_0": "10.0",
+      "mat_1": "0.0",
+      "mat_2": "0.0",
+      "mat_3": "9.0",
+      "mat_4": "0.0"
+    },
+    "time_budget": "3.0",
+    "participation_level": "0.129371747381577",
+    "sharing_tendency": "0.47827207587511966",
+    "imitation_tendency": "0.311300870133657",
+    "helping_norm": "0.9294192495709028",
+    "maker_stage": "advanced_maker"
+  },
+  {
+    "id": "agent_33",
+    "is_participant": false,
+    "skills": {
+      "skill_0": "0.24799935190198807",
+      "skill_1": "0.2531792045892703",
+      "skill_2": "0.24734161130079532",
+      "skill_3": "0.2510528825463244",
+      "skill_4": "0.2457838323653245",
+      "skill_5": "0.25000050132320256"
+    },
+    "assets": {
+      "asset_0": "False",
+      "asset_1": "False",
+      "asset_2": "0",
+      "asset_3": "False"
+    },
+    "materials": {
+      "mat_0": "10.0",
+      "mat_1": "10.0",
+      "mat_2": "10.0",
+      "mat_3": "10.0",
+      "mat_4": "10.0"
+    },
+    "time_budget": "3.0",
+    "participation_level": "0.0",
+    "sharing_tendency": "0.3998799263186222",
+    "imitation_tendency": "0.14351059054062026",
+    "helping_norm": "0.44843098206596216",
+    "maker_stage": "consumer"
+  },
+  {
+    "id": "agent_34",
+    "is_participant": true,
+    "skills": {
+      "skill_0": "0.9973368931842276",
+      "skill_1": "0.7530096401157749",
+      "skill_2": "0.2629340271512896",
+      "skill_3": "0.25937530484905114",
+      "skill_4": "0.2559645252540561",
+      "skill_5": "0.26116318216543066"
+    },
+    "assets": {
+      "asset_0": "False",
+      "asset_1": "False",
+      "asset_2": "1",
+      "asset_3": "True"
+    },
+    "materials": {
+      "mat_0": "10.0",
+      "mat_1": "0.0",
+      "mat_2": "10.0",
+      "mat_3": "0.0",
+      "mat_4": "0.0"
+    },
+    "time_budget": "3.0",
+    "participation_level": "0.5099172837489832",
+    "sharing_tendency": "0.5989016985061912",
+    "imitation_tendency": "0.6528270131011081",
+    "helping_norm": "0.48070821289534216",
+    "maker_stage": "maker"
+  },
+  {
+    "id": "agent_35",
+    "is_participant": true,
+    "skills": {
+      "skill_0": "0.9985467185100837",
+      "skill_1": "0.8537867121710712",
+      "skill_2": "0.0944488954121727",
+      "skill_3": "0.8500897395426101",
+      "skill_4": "0.1698257935450226",
+      "skill_5": "0.09082861159434039"
+    },
+    "assets": {
+      "asset_0": "False",
+      "asset_1": "True",
+      "asset_2": "2",
+      "asset_3": "True"
+    },
+    "materials": {
+      "mat_0": "8.0",
+      "mat_1": "0.0",
+      "mat_2": "10.0",
+      "mat_3": "1.0",
+      "mat_4": "0.0"
+    },
+    "time_budget": "3.0",
+    "participation_level": "0.6613631610555359",
+    "sharing_tendency": "0.4327302903015557",
+    "imitation_tendency": "0.5089508500353689",
+    "helping_norm": "0.8954274102697859",
+    "maker_stage": "advanced_maker"
+  },
+  {
+    "id": "agent_36",
+    "is_participant": true,
+    "skills": {
+      "skill_0": "0.9981506687494757",
+      "skill_1": "0.8455226805415537",
+      "skill_2": "0.2358397673555934",
+      "skill_3": "0.23715931546445676",
+      "skill_4": "0.24322765999285956",
+      "skill_5": "0.24062411872437975"
+    },
+    "assets": {
+      "asset_0": "False",
+      "asset_1": "False",
+      "asset_2": "2",
+      "asset_3": "False"
+    },
+    "materials": {
+      "mat_0": "10.0",
+      "mat_1": "5.0",
+      "mat_2": "10.0",
+      "mat_3": "0.0",
+      "mat_4": "0.0"
+    },
+    "time_budget": "3.0",
+    "participation_level": "0.4625880521858218",
+    "sharing_tendency": "0.18300989382000954",
+    "imitation_tendency": "0.49719883530657455",
+    "helping_norm": "0.873045057926991",
+    "maker_stage": "maker"
+  },
+  {
+    "id": "agent_37",
+    "is_participant": true,
+    "skills": {
+      "skill_0": "0.9983446571370312",
+      "skill_1": "0.8032568861604108",
+      "skill_2": "0.195407709820719",
+      "skill_3": "0.1877217245991717",
+      "skill_4": "0.19043503038897616",
+      "skill_5": "0.19330687592483323"
+    },
+    "assets": {
+      "asset_0": "False",
+      "asset_1": "False",
+      "asset_2": "0",
+      "asset_3": "False"
+    },
+    "materials": {
+      "mat_0": "10.0",
+      "mat_1": "5.0",
+      "mat_2": "10.0",
+      "mat_3": "1.0",
+      "mat_4": "5.0"
+    },
+    "time_budget": "3.0",
+    "participation_level": "0.2354140030116728",
+    "sharing_tendency": "0.14877163210860667",
+    "imitation_tendency": "0.5570343093901967",
+    "helping_norm": "0.5342477201969431",
+    "maker_stage": "maker"
+  },
+  {
+    "id": "agent_38",
+    "is_participant": false,
+    "skills": {
+      "skill_0": "0.24819881902113367",
+      "skill_1": "0.2412669152489879",
+      "skill_2": "0.24719930029835718",
+      "skill_3": "0.24247700883435497",
+      "skill_4": "0.24447571294867093",
+      "skill_5": "0.24938473838727632"
+    },
+    "assets": {
+      "asset_0": "True",
+      "asset_1": "False",
+      "asset_2": "0",
+      "asset_3": "False"
+    },
+    "materials": {
+      "mat_0": "10.0",
+      "mat_1": "10.0",
+      "mat_2": "10.0",
+      "mat_3": "10.0",
+      "mat_4": "10.0"
+    },
+    "time_budget": "3.0",
+    "participation_level": "0.0",
+    "sharing_tendency": "0.4136339432092491",
+    "imitation_tendency": "0.9152367807482965",
+    "helping_norm": "0.3024767118853209",
+    "maker_stage": "consumer"
+  },
+  {
+    "id": "agent_39",
+    "is_participant": false,
+    "skills": {
+      "skill_0": "0.23360841960208903",
+      "skill_1": "0.23731517088125495",
+      "skill_2": "0.23486957498973068",
+      "skill_3": "0.23285177085908584",
+      "skill_4": "0.23106366445486462",
+      "skill_5": "0.2359271866727395"
+    },
+    "assets": {
+      "asset_0": "False",
+      "asset_1": "False",
+      "asset_2": "0",
+      "asset_3": "False"
+    },
+    "materials": {
+      "mat_0": "10.0",
+      "mat_1": "10.0",
+      "mat_2": "10.0",
+      "mat_3": "10.0",
+      "mat_4": "10.0"
+    },
+    "time_budget": "3.0",
+    "participation_level": "0.0",
+    "sharing_tendency": "0.5938111541663039",
+    "imitation_tendency": "0.9515330958715916",
+    "helping_norm": "0.3080021061187663",
+    "maker_stage": "consumer"
+  },
+  {
+    "id": "agent_4",
+    "is_participant": false,
+    "skills": {
+      "skill_0": "0.24923849030206",
+      "skill_1": "0.2538349340501003",
+      "skill_2": "0.24664375233518437",
+      "skill_3": "0.2500617466804592",
+      "skill_4": "0.2517866787943073",
+      "skill_5": "0.24766252073093378"
+    },
+    "assets": {
+      "asset_0": "True",
+      "asset_1": "False",
+      "asset_2": "3",
+      "asset_3": "False"
+    },
+    "materials": {
+      "mat_0": "10.0",
+      "mat_1": "10.0",
+      "mat_2": "10.0",
+      "mat_3": "10.0",
+      "mat_4": "10.0"
+    },
+    "time_budget": "3.0",
+    "participation_level": "0.0",
+    "sharing_tendency": "0.24379998456175586",
+    "imitation_tendency": "0.6731126426535288",
+    "helping_norm": "0.5958017524505899",
+    "maker_stage": "consumer"
+  },
+  {
+    "id": "agent_5",
+    "is_participant": true,
+    "skills": {
+      "skill_0": "0.997745022641474",
+      "skill_1": "0.8365044949520772",
+      "skill_2": "0.1499720826038478",
+      "skill_3": "0.14728941380524588",
+      "skill_4": "0.14967432717934132",
+      "skill_5": "0.8753298986961106"
+    },
+    "assets": {
+      "asset_0": "True",
+      "asset_1": "False",
+      "asset_2": "2",
+      "asset_3": "False"
+    },
+    "materials": {
+      "mat_0": "10.0",
+      "mat_1": "8.0",
+      "mat_2": "0.0",
+      "mat_3": "9.0",
+      "mat_4": "0.0"
+    },
+    "time_budget": "3.0",
+    "participation_level": "0.3788234945414752",
+    "sharing_tendency": "0.505123453166433",
+    "imitation_tendency": "0.6501977536214664",
+    "helping_norm": "0.3379942215188369",
+    "maker_stage": "advanced_maker"
+  },
+  {
+    "id": "agent_6",
+    "is_participant": false,
+    "skills": {
+      "skill_0": "0.24134513852260098",
+      "skill_1": "0.2401899128749203",
+      "skill_2": "0.24397868357862484",
+      "skill_3": "0.24646767702766786",
+      "skill_4": "0.24483468189582883",
+      "skill_5": "0.24310012264047842"
+    },
+    "assets": {
+      "asset_0": "False",
+      "asset_1": "True",
+      "asset_2": "2",
+      "asset_3": "False"
+    },
+    "materials": {
+      "mat_0": "10.0",
+      "mat_1": "10.0",
+      "mat_2": "10.0",
+      "mat_3": "10.0",
+      "mat_4": "10.0"
+    },
+    "time_budget": "3.0",
+    "participation_level": "0.0",
+    "sharing_tendency": "0.3937074353745431",
+    "imitation_tendency": "0.3245791484250547",
+    "helping_norm": "0.36742678582522204",
+    "maker_stage": "consumer"
+  },
+  {
+    "id": "agent_7",
+    "is_participant": true,
+    "skills": {
+      "skill_0": "0.9979067873263183",
+      "skill_1": "0.8236306748337788",
+      "skill_2": "0.21030381111525875",
+      "skill_3": "0.1986190045732661",
+      "skill_4": "0.19729791307998254",
+      "skill_5": "0.8784427973011815"
+    },
+    "assets": {
+      "asset_0": "True",
+      "asset_1": "False",
+      "asset_2": "1",
+      "asset_3": "False"
+    },
+    "materials": {
+      "mat_0": "10.0",
+      "mat_1": "8.0",
+      "mat_2": "0.0",
+      "mat_3": "9.0",
+      "mat_4": "0.0"
+    },
+    "time_budget": "3.0",
+    "participation_level": "0.18865926782677445",
+    "sharing_tendency": "0.2178861226379144",
+    "imitation_tendency": "0.10250962034993273",
+    "helping_norm": "0.475099433621675",
+    "maker_stage": "advanced_maker"
+  },
+  {
+    "id": "agent_8",
+    "is_participant": false,
+    "skills": {
+      "skill_0": "0.22739172482794723",
+      "skill_1": "0.22650260544319037",
+      "skill_2": "0.22898002879394608",
+      "skill_3": "0.23120165906220372",
+      "skill_4": "0.2322012250600633",
+      "skill_5": "0.23356848398225158"
+    },
+    "assets": {
+      "asset_0": "False",
+      "asset_1": "True",
+      "asset_2": "3",
+      "asset_3": "True"
+    },
+    "materials": {
+      "mat_0": "10.0",
+      "mat_1": "10.0",
+      "mat_2": "10.0",
+      "mat_3": "10.0",
+      "mat_4": "10.0"
+    },
+    "time_budget": "3.0",
+    "participation_level": "0.0",
+    "sharing_tendency": "0.1244000357619912",
+    "imitation_tendency": "0.4165140230956148",
+    "helping_norm": "0.3893008427269721",
+    "maker_stage": "consumer"
+  },
+  {
+    "id": "agent_9",
+    "is_participant": true,
+    "skills": {
+      "skill_0": "0.9987528023654713",
+      "skill_1": "0.8160943797816151",
+      "skill_2": "0.21727896525334658",
+      "skill_3": "0.21498987260225433",
+      "skill_4": "0.20992142930948315",
+      "skill_5": "0.2114723553424891"
+    },
+    "assets": {
+      "asset_0": "False",
+      "asset_1": "False",
+      "asset_2": "0",
+      "asset_3": "True"
+    },
+    "materials": {
+      "mat_0": "10.0",
+      "mat_1": "0.0",
+      "mat_2": "10.0",
+      "mat_3": "0.0",
+      "mat_4": "5.0"
+    },
+    "time_budget": "3.0",
+    "participation_level": "0.2941054877296932",
+    "sharing_tendency": "0.2718860633777982",
+    "imitation_tendency": "0.464756261350716",
+    "helping_norm": "0.0722599510132312",
+    "maker_stage": "maker"
+  }
+]

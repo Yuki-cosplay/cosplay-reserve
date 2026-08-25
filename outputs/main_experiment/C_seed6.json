@@ -1,0 +1,5119 @@
+{
+  "run_purpose": "main_experiment",
+  "status": "completed",
+  "error": null,
+  "attempt": 1,
+  "condition": "C",
+  "seed": 6,
+  "code_git_commit": "0976cf27dd79153212473532a1dc4fb40ebe9076",
+  "config_sha256": "66cd038fc8595335a5f9230acea8bc30ee9105f09acae7c00cc08d59050b9636",
+  "prompt_version": "m2-minimal-v1",
+  "prompt_sha256": "6cf3be8a88f218f5f43d09dfe2884dffc65f69e0f3c698d9e92c1a6c419c51ff",
+  "model": "claude-opus-5",
+  "effort": "low",
+  "shock_agent_ids": [
+    "agent_10",
+    "agent_13",
+    "agent_26",
+    "agent_33",
+    "agent_4",
+    "agent_8"
+  ],
+  "base_graph_sha256": "fa8cd0a3dc4c07584414d5099e86ccd5d65b269dae023c06a42e9a182f02a4f7",
+  "induced_subgraph_sha256": "0ac1f655b66bf67df6efe34dcbdc593697ae001ab14e1bfe707f572ebe28d020",
+  "agent_initial_states_sha256": "89589922194e5cd4de07e5dbd2ad142e97d785ceb5c12176e50e3de34d5e20f3",
+  "participant_ids_sha256": "ccfa0310c2cbd929813d32f34facf88a7f53415faa5bfc38bca72f2e457291d5",
+  "cultural_edge_count": 69,
+  "structural_coordination": {
+    "selected_agent_ids": [
+      "agent_10",
+      "agent_13",
+      "agent_26",
+      "agent_33",
+      "agent_4",
+      "agent_8"
+    ],
+    "structurally_available_pairs": 2,
+    "structurally_available_pair_list": [
+      [
+        "agent_10",
+        "agent_13"
+      ],
+      [
+        "agent_10",
+        "agent_8"
+      ]
+    ],
+    "coordination_edges_threshold": 2,
+    "structurally_reachable": true
+  },
+  "D4_transition": {
+    "community_supply_share": 0.2,
+    "active_supplier_count": 3,
+    "supply_duration_steps": 3,
+    "coordination_edges": 2
+  },
+  "D5_external_reference_supply_per_step": 18.0,
+  "unit_demand_stock": 200.0,
+  "unit_demand_note": "context only; remaining_demand depletion is not used",
+  "accumulation_steps": 156,
+  "shock_steps_run": 8,
+  "shock_step_hours": 6,
+  "community_supply_total": 28.0,
+  "external_reference_total": 144.0,
+  "community_supply_share": 0.162791,
+  "modify_count": 18,
+  "coordination_edges": 2,
+  "coordination_pairs": [
+    [
+      "agent_10",
+      "agent_13"
+    ],
+    [
+      "agent_10",
+      "agent_8"
+    ]
+  ],
+  "qualifying_makes": 28,
+  "nonqualifying_makes": 4,
+  "action_counts": {
+    "modify": 18,
+    "make": 57,
+    "share": 47,
+    "propose": 22,
+    "join": 14,
+    "practice": 22,
+    "idle": 1
+  },
+  "rejection_counts": {
+    "time_budget_exceeded": 1
+  },
+  "intents_proposed": 183,
+  "intents_accepted": 181,
+  "emergence_level_provisional": "E2",
+  "transitioned": false,
+  "transition_step": null,
+  "thresholds": {
+    "community_supply_share": 0.2,
+    "active_supplier_count": 3,
+    "supply_duration_steps": 3,
+    "coordination_edges": 2
+  },
+  "onset_step": 156,
+  "steps_to_first_community_supply": 0,
+  "steps_to_transition": null,
+  "llm_calls": 48,
+  "input_tokens": 118404,
+  "output_tokens": 13688,
+  "spent_usd": 0.93422,
+  "per_call_usage": [
+    {
+      "call": 1,
+      "input_tokens": 2494,
+      "output_tokens": 302,
+      "usd": 0.02002
+    },
+    {
+      "call": 2,
+      "input_tokens": 2464,
+      "output_tokens": 300,
+      "usd": 0.01982
+    },
+    {
+      "call": 3,
+      "input_tokens": 2424,
+      "output_tokens": 294,
+      "usd": 0.019469999999999998
+    },
+    {
+      "call": 4,
+      "input_tokens": 2449,
+      "output_tokens": 392,
+      "usd": 0.022045
+    },
+    {
+      "call": 5,
+      "input_tokens": 2549,
+      "output_tokens": 313,
+      "usd": 0.020569999999999998
+    },
+    {
+      "call": 6,
+      "input_tokens": 2484,
+      "output_tokens": 310,
+      "usd": 0.02017
+    },
+    {
+      "call": 7,
+      "input_tokens": 2480,
+      "output_tokens": 229,
+      "usd": 0.018125
+    },
+    {
+      "call": 8,
+      "input_tokens": 2461,
+      "output_tokens": 237,
+      "usd": 0.01823
+    },
+    {
+      "call": 9,
+      "input_tokens": 2410,
+      "output_tokens": 293,
+      "usd": 0.019375
+    },
+    {
+      "call": 10,
+      "input_tokens": 2435,
+      "output_tokens": 283,
+      "usd": 0.01925
+    },
+    {
+      "call": 11,
+      "input_tokens": 2535,
+      "output_tokens": 294,
+      "usd": 0.020024999999999998
+    },
+    {
+      "call": 12,
+      "input_tokens": 2481,
+      "output_tokens": 313,
+      "usd": 0.02023
+    },
+    {
+      "call": 13,
+      "input_tokens": 2480,
+      "output_tokens": 286,
+      "usd": 0.019549999999999998
+    },
+    {
+      "call": 14,
+      "input_tokens": 2461,
+      "output_tokens": 237,
+      "usd": 0.01823
+    },
+    {
+      "call": 15,
+      "input_tokens": 2410,
+      "output_tokens": 222,
+      "usd": 0.017599999999999998
+    },
+    {
+      "call": 16,
+      "input_tokens": 2435,
+      "output_tokens": 297,
+      "usd": 0.0196
+    },
+    {
+      "call": 17,
+      "input_tokens": 2535,
+      "output_tokens": 221,
+      "usd": 0.0182
+    },
+    {
+      "call": 18,
+      "input_tokens": 2481,
+      "output_tokens": 311,
+      "usd": 0.020180000000000003
+    },
+    {
+      "call": 19,
+      "input_tokens": 2480,
+      "output_tokens": 297,
+      "usd": 0.019825
+    },
+    {
+      "call": 20,
+      "input_tokens": 2461,
+      "output_tokens": 298,
+      "usd": 0.019754999999999998
+    },
+    {
+      "call": 21,
+      "input_tokens": 2410,
+      "output_tokens": 281,
+      "usd": 0.019074999999999998
+    },
+    {
+      "call": 22,
+      "input_tokens": 2435,
+      "output_tokens": 284,
+      "usd": 0.019275
+    },
+    {
+      "call": 23,
+      "input_tokens": 2535,
+      "output_tokens": 301,
+      "usd": 0.0202
+    },
+    {
+      "call": 24,
+      "input_tokens": 2481,
+      "output_tokens": 320,
+      "usd": 0.020405
+    },
+    {
+      "call": 25,
+      "input_tokens": 2480,
+      "output_tokens": 291,
+      "usd": 0.019674999999999998
+    },
+    {
+      "call": 26,
+      "input_tokens": 2461,
+      "output_tokens": 297,
+      "usd": 0.01973
+    },
+    {
+      "call": 27,
+      "input_tokens": 2410,
+      "output_tokens": 296,
+      "usd": 0.01945
+    },
+    {
+      "call": 28,
+      "input_tokens": 2435,
+      "output_tokens": 307,
+      "usd": 0.01985
+    },
+    {
+      "call": 29,
+      "input_tokens": 2535,
+      "output_tokens": 217,
+      "usd": 0.018099999999999998
+    },
+    {
+      "call": 30,
+      "input_tokens": 2469,
+      "output_tokens": 304,
+      "usd": 0.019944999999999997
+    },
+    {
+      "call": 31,
+      "input_tokens": 2480,
+      "output_tokens": 284,
+      "usd": 0.0195
+    },
+    {
+      "call": 32,
+      "input_tokens": 2461,
+      "output_tokens": 295,
+      "usd": 0.01968
+    },
+    {
+      "call": 33,
+      "input_tokens": 2410,
+      "output_tokens": 285,
+      "usd": 0.019174999999999998
+    },
+    {
+      "call": 34,
+      "input_tokens": 2435,
+      "output_tokens": 302,
+      "usd": 0.019725
+    },
+    {
+      "call": 35,
+      "input_tokens": 2535,
+      "output_tokens": 218,
+      "usd": 0.018125
+    },
+    {
+      "call": 36,
+      "input_tokens": 2469,
+      "output_tokens": 319,
+      "usd": 0.020319999999999998
+    },
+    {
+      "call": 37,
+      "input_tokens": 2480,
+      "output_tokens": 291,
+      "usd": 0.019674999999999998
+    },
+    {
+      "call": 38,
+      "input_tokens": 2461,
+      "output_tokens": 224,
+      "usd": 0.017905
+    },
+    {
+      "call": 39,
+      "input_tokens": 2410,
+      "output_tokens": 219,
+      "usd": 0.017525
+    },
+    {
+      "call": 40,
+      "input_tokens": 2423,
+      "output_tokens": 310,
+      "usd": 0.019865
+    },
+    {
+      "call": 41,
+      "input_tokens": 2535,
+      "output_tokens": 267,
+      "usd": 0.01935
+    },
+    {
+      "call": 42,
+      "input_tokens": 2469,
+      "output_tokens": 330,
+      "usd": 0.020595
+    },
+    {
+      "call": 43,
+      "input_tokens": 2480,
+      "output_tokens": 227,
+      "usd": 0.018075
+    },
+    {
+      "call": 44,
+      "input_tokens": 2461,
+      "output_tokens": 293,
+      "usd": 0.01963
+    },
+    {
+      "call": 45,
+      "input_tokens": 2410,
+      "output_tokens": 288,
+      "usd": 0.019249999999999996
+    },
+    {
+      "call": 46,
+      "input_tokens": 2423,
+      "output_tokens": 325,
+      "usd": 0.02024
+    },
+    {
+      "call": 47,
+      "input_tokens": 2535,
+      "output_tokens": 270,
+      "usd": 0.019424999999999998
+    },
+    {
+      "call": 48,
+      "input_tokens": 2467,
+      "output_tokens": 314,
+      "usd": 0.020185
+    }
+  ],
+  "stopped_by_budget": null,
+  "run_started_utc": "2026-08-16T09:34:38.984257+00:00",
+  "run_ended_utc": "2026-08-16T09:39:12.348833+00:00",
+  "wall_seconds": 273.4,
+  "transition_history": [
+    {
+      "step": 156,
+      "share": 0.142857,
+      "suppliers": 3,
+      "duration": 1,
+      "coordination_edges": 0,
+      "met_community_supply_share": false,
+      "met_active_supplier_count": true,
+      "met_supply_duration": false,
+      "met_coordination_edges": false,
+      "all_met": false
+    },
+    {
+      "step": 157,
+      "share": 0.142857,
+      "suppliers": 3,
+      "duration": 2,
+      "coordination_edges": 2,
+      "met_community_supply_share": false,
+      "met_active_supplier_count": true,
+      "met_supply_duration": false,
+      "met_coordination_edges": true,
+      "all_met": false
+    },
+    {
+      "step": 158,
+      "share": 0.114754,
+      "suppliers": 1,
+      "duration": 3,
+      "coordination_edges": 2,
+      "met_community_supply_share": false,
+      "met_active_supplier_count": false,
+      "met_supply_duration": true,
+      "met_coordination_edges": true,
+      "all_met": false
+    },
+    {
+      "step": 159,
+      "share": 0.142857,
+      "suppliers": 5,
+      "duration": 4,
+      "coordination_edges": 2,
+      "met_community_supply_share": false,
+      "met_active_supplier_count": true,
+      "met_supply_duration": true,
+      "met_coordination_edges": true,
+      "all_met": false
+    },
+    {
+      "step": 160,
+      "share": 0.142857,
+      "suppliers": 3,
+      "duration": 5,
+      "coordination_edges": 2,
+      "met_community_supply_share": false,
+      "met_active_supplier_count": true,
+      "met_supply_duration": true,
+      "met_coordination_edges": true,
+      "all_met": false
+    },
+    {
+      "step": 161,
+      "share": 0.149606,
+      "suppliers": 4,
+      "duration": 6,
+      "coordination_edges": 2,
+      "met_community_supply_share": false,
+      "met_active_supplier_count": true,
+      "met_supply_duration": true,
+      "met_coordination_edges": true,
+      "all_met": false
+    },
+    {
+      "step": 162,
+      "share": 0.16,
+      "suppliers": 4,
+      "duration": 7,
+      "coordination_edges": 2,
+      "met_community_supply_share": false,
+      "met_active_supplier_count": true,
+      "met_supply_duration": true,
+      "met_coordination_edges": true,
+      "all_met": false
+    },
+    {
+      "step": 163,
+      "share": 0.162791,
+      "suppliers": 3,
+      "duration": 8,
+      "coordination_edges": 2,
+      "met_community_supply_share": false,
+      "met_active_supplier_count": true,
+      "met_supply_duration": true,
+      "met_coordination_edges": true,
+      "all_met": false
+    }
+  ],
+  "provenance": [
+    {
+      "step": 156,
+      "condition": "C",
+      "seed": 6,
+      "agent_id": "agent_10",
+      "intent": {
+        "action": "make",
+        "target_project_id": "proj_2",
+        "target_skill_id": null,
+        "target_agent_id": null,
+        "reason": "build it with many methods and high skill_0"
+      },
+      "modify_history": [
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_0",
+          "delta": 0.15
+        },
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_2",
+          "delta": 0.15
+        }
+      ],
+      "before_attributes": {
+        "attr_0": 0.45,
+        "attr_1": 0.25,
+        "attr_2": 0.4,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_attributes": {
+        "attr_0": 0.6,
+        "attr_2": 0.55
+      },
+      "source_project_id": "proj_2",
+      "applied_modifications": {
+        "attr_0": 0.15,
+        "attr_2": 0.15
+      },
+      "after_attributes": {
+        "attr_0": 0.6,
+        "attr_1": 0.25,
+        "attr_2": 0.55,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_asset": null,
+      "asset_feasible": true,
+      "required_materials": {
+        "mat_1": 1.0,
+        "mat_4": 1.0
+      },
+      "material_feasible": true,
+      "effective_success_probability": 0.576471,
+      "make_success": false,
+      "meets_requirement": true,
+      "supplied_units": 0.0,
+      "proposal_relation": {
+        "self_proposed": null,
+        "visible_neighbour_proposals": {}
+      },
+      "join_relation": [],
+      "coordination_relation": {
+        "edges_total": 0,
+        "edges_involving_self": []
+      }
+    },
+    {
+      "step": 156,
+      "condition": "C",
+      "seed": 6,
+      "agent_id": "agent_13",
+      "intent": {
+        "action": "make",
+        "target_project_id": "proj_2",
+        "target_skill_id": null,
+        "target_agent_id": null,
+        "reason": "build it with my many proj_2 methods and high skill"
+      },
+      "modify_history": [
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_0",
+          "delta": 0.15
+        },
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_2",
+          "delta": 0.15
+        }
+      ],
+      "before_attributes": {
+        "attr_0": 0.45,
+        "attr_1": 0.25,
+        "attr_2": 0.4,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_attributes": {
+        "attr_0": 0.6,
+        "attr_2": 0.55
+      },
+      "source_project_id": "proj_2",
+      "applied_modifications": {
+        "attr_0": 0.15,
+        "attr_2": 0.15
+      },
+      "after_attributes": {
+        "attr_0": 0.6,
+        "attr_1": 0.25,
+        "attr_2": 0.55,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_asset": null,
+      "asset_feasible": true,
+      "required_materials": {
+        "mat_1": 1.0,
+        "mat_4": 1.0
+      },
+      "material_feasible": true,
+      "effective_success_probability": 0.576471,
+      "make_success": true,
+      "meets_requirement": true,
+      "supplied_units": 1.0,
+      "proposal_relation": {
+        "self_proposed": null,
+        "visible_neighbour_proposals": {}
+      },
+      "join_relation": [],
+      "coordination_relation": {
+        "edges_total": 0,
+        "edges_involving_self": []
+      }
+    },
+    {
+      "step": 156,
+      "condition": "C",
+      "seed": 6,
+      "agent_id": "agent_26",
+      "intent": {
+        "action": "make",
+        "target_project_id": "proj_2",
+        "target_skill_id": null,
+        "target_agent_id": null,
+        "reason": "build it with my many proj_2 methods and materials"
+      },
+      "modify_history": [
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_0",
+          "delta": 0.15
+        },
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_2",
+          "delta": 0.15
+        }
+      ],
+      "before_attributes": {
+        "attr_0": 0.45,
+        "attr_1": 0.25,
+        "attr_2": 0.4,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_attributes": {
+        "attr_0": 0.6,
+        "attr_2": 0.55
+      },
+      "source_project_id": "proj_2",
+      "applied_modifications": {
+        "attr_0": 0.15,
+        "attr_2": 0.15
+      },
+      "after_attributes": {
+        "attr_0": 0.6,
+        "attr_1": 0.25,
+        "attr_2": 0.55,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_asset": null,
+      "asset_feasible": true,
+      "required_materials": {
+        "mat_1": 1.0,
+        "mat_4": 1.0
+      },
+      "material_feasible": true,
+      "effective_success_probability": 0.576471,
+      "make_success": true,
+      "meets_requirement": true,
+      "supplied_units": 1.0,
+      "proposal_relation": {
+        "self_proposed": null,
+        "visible_neighbour_proposals": {}
+      },
+      "join_relation": [],
+      "coordination_relation": {
+        "edges_total": 0,
+        "edges_involving_self": []
+      }
+    },
+    {
+      "step": 156,
+      "condition": "C",
+      "seed": 6,
+      "agent_id": "agent_33",
+      "intent": {
+        "action": "make",
+        "target_project_id": "proj_2",
+        "target_skill_id": null,
+        "target_agent_id": null,
+        "reason": "build it with high skill_0 and many methods"
+      },
+      "modify_history": [
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_0",
+          "delta": 0.15
+        },
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_2",
+          "delta": 0.15
+        }
+      ],
+      "before_attributes": {
+        "attr_0": 0.45,
+        "attr_1": 0.25,
+        "attr_2": 0.4,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_attributes": {
+        "attr_0": 0.6,
+        "attr_2": 0.55
+      },
+      "source_project_id": "proj_2",
+      "applied_modifications": {
+        "attr_0": 0.15,
+        "attr_2": 0.15
+      },
+      "after_attributes": {
+        "attr_0": 0.6,
+        "attr_1": 0.25,
+        "attr_2": 0.55,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_asset": null,
+      "asset_feasible": true,
+      "required_materials": {
+        "mat_1": 1.0,
+        "mat_4": 1.0
+      },
+      "material_feasible": true,
+      "effective_success_probability": 0.576471,
+      "make_success": false,
+      "meets_requirement": true,
+      "supplied_units": 0.0,
+      "proposal_relation": {
+        "self_proposed": null,
+        "visible_neighbour_proposals": {}
+      },
+      "join_relation": [],
+      "coordination_relation": {
+        "edges_total": 0,
+        "edges_involving_self": []
+      }
+    },
+    {
+      "step": 156,
+      "condition": "C",
+      "seed": 6,
+      "agent_id": "agent_4",
+      "intent": {
+        "action": "make",
+        "target_project_id": "proj_2",
+        "target_skill_id": null,
+        "target_agent_id": null,
+        "reason": "build it; I hold many proj_2 methods and materials"
+      },
+      "modify_history": [
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_0",
+          "delta": 0.15
+        },
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_2",
+          "delta": 0.15
+        }
+      ],
+      "before_attributes": {
+        "attr_0": 0.45,
+        "attr_1": 0.25,
+        "attr_2": 0.4,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_attributes": {
+        "attr_0": 0.6,
+        "attr_2": 0.55
+      },
+      "source_project_id": "proj_2",
+      "applied_modifications": {
+        "attr_0": 0.15,
+        "attr_2": 0.15
+      },
+      "after_attributes": {
+        "attr_0": 0.6,
+        "attr_1": 0.25,
+        "attr_2": 0.55,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_asset": null,
+      "asset_feasible": true,
+      "required_materials": {
+        "mat_1": 1.0,
+        "mat_4": 1.0
+      },
+      "material_feasible": true,
+      "effective_success_probability": 0.576471,
+      "make_success": false,
+      "meets_requirement": true,
+      "supplied_units": 0.0,
+      "proposal_relation": {
+        "self_proposed": null,
+        "visible_neighbour_proposals": {}
+      },
+      "join_relation": [],
+      "coordination_relation": {
+        "edges_total": 0,
+        "edges_involving_self": []
+      }
+    },
+    {
+      "step": 156,
+      "condition": "C",
+      "seed": 6,
+      "agent_id": "agent_8",
+      "intent": {
+        "action": "make",
+        "target_project_id": "proj_2",
+        "target_skill_id": null,
+        "target_agent_id": null,
+        "reason": "build it with many methods held and materials available"
+      },
+      "modify_history": [
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_0",
+          "delta": 0.15
+        },
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_2",
+          "delta": 0.15
+        }
+      ],
+      "before_attributes": {
+        "attr_0": 0.45,
+        "attr_1": 0.25,
+        "attr_2": 0.4,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_attributes": {
+        "attr_0": 0.6,
+        "attr_2": 0.55
+      },
+      "source_project_id": "proj_2",
+      "applied_modifications": {
+        "attr_0": 0.15,
+        "attr_2": 0.15
+      },
+      "after_attributes": {
+        "attr_0": 0.6,
+        "attr_1": 0.25,
+        "attr_2": 0.55,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_asset": null,
+      "asset_feasible": true,
+      "required_materials": {
+        "mat_1": 1.0,
+        "mat_4": 1.0
+      },
+      "material_feasible": true,
+      "effective_success_probability": 0.576471,
+      "make_success": true,
+      "meets_requirement": true,
+      "supplied_units": 1.0,
+      "proposal_relation": {
+        "self_proposed": null,
+        "visible_neighbour_proposals": {}
+      },
+      "join_relation": [],
+      "coordination_relation": {
+        "edges_total": 0,
+        "edges_involving_self": []
+      }
+    },
+    {
+      "step": 157,
+      "condition": "C",
+      "seed": 6,
+      "agent_id": "agent_10",
+      "intent": {
+        "action": "make",
+        "target_project_id": "proj_2",
+        "target_skill_id": null,
+        "target_agent_id": null,
+        "reason": "proj_2 already meets the requirement and I have skill_0=0.999 plus materials"
+      },
+      "modify_history": [
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_0",
+          "delta": 0.15
+        },
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_2",
+          "delta": 0.15
+        }
+      ],
+      "before_attributes": {
+        "attr_0": 0.45,
+        "attr_1": 0.25,
+        "attr_2": 0.4,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_attributes": {
+        "attr_0": 0.6,
+        "attr_2": 0.55
+      },
+      "source_project_id": "proj_2",
+      "applied_modifications": {
+        "attr_0": 0.15,
+        "attr_2": 0.15
+      },
+      "after_attributes": {
+        "attr_0": 0.6,
+        "attr_1": 0.25,
+        "attr_2": 0.55,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_asset": null,
+      "asset_feasible": true,
+      "required_materials": {
+        "mat_1": 1.0,
+        "mat_4": 1.0
+      },
+      "material_feasible": true,
+      "effective_success_probability": 0.576471,
+      "make_success": false,
+      "meets_requirement": true,
+      "supplied_units": 0.0,
+      "proposal_relation": {
+        "self_proposed": null,
+        "visible_neighbour_proposals": {}
+      },
+      "join_relation": [],
+      "coordination_relation": {
+        "edges_total": 0,
+        "edges_involving_self": []
+      }
+    },
+    {
+      "step": 157,
+      "condition": "C",
+      "seed": 6,
+      "agent_id": "agent_13",
+      "intent": {
+        "action": "make",
+        "target_project_id": "proj_2",
+        "target_skill_id": null,
+        "target_agent_id": null,
+        "reason": "proj_2 already meets the requirement and I have skill_0=0.999 plus materials"
+      },
+      "modify_history": [
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_0",
+          "delta": 0.15
+        },
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_2",
+          "delta": 0.15
+        }
+      ],
+      "before_attributes": {
+        "attr_0": 0.45,
+        "attr_1": 0.25,
+        "attr_2": 0.4,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_attributes": {
+        "attr_0": 0.6,
+        "attr_2": 0.55
+      },
+      "source_project_id": "proj_2",
+      "applied_modifications": {
+        "attr_0": 0.15,
+        "attr_2": 0.15
+      },
+      "after_attributes": {
+        "attr_0": 0.6,
+        "attr_1": 0.25,
+        "attr_2": 0.55,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_asset": null,
+      "asset_feasible": true,
+      "required_materials": {
+        "mat_1": 1.0,
+        "mat_4": 1.0
+      },
+      "material_feasible": true,
+      "effective_success_probability": 0.576471,
+      "make_success": true,
+      "meets_requirement": true,
+      "supplied_units": 1.0,
+      "proposal_relation": {
+        "self_proposed": null,
+        "visible_neighbour_proposals": {
+          "agent_10": "proj_2"
+        }
+      },
+      "join_relation": [],
+      "coordination_relation": {
+        "edges_total": 0,
+        "edges_involving_self": []
+      }
+    },
+    {
+      "step": 157,
+      "condition": "C",
+      "seed": 6,
+      "agent_id": "agent_26",
+      "intent": {
+        "action": "make",
+        "target_project_id": "proj_2",
+        "target_skill_id": null,
+        "target_agent_id": null,
+        "reason": "proj_2 already meets requirement and I have skill_0=0.998 plus many methods and materials"
+      },
+      "modify_history": [
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_0",
+          "delta": 0.15
+        },
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_2",
+          "delta": 0.15
+        }
+      ],
+      "before_attributes": {
+        "attr_0": 0.45,
+        "attr_1": 0.25,
+        "attr_2": 0.4,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_attributes": {
+        "attr_0": 0.6,
+        "attr_2": 0.55
+      },
+      "source_project_id": "proj_2",
+      "applied_modifications": {
+        "attr_0": 0.15,
+        "attr_2": 0.15
+      },
+      "after_attributes": {
+        "attr_0": 0.6,
+        "attr_1": 0.25,
+        "attr_2": 0.55,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_asset": null,
+      "asset_feasible": true,
+      "required_materials": {
+        "mat_1": 1.0,
+        "mat_4": 1.0
+      },
+      "material_feasible": true,
+      "effective_success_probability": 0.576471,
+      "make_success": true,
+      "meets_requirement": true,
+      "supplied_units": 1.0,
+      "proposal_relation": {
+        "self_proposed": null,
+        "visible_neighbour_proposals": {}
+      },
+      "join_relation": [],
+      "coordination_relation": {
+        "edges_total": 1,
+        "edges_involving_self": []
+      }
+    },
+    {
+      "step": 157,
+      "condition": "C",
+      "seed": 6,
+      "agent_id": "agent_33",
+      "intent": {
+        "action": "make",
+        "target_project_id": "proj_2",
+        "target_skill_id": null,
+        "target_agent_id": null,
+        "reason": "proj_2 already meets requirement and my skill_0 is 0.998"
+      },
+      "modify_history": [
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_0",
+          "delta": 0.15
+        },
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_2",
+          "delta": 0.15
+        }
+      ],
+      "before_attributes": {
+        "attr_0": 0.45,
+        "attr_1": 0.25,
+        "attr_2": 0.4,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_attributes": {
+        "attr_0": 0.6,
+        "attr_2": 0.55
+      },
+      "source_project_id": "proj_2",
+      "applied_modifications": {
+        "attr_0": 0.15,
+        "attr_2": 0.15
+      },
+      "after_attributes": {
+        "attr_0": 0.6,
+        "attr_1": 0.25,
+        "attr_2": 0.55,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_asset": null,
+      "asset_feasible": true,
+      "required_materials": {
+        "mat_1": 1.0,
+        "mat_4": 1.0
+      },
+      "material_feasible": true,
+      "effective_success_probability": 0.576471,
+      "make_success": false,
+      "meets_requirement": true,
+      "supplied_units": 0.0,
+      "proposal_relation": {
+        "self_proposed": null,
+        "visible_neighbour_proposals": {}
+      },
+      "join_relation": [],
+      "coordination_relation": {
+        "edges_total": 1,
+        "edges_involving_self": []
+      }
+    },
+    {
+      "step": 157,
+      "condition": "C",
+      "seed": 6,
+      "agent_id": "agent_33",
+      "intent": {
+        "action": "make",
+        "target_project_id": "proj_4",
+        "target_skill_id": null,
+        "target_agent_id": null,
+        "reason": "backup output with strong skill_5"
+      },
+      "modify_history": [
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_0",
+          "delta": 0.15
+        },
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_2",
+          "delta": 0.15
+        }
+      ],
+      "before_attributes": {
+        "attr_0": 0.35,
+        "attr_1": 0.15,
+        "attr_2": 0.5,
+        "attr_3": 0.25,
+        "attr_4": 0.45,
+        "attr_5": 0.2,
+        "attr_6": 0.1
+      },
+      "required_attributes": {
+        "attr_0": 0.6,
+        "attr_2": 0.55
+      },
+      "source_project_id": "proj_4",
+      "applied_modifications": {},
+      "after_attributes": {
+        "attr_0": 0.35,
+        "attr_1": 0.15,
+        "attr_2": 0.5,
+        "attr_3": 0.25,
+        "attr_4": 0.45,
+        "attr_5": 0.2,
+        "attr_6": 0.1
+      },
+      "required_asset": "asset_0",
+      "asset_feasible": true,
+      "required_materials": {
+        "mat_2": 2.0
+      },
+      "material_feasible": true,
+      "effective_success_probability": 0.98,
+      "make_success": true,
+      "meets_requirement": false,
+      "supplied_units": 0.0,
+      "proposal_relation": {
+        "self_proposed": "proj_2",
+        "visible_neighbour_proposals": {}
+      },
+      "join_relation": [],
+      "coordination_relation": {
+        "edges_total": 1,
+        "edges_involving_self": []
+      }
+    },
+    {
+      "step": 157,
+      "condition": "C",
+      "seed": 6,
+      "agent_id": "agent_4",
+      "intent": {
+        "action": "make",
+        "target_project_id": "proj_2",
+        "target_skill_id": null,
+        "target_agent_id": null,
+        "reason": "proj_2 already meets the requirement and my skill_0 is 0.998 with materials on hand"
+      },
+      "modify_history": [
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_0",
+          "delta": 0.15
+        },
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_2",
+          "delta": 0.15
+        }
+      ],
+      "before_attributes": {
+        "attr_0": 0.45,
+        "attr_1": 0.25,
+        "attr_2": 0.4,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_attributes": {
+        "attr_0": 0.6,
+        "attr_2": 0.55
+      },
+      "source_project_id": "proj_2",
+      "applied_modifications": {
+        "attr_0": 0.15,
+        "attr_2": 0.15
+      },
+      "after_attributes": {
+        "attr_0": 0.6,
+        "attr_1": 0.25,
+        "attr_2": 0.55,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_asset": null,
+      "asset_feasible": true,
+      "required_materials": {
+        "mat_1": 1.0,
+        "mat_4": 1.0
+      },
+      "material_feasible": true,
+      "effective_success_probability": 0.576471,
+      "make_success": true,
+      "meets_requirement": true,
+      "supplied_units": 1.0,
+      "proposal_relation": {
+        "self_proposed": null,
+        "visible_neighbour_proposals": {}
+      },
+      "join_relation": [],
+      "coordination_relation": {
+        "edges_total": 1,
+        "edges_involving_self": []
+      }
+    },
+    {
+      "step": 157,
+      "condition": "C",
+      "seed": 6,
+      "agent_id": "agent_8",
+      "intent": {
+        "action": "make",
+        "target_project_id": "proj_2",
+        "target_skill_id": null,
+        "target_agent_id": null,
+        "reason": "proj_2 already meets the requirement and I have skill_0=0.998 plus many methods and materials."
+      },
+      "modify_history": [
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_0",
+          "delta": 0.15
+        },
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_2",
+          "delta": 0.15
+        }
+      ],
+      "before_attributes": {
+        "attr_0": 0.45,
+        "attr_1": 0.25,
+        "attr_2": 0.4,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_attributes": {
+        "attr_0": 0.6,
+        "attr_2": 0.55
+      },
+      "source_project_id": "proj_2",
+      "applied_modifications": {
+        "attr_0": 0.15,
+        "attr_2": 0.15
+      },
+      "after_attributes": {
+        "attr_0": 0.6,
+        "attr_1": 0.25,
+        "attr_2": 0.55,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_asset": null,
+      "asset_feasible": true,
+      "required_materials": {
+        "mat_1": 1.0,
+        "mat_4": 1.0
+      },
+      "material_feasible": true,
+      "effective_success_probability": 0.576471,
+      "make_success": false,
+      "meets_requirement": true,
+      "supplied_units": 0.0,
+      "proposal_relation": {
+        "self_proposed": null,
+        "visible_neighbour_proposals": {
+          "agent_10": "proj_2"
+        }
+      },
+      "join_relation": [],
+      "coordination_relation": {
+        "edges_total": 1,
+        "edges_involving_self": []
+      }
+    },
+    {
+      "step": 158,
+      "condition": "C",
+      "seed": 6,
+      "agent_id": "agent_10",
+      "intent": {
+        "action": "make",
+        "target_project_id": "proj_2",
+        "target_skill_id": null,
+        "target_agent_id": null,
+        "reason": "proj_2 already meets the requirement and my skill_0 is 0.999"
+      },
+      "modify_history": [
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_0",
+          "delta": 0.15
+        },
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_2",
+          "delta": 0.15
+        }
+      ],
+      "before_attributes": {
+        "attr_0": 0.45,
+        "attr_1": 0.25,
+        "attr_2": 0.4,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_attributes": {
+        "attr_0": 0.6,
+        "attr_2": 0.55
+      },
+      "source_project_id": "proj_2",
+      "applied_modifications": {
+        "attr_0": 0.15,
+        "attr_2": 0.15
+      },
+      "after_attributes": {
+        "attr_0": 0.6,
+        "attr_1": 0.25,
+        "attr_2": 0.55,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_asset": null,
+      "asset_feasible": true,
+      "required_materials": {
+        "mat_1": 1.0,
+        "mat_4": 1.0
+      },
+      "material_feasible": true,
+      "effective_success_probability": 0.576471,
+      "make_success": false,
+      "meets_requirement": true,
+      "supplied_units": 0.0,
+      "proposal_relation": {
+        "self_proposed": "proj_2",
+        "visible_neighbour_proposals": {}
+      },
+      "join_relation": [
+        "agent_13",
+        "agent_8"
+      ],
+      "coordination_relation": {
+        "edges_total": 2,
+        "edges_involving_self": [
+          [
+            "agent_10",
+            "agent_13"
+          ],
+          [
+            "agent_10",
+            "agent_8"
+          ]
+        ]
+      }
+    },
+    {
+      "step": 158,
+      "condition": "C",
+      "seed": 6,
+      "agent_id": "agent_13",
+      "intent": {
+        "action": "make",
+        "target_project_id": "proj_2",
+        "target_skill_id": null,
+        "target_agent_id": null,
+        "reason": "proj_2 already meets requirement and I have skill_0=0.999 plus many methods"
+      },
+      "modify_history": [
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_0",
+          "delta": 0.15
+        },
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_2",
+          "delta": 0.15
+        }
+      ],
+      "before_attributes": {
+        "attr_0": 0.45,
+        "attr_1": 0.25,
+        "attr_2": 0.4,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_attributes": {
+        "attr_0": 0.6,
+        "attr_2": 0.55
+      },
+      "source_project_id": "proj_2",
+      "applied_modifications": {
+        "attr_0": 0.15,
+        "attr_2": 0.15
+      },
+      "after_attributes": {
+        "attr_0": 0.6,
+        "attr_1": 0.25,
+        "attr_2": 0.55,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_asset": null,
+      "asset_feasible": true,
+      "required_materials": {
+        "mat_1": 1.0,
+        "mat_4": 1.0
+      },
+      "material_feasible": true,
+      "effective_success_probability": 0.576471,
+      "make_success": false,
+      "meets_requirement": true,
+      "supplied_units": 0.0,
+      "proposal_relation": {
+        "self_proposed": null,
+        "visible_neighbour_proposals": {
+          "agent_10": "proj_2"
+        }
+      },
+      "join_relation": [
+        "agent_10"
+      ],
+      "coordination_relation": {
+        "edges_total": 2,
+        "edges_involving_self": [
+          [
+            "agent_10",
+            "agent_13"
+          ]
+        ]
+      }
+    },
+    {
+      "step": 158,
+      "condition": "C",
+      "seed": 6,
+      "agent_id": "agent_26",
+      "intent": {
+        "action": "make",
+        "target_project_id": "proj_2",
+        "target_skill_id": null,
+        "target_agent_id": null,
+        "reason": "proj_2 already meets requirement and my skill_0 is 0.998"
+      },
+      "modify_history": [
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_0",
+          "delta": 0.15
+        },
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_2",
+          "delta": 0.15
+        }
+      ],
+      "before_attributes": {
+        "attr_0": 0.45,
+        "attr_1": 0.25,
+        "attr_2": 0.4,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_attributes": {
+        "attr_0": 0.6,
+        "attr_2": 0.55
+      },
+      "source_project_id": "proj_2",
+      "applied_modifications": {
+        "attr_0": 0.15,
+        "attr_2": 0.15
+      },
+      "after_attributes": {
+        "attr_0": 0.6,
+        "attr_1": 0.25,
+        "attr_2": 0.55,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_asset": null,
+      "asset_feasible": true,
+      "required_materials": {
+        "mat_1": 1.0,
+        "mat_4": 1.0
+      },
+      "material_feasible": true,
+      "effective_success_probability": 0.576471,
+      "make_success": false,
+      "meets_requirement": true,
+      "supplied_units": 0.0,
+      "proposal_relation": {
+        "self_proposed": "proj_2",
+        "visible_neighbour_proposals": {}
+      },
+      "join_relation": [],
+      "coordination_relation": {
+        "edges_total": 2,
+        "edges_involving_self": []
+      }
+    },
+    {
+      "step": 158,
+      "condition": "C",
+      "seed": 6,
+      "agent_id": "agent_33",
+      "intent": {
+        "action": "make",
+        "target_project_id": "proj_2",
+        "target_skill_id": null,
+        "target_agent_id": null,
+        "reason": "proj_2 already meets the requirement and my skill_0 is 0.998 with materials on hand"
+      },
+      "modify_history": [
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_0",
+          "delta": 0.15
+        },
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_2",
+          "delta": 0.15
+        }
+      ],
+      "before_attributes": {
+        "attr_0": 0.45,
+        "attr_1": 0.25,
+        "attr_2": 0.4,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_attributes": {
+        "attr_0": 0.6,
+        "attr_2": 0.55
+      },
+      "source_project_id": "proj_2",
+      "applied_modifications": {
+        "attr_0": 0.15,
+        "attr_2": 0.15
+      },
+      "after_attributes": {
+        "attr_0": 0.6,
+        "attr_1": 0.25,
+        "attr_2": 0.55,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_asset": null,
+      "asset_feasible": true,
+      "required_materials": {
+        "mat_1": 1.0,
+        "mat_4": 1.0
+      },
+      "material_feasible": true,
+      "effective_success_probability": 0.576471,
+      "make_success": true,
+      "meets_requirement": true,
+      "supplied_units": 1.0,
+      "proposal_relation": {
+        "self_proposed": "proj_2",
+        "visible_neighbour_proposals": {}
+      },
+      "join_relation": [],
+      "coordination_relation": {
+        "edges_total": 2,
+        "edges_involving_self": []
+      }
+    },
+    {
+      "step": 158,
+      "condition": "C",
+      "seed": 6,
+      "agent_id": "agent_33",
+      "intent": {
+        "action": "make",
+        "target_project_id": "proj_2",
+        "target_skill_id": null,
+        "target_agent_id": null,
+        "reason": "build another to be safe"
+      },
+      "modify_history": [
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_0",
+          "delta": 0.15
+        },
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_2",
+          "delta": 0.15
+        }
+      ],
+      "before_attributes": {
+        "attr_0": 0.45,
+        "attr_1": 0.25,
+        "attr_2": 0.4,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_attributes": {
+        "attr_0": 0.6,
+        "attr_2": 0.55
+      },
+      "source_project_id": "proj_2",
+      "applied_modifications": {
+        "attr_0": 0.15,
+        "attr_2": 0.15
+      },
+      "after_attributes": {
+        "attr_0": 0.6,
+        "attr_1": 0.25,
+        "attr_2": 0.55,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_asset": null,
+      "asset_feasible": true,
+      "required_materials": {
+        "mat_1": 1.0,
+        "mat_4": 1.0
+      },
+      "material_feasible": false,
+      "effective_success_probability": 0.576471,
+      "make_success": false,
+      "meets_requirement": true,
+      "supplied_units": 0.0,
+      "proposal_relation": {
+        "self_proposed": "proj_2",
+        "visible_neighbour_proposals": {}
+      },
+      "join_relation": [],
+      "coordination_relation": {
+        "edges_total": 2,
+        "edges_involving_self": []
+      }
+    },
+    {
+      "step": 158,
+      "condition": "C",
+      "seed": 6,
+      "agent_id": "agent_4",
+      "intent": {
+        "action": "make",
+        "target_project_id": "proj_2",
+        "target_skill_id": null,
+        "target_agent_id": null,
+        "reason": "proj_2 already meets the requirement and my skill_0 is 0.998"
+      },
+      "modify_history": [
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_0",
+          "delta": 0.15
+        },
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_2",
+          "delta": 0.15
+        }
+      ],
+      "before_attributes": {
+        "attr_0": 0.45,
+        "attr_1": 0.25,
+        "attr_2": 0.4,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_attributes": {
+        "attr_0": 0.6,
+        "attr_2": 0.55
+      },
+      "source_project_id": "proj_2",
+      "applied_modifications": {
+        "attr_0": 0.15,
+        "attr_2": 0.15
+      },
+      "after_attributes": {
+        "attr_0": 0.6,
+        "attr_1": 0.25,
+        "attr_2": 0.55,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_asset": null,
+      "asset_feasible": true,
+      "required_materials": {
+        "mat_1": 1.0,
+        "mat_4": 1.0
+      },
+      "material_feasible": true,
+      "effective_success_probability": 0.576471,
+      "make_success": false,
+      "meets_requirement": true,
+      "supplied_units": 0.0,
+      "proposal_relation": {
+        "self_proposed": "proj_2",
+        "visible_neighbour_proposals": {}
+      },
+      "join_relation": [],
+      "coordination_relation": {
+        "edges_total": 2,
+        "edges_involving_self": []
+      }
+    },
+    {
+      "step": 158,
+      "condition": "C",
+      "seed": 6,
+      "agent_id": "agent_8",
+      "intent": {
+        "action": "make",
+        "target_project_id": "proj_2",
+        "target_skill_id": null,
+        "target_agent_id": null,
+        "reason": "proj_2 already meets the requirement and my skill_0 is 0.998 with materials on hand"
+      },
+      "modify_history": [
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_0",
+          "delta": 0.15
+        },
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_2",
+          "delta": 0.15
+        }
+      ],
+      "before_attributes": {
+        "attr_0": 0.45,
+        "attr_1": 0.25,
+        "attr_2": 0.4,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_attributes": {
+        "attr_0": 0.6,
+        "attr_2": 0.55
+      },
+      "source_project_id": "proj_2",
+      "applied_modifications": {
+        "attr_0": 0.15,
+        "attr_2": 0.15
+      },
+      "after_attributes": {
+        "attr_0": 0.6,
+        "attr_1": 0.25,
+        "attr_2": 0.55,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_asset": null,
+      "asset_feasible": true,
+      "required_materials": {
+        "mat_1": 1.0,
+        "mat_4": 1.0
+      },
+      "material_feasible": true,
+      "effective_success_probability": 0.576471,
+      "make_success": false,
+      "meets_requirement": true,
+      "supplied_units": 0.0,
+      "proposal_relation": {
+        "self_proposed": null,
+        "visible_neighbour_proposals": {
+          "agent_10": "proj_2"
+        }
+      },
+      "join_relation": [
+        "agent_10"
+      ],
+      "coordination_relation": {
+        "edges_total": 2,
+        "edges_involving_self": [
+          [
+            "agent_10",
+            "agent_8"
+          ]
+        ]
+      }
+    },
+    {
+      "step": 159,
+      "condition": "C",
+      "seed": 6,
+      "agent_id": "agent_10",
+      "intent": {
+        "action": "make",
+        "target_project_id": "proj_2",
+        "target_skill_id": null,
+        "target_agent_id": null,
+        "reason": "proj_2 already meets the requirement and I have skill_0=0.999 plus materials"
+      },
+      "modify_history": [
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_0",
+          "delta": 0.15
+        },
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_2",
+          "delta": 0.15
+        }
+      ],
+      "before_attributes": {
+        "attr_0": 0.45,
+        "attr_1": 0.25,
+        "attr_2": 0.4,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_attributes": {
+        "attr_0": 0.6,
+        "attr_2": 0.55
+      },
+      "source_project_id": "proj_2",
+      "applied_modifications": {
+        "attr_0": 0.15,
+        "attr_2": 0.15
+      },
+      "after_attributes": {
+        "attr_0": 0.6,
+        "attr_1": 0.25,
+        "attr_2": 0.55,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_asset": null,
+      "asset_feasible": true,
+      "required_materials": {
+        "mat_1": 1.0,
+        "mat_4": 1.0
+      },
+      "material_feasible": true,
+      "effective_success_probability": 0.576471,
+      "make_success": false,
+      "meets_requirement": true,
+      "supplied_units": 0.0,
+      "proposal_relation": {
+        "self_proposed": "proj_2",
+        "visible_neighbour_proposals": {}
+      },
+      "join_relation": [
+        "agent_13",
+        "agent_8"
+      ],
+      "coordination_relation": {
+        "edges_total": 2,
+        "edges_involving_self": [
+          [
+            "agent_10",
+            "agent_13"
+          ],
+          [
+            "agent_10",
+            "agent_8"
+          ]
+        ]
+      }
+    },
+    {
+      "step": 159,
+      "condition": "C",
+      "seed": 6,
+      "agent_id": "agent_13",
+      "intent": {
+        "action": "make",
+        "target_project_id": "proj_2",
+        "target_skill_id": null,
+        "target_agent_id": null,
+        "reason": "proj_2 already meets the requirement and I have skill_0=0.999 plus many methods"
+      },
+      "modify_history": [
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_0",
+          "delta": 0.15
+        },
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_2",
+          "delta": 0.15
+        }
+      ],
+      "before_attributes": {
+        "attr_0": 0.45,
+        "attr_1": 0.25,
+        "attr_2": 0.4,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_attributes": {
+        "attr_0": 0.6,
+        "attr_2": 0.55
+      },
+      "source_project_id": "proj_2",
+      "applied_modifications": {
+        "attr_0": 0.15,
+        "attr_2": 0.15
+      },
+      "after_attributes": {
+        "attr_0": 0.6,
+        "attr_1": 0.25,
+        "attr_2": 0.55,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_asset": null,
+      "asset_feasible": true,
+      "required_materials": {
+        "mat_1": 1.0,
+        "mat_4": 1.0
+      },
+      "material_feasible": true,
+      "effective_success_probability": 0.576471,
+      "make_success": true,
+      "meets_requirement": true,
+      "supplied_units": 1.0,
+      "proposal_relation": {
+        "self_proposed": null,
+        "visible_neighbour_proposals": {
+          "agent_10": "proj_2"
+        }
+      },
+      "join_relation": [
+        "agent_10"
+      ],
+      "coordination_relation": {
+        "edges_total": 2,
+        "edges_involving_self": [
+          [
+            "agent_10",
+            "agent_13"
+          ]
+        ]
+      }
+    },
+    {
+      "step": 159,
+      "condition": "C",
+      "seed": 6,
+      "agent_id": "agent_13",
+      "intent": {
+        "action": "make",
+        "target_project_id": "proj_2",
+        "target_skill_id": null,
+        "target_agent_id": null,
+        "reason": "Build another to be safe"
+      },
+      "modify_history": [
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_0",
+          "delta": 0.15
+        },
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_2",
+          "delta": 0.15
+        }
+      ],
+      "before_attributes": {
+        "attr_0": 0.45,
+        "attr_1": 0.25,
+        "attr_2": 0.4,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_attributes": {
+        "attr_0": 0.6,
+        "attr_2": 0.55
+      },
+      "source_project_id": "proj_2",
+      "applied_modifications": {
+        "attr_0": 0.15,
+        "attr_2": 0.15
+      },
+      "after_attributes": {
+        "attr_0": 0.6,
+        "attr_1": 0.25,
+        "attr_2": 0.55,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_asset": null,
+      "asset_feasible": true,
+      "required_materials": {
+        "mat_1": 1.0,
+        "mat_4": 1.0
+      },
+      "material_feasible": true,
+      "effective_success_probability": 0.576471,
+      "make_success": false,
+      "meets_requirement": true,
+      "supplied_units": 0.0,
+      "proposal_relation": {
+        "self_proposed": null,
+        "visible_neighbour_proposals": {
+          "agent_10": "proj_2"
+        }
+      },
+      "join_relation": [
+        "agent_10"
+      ],
+      "coordination_relation": {
+        "edges_total": 2,
+        "edges_involving_self": [
+          [
+            "agent_10",
+            "agent_13"
+          ]
+        ]
+      }
+    },
+    {
+      "step": 159,
+      "condition": "C",
+      "seed": 6,
+      "agent_id": "agent_26",
+      "intent": {
+        "action": "make",
+        "target_project_id": "proj_2",
+        "target_skill_id": null,
+        "target_agent_id": null,
+        "reason": "proj_2 already meets requirement and my skill_0 is 0.998"
+      },
+      "modify_history": [
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_0",
+          "delta": 0.15
+        },
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_2",
+          "delta": 0.15
+        }
+      ],
+      "before_attributes": {
+        "attr_0": 0.45,
+        "attr_1": 0.25,
+        "attr_2": 0.4,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_attributes": {
+        "attr_0": 0.6,
+        "attr_2": 0.55
+      },
+      "source_project_id": "proj_2",
+      "applied_modifications": {
+        "attr_0": 0.15,
+        "attr_2": 0.15
+      },
+      "after_attributes": {
+        "attr_0": 0.6,
+        "attr_1": 0.25,
+        "attr_2": 0.55,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_asset": null,
+      "asset_feasible": true,
+      "required_materials": {
+        "mat_1": 1.0,
+        "mat_4": 1.0
+      },
+      "material_feasible": true,
+      "effective_success_probability": 0.576471,
+      "make_success": true,
+      "meets_requirement": true,
+      "supplied_units": 1.0,
+      "proposal_relation": {
+        "self_proposed": "proj_2",
+        "visible_neighbour_proposals": {}
+      },
+      "join_relation": [],
+      "coordination_relation": {
+        "edges_total": 2,
+        "edges_involving_self": []
+      }
+    },
+    {
+      "step": 159,
+      "condition": "C",
+      "seed": 6,
+      "agent_id": "agent_33",
+      "intent": {
+        "action": "make",
+        "target_project_id": "proj_2",
+        "target_skill_id": null,
+        "target_agent_id": null,
+        "reason": "proj_2 already meets requirement and I have skill_0=0.998 plus many methods"
+      },
+      "modify_history": [
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_0",
+          "delta": 0.15
+        },
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_2",
+          "delta": 0.15
+        }
+      ],
+      "before_attributes": {
+        "attr_0": 0.45,
+        "attr_1": 0.25,
+        "attr_2": 0.4,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_attributes": {
+        "attr_0": 0.6,
+        "attr_2": 0.55
+      },
+      "source_project_id": "proj_2",
+      "applied_modifications": {
+        "attr_0": 0.15,
+        "attr_2": 0.15
+      },
+      "after_attributes": {
+        "attr_0": 0.6,
+        "attr_1": 0.25,
+        "attr_2": 0.55,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_asset": null,
+      "asset_feasible": true,
+      "required_materials": {
+        "mat_1": 1.0,
+        "mat_4": 1.0
+      },
+      "material_feasible": true,
+      "effective_success_probability": 0.576471,
+      "make_success": true,
+      "meets_requirement": true,
+      "supplied_units": 1.0,
+      "proposal_relation": {
+        "self_proposed": "proj_2",
+        "visible_neighbour_proposals": {}
+      },
+      "join_relation": [],
+      "coordination_relation": {
+        "edges_total": 2,
+        "edges_involving_self": []
+      }
+    },
+    {
+      "step": 159,
+      "condition": "C",
+      "seed": 6,
+      "agent_id": "agent_4",
+      "intent": {
+        "action": "make",
+        "target_project_id": "proj_2",
+        "target_skill_id": null,
+        "target_agent_id": null,
+        "reason": "proj_2 already meets the requirement and I have skill_0=0.998 plus materials."
+      },
+      "modify_history": [
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_0",
+          "delta": 0.15
+        },
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_2",
+          "delta": 0.15
+        }
+      ],
+      "before_attributes": {
+        "attr_0": 0.45,
+        "attr_1": 0.25,
+        "attr_2": 0.4,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_attributes": {
+        "attr_0": 0.6,
+        "attr_2": 0.55
+      },
+      "source_project_id": "proj_2",
+      "applied_modifications": {
+        "attr_0": 0.15,
+        "attr_2": 0.15
+      },
+      "after_attributes": {
+        "attr_0": 0.6,
+        "attr_1": 0.25,
+        "attr_2": 0.55,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_asset": null,
+      "asset_feasible": true,
+      "required_materials": {
+        "mat_1": 1.0,
+        "mat_4": 1.0
+      },
+      "material_feasible": true,
+      "effective_success_probability": 0.576471,
+      "make_success": true,
+      "meets_requirement": true,
+      "supplied_units": 1.0,
+      "proposal_relation": {
+        "self_proposed": "proj_2",
+        "visible_neighbour_proposals": {}
+      },
+      "join_relation": [],
+      "coordination_relation": {
+        "edges_total": 2,
+        "edges_involving_self": []
+      }
+    },
+    {
+      "step": 159,
+      "condition": "C",
+      "seed": 6,
+      "agent_id": "agent_4",
+      "intent": {
+        "action": "make",
+        "target_project_id": "proj_4",
+        "target_skill_id": null,
+        "target_agent_id": null,
+        "reason": "Backup build with high skill_5 and asset_0."
+      },
+      "modify_history": [
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_0",
+          "delta": 0.15
+        },
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_2",
+          "delta": 0.15
+        }
+      ],
+      "before_attributes": {
+        "attr_0": 0.35,
+        "attr_1": 0.15,
+        "attr_2": 0.5,
+        "attr_3": 0.25,
+        "attr_4": 0.45,
+        "attr_5": 0.2,
+        "attr_6": 0.1
+      },
+      "required_attributes": {
+        "attr_0": 0.6,
+        "attr_2": 0.55
+      },
+      "source_project_id": "proj_4",
+      "applied_modifications": {},
+      "after_attributes": {
+        "attr_0": 0.35,
+        "attr_1": 0.15,
+        "attr_2": 0.5,
+        "attr_3": 0.25,
+        "attr_4": 0.45,
+        "attr_5": 0.2,
+        "attr_6": 0.1
+      },
+      "required_asset": "asset_0",
+      "asset_feasible": true,
+      "required_materials": {
+        "mat_2": 2.0
+      },
+      "material_feasible": true,
+      "effective_success_probability": 0.98,
+      "make_success": true,
+      "meets_requirement": false,
+      "supplied_units": 0.0,
+      "proposal_relation": {
+        "self_proposed": "proj_2",
+        "visible_neighbour_proposals": {}
+      },
+      "join_relation": [],
+      "coordination_relation": {
+        "edges_total": 2,
+        "edges_involving_self": []
+      }
+    },
+    {
+      "step": 159,
+      "condition": "C",
+      "seed": 6,
+      "agent_id": "agent_8",
+      "intent": {
+        "action": "make",
+        "target_project_id": "proj_2",
+        "target_skill_id": null,
+        "target_agent_id": null,
+        "reason": "proj_2 already meets the requirement and I have skill_0=0.998 plus many methods"
+      },
+      "modify_history": [
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_0",
+          "delta": 0.15
+        },
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_2",
+          "delta": 0.15
+        }
+      ],
+      "before_attributes": {
+        "attr_0": 0.45,
+        "attr_1": 0.25,
+        "attr_2": 0.4,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_attributes": {
+        "attr_0": 0.6,
+        "attr_2": 0.55
+      },
+      "source_project_id": "proj_2",
+      "applied_modifications": {
+        "attr_0": 0.15,
+        "attr_2": 0.15
+      },
+      "after_attributes": {
+        "attr_0": 0.6,
+        "attr_1": 0.25,
+        "attr_2": 0.55,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_asset": null,
+      "asset_feasible": true,
+      "required_materials": {
+        "mat_1": 1.0,
+        "mat_4": 1.0
+      },
+      "material_feasible": true,
+      "effective_success_probability": 0.576471,
+      "make_success": true,
+      "meets_requirement": true,
+      "supplied_units": 1.0,
+      "proposal_relation": {
+        "self_proposed": null,
+        "visible_neighbour_proposals": {
+          "agent_10": "proj_2"
+        }
+      },
+      "join_relation": [
+        "agent_10"
+      ],
+      "coordination_relation": {
+        "edges_total": 2,
+        "edges_involving_self": [
+          [
+            "agent_10",
+            "agent_8"
+          ]
+        ]
+      }
+    },
+    {
+      "step": 160,
+      "condition": "C",
+      "seed": 6,
+      "agent_id": "agent_10",
+      "intent": {
+        "action": "make",
+        "target_project_id": "proj_2",
+        "target_skill_id": null,
+        "target_agent_id": null,
+        "reason": "proj_2 already meets the requirement and I have skill_0=0.999 plus materials"
+      },
+      "modify_history": [
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_0",
+          "delta": 0.15
+        },
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_2",
+          "delta": 0.15
+        }
+      ],
+      "before_attributes": {
+        "attr_0": 0.45,
+        "attr_1": 0.25,
+        "attr_2": 0.4,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_attributes": {
+        "attr_0": 0.6,
+        "attr_2": 0.55
+      },
+      "source_project_id": "proj_2",
+      "applied_modifications": {
+        "attr_0": 0.15,
+        "attr_2": 0.15
+      },
+      "after_attributes": {
+        "attr_0": 0.6,
+        "attr_1": 0.25,
+        "attr_2": 0.55,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_asset": null,
+      "asset_feasible": true,
+      "required_materials": {
+        "mat_1": 1.0,
+        "mat_4": 1.0
+      },
+      "material_feasible": true,
+      "effective_success_probability": 0.576471,
+      "make_success": true,
+      "meets_requirement": true,
+      "supplied_units": 1.0,
+      "proposal_relation": {
+        "self_proposed": "proj_2",
+        "visible_neighbour_proposals": {}
+      },
+      "join_relation": [
+        "agent_13",
+        "agent_8"
+      ],
+      "coordination_relation": {
+        "edges_total": 2,
+        "edges_involving_self": [
+          [
+            "agent_10",
+            "agent_13"
+          ],
+          [
+            "agent_10",
+            "agent_8"
+          ]
+        ]
+      }
+    },
+    {
+      "step": 160,
+      "condition": "C",
+      "seed": 6,
+      "agent_id": "agent_13",
+      "intent": {
+        "action": "make",
+        "target_project_id": "proj_2",
+        "target_skill_id": null,
+        "target_agent_id": null,
+        "reason": "proj_2 already meets the requirement and I have skill_0=0.999 plus materials"
+      },
+      "modify_history": [
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_0",
+          "delta": 0.15
+        },
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_2",
+          "delta": 0.15
+        }
+      ],
+      "before_attributes": {
+        "attr_0": 0.45,
+        "attr_1": 0.25,
+        "attr_2": 0.4,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_attributes": {
+        "attr_0": 0.6,
+        "attr_2": 0.55
+      },
+      "source_project_id": "proj_2",
+      "applied_modifications": {
+        "attr_0": 0.15,
+        "attr_2": 0.15
+      },
+      "after_attributes": {
+        "attr_0": 0.6,
+        "attr_1": 0.25,
+        "attr_2": 0.55,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_asset": null,
+      "asset_feasible": true,
+      "required_materials": {
+        "mat_1": 1.0,
+        "mat_4": 1.0
+      },
+      "material_feasible": true,
+      "effective_success_probability": 0.576471,
+      "make_success": true,
+      "meets_requirement": true,
+      "supplied_units": 1.0,
+      "proposal_relation": {
+        "self_proposed": null,
+        "visible_neighbour_proposals": {
+          "agent_10": "proj_2"
+        }
+      },
+      "join_relation": [
+        "agent_10"
+      ],
+      "coordination_relation": {
+        "edges_total": 2,
+        "edges_involving_self": [
+          [
+            "agent_10",
+            "agent_13"
+          ]
+        ]
+      }
+    },
+    {
+      "step": 160,
+      "condition": "C",
+      "seed": 6,
+      "agent_id": "agent_26",
+      "intent": {
+        "action": "make",
+        "target_project_id": "proj_2",
+        "target_skill_id": null,
+        "target_agent_id": null,
+        "reason": "proj_2 already meets the requirement and uses my best skill_0=0.998"
+      },
+      "modify_history": [
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_0",
+          "delta": 0.15
+        },
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_2",
+          "delta": 0.15
+        }
+      ],
+      "before_attributes": {
+        "attr_0": 0.45,
+        "attr_1": 0.25,
+        "attr_2": 0.4,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_attributes": {
+        "attr_0": 0.6,
+        "attr_2": 0.55
+      },
+      "source_project_id": "proj_2",
+      "applied_modifications": {
+        "attr_0": 0.15,
+        "attr_2": 0.15
+      },
+      "after_attributes": {
+        "attr_0": 0.6,
+        "attr_1": 0.25,
+        "attr_2": 0.55,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_asset": null,
+      "asset_feasible": true,
+      "required_materials": {
+        "mat_1": 1.0,
+        "mat_4": 1.0
+      },
+      "material_feasible": true,
+      "effective_success_probability": 0.576471,
+      "make_success": true,
+      "meets_requirement": true,
+      "supplied_units": 1.0,
+      "proposal_relation": {
+        "self_proposed": "proj_2",
+        "visible_neighbour_proposals": {}
+      },
+      "join_relation": [],
+      "coordination_relation": {
+        "edges_total": 2,
+        "edges_involving_self": []
+      }
+    },
+    {
+      "step": 160,
+      "condition": "C",
+      "seed": 6,
+      "agent_id": "agent_33",
+      "intent": {
+        "action": "make",
+        "target_project_id": "proj_2",
+        "target_skill_id": null,
+        "target_agent_id": null,
+        "reason": "proj_2 already meets the requirement and I have skill_0=0.998 plus many methods and materials"
+      },
+      "modify_history": [
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_0",
+          "delta": 0.15
+        },
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_2",
+          "delta": 0.15
+        }
+      ],
+      "before_attributes": {
+        "attr_0": 0.45,
+        "attr_1": 0.25,
+        "attr_2": 0.4,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_attributes": {
+        "attr_0": 0.6,
+        "attr_2": 0.55
+      },
+      "source_project_id": "proj_2",
+      "applied_modifications": {
+        "attr_0": 0.15,
+        "attr_2": 0.15
+      },
+      "after_attributes": {
+        "attr_0": 0.6,
+        "attr_1": 0.25,
+        "attr_2": 0.55,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_asset": null,
+      "asset_feasible": true,
+      "required_materials": {
+        "mat_1": 1.0,
+        "mat_4": 1.0
+      },
+      "material_feasible": true,
+      "effective_success_probability": 0.576471,
+      "make_success": false,
+      "meets_requirement": true,
+      "supplied_units": 0.0,
+      "proposal_relation": {
+        "self_proposed": "proj_2",
+        "visible_neighbour_proposals": {}
+      },
+      "join_relation": [],
+      "coordination_relation": {
+        "edges_total": 2,
+        "edges_involving_self": []
+      }
+    },
+    {
+      "step": 160,
+      "condition": "C",
+      "seed": 6,
+      "agent_id": "agent_33",
+      "intent": {
+        "action": "make",
+        "target_project_id": "proj_4",
+        "target_skill_id": null,
+        "target_agent_id": null,
+        "reason": "backup build with skill_5 and asset_0"
+      },
+      "modify_history": [
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_0",
+          "delta": 0.15
+        },
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_2",
+          "delta": 0.15
+        }
+      ],
+      "before_attributes": {
+        "attr_0": 0.35,
+        "attr_1": 0.15,
+        "attr_2": 0.5,
+        "attr_3": 0.25,
+        "attr_4": 0.45,
+        "attr_5": 0.2,
+        "attr_6": 0.1
+      },
+      "required_attributes": {
+        "attr_0": 0.6,
+        "attr_2": 0.55
+      },
+      "source_project_id": "proj_4",
+      "applied_modifications": {},
+      "after_attributes": {
+        "attr_0": 0.35,
+        "attr_1": 0.15,
+        "attr_2": 0.5,
+        "attr_3": 0.25,
+        "attr_4": 0.45,
+        "attr_5": 0.2,
+        "attr_6": 0.1
+      },
+      "required_asset": "asset_0",
+      "asset_feasible": true,
+      "required_materials": {
+        "mat_2": 2.0
+      },
+      "material_feasible": true,
+      "effective_success_probability": 0.98,
+      "make_success": true,
+      "meets_requirement": false,
+      "supplied_units": 0.0,
+      "proposal_relation": {
+        "self_proposed": "proj_2",
+        "visible_neighbour_proposals": {}
+      },
+      "join_relation": [],
+      "coordination_relation": {
+        "edges_total": 2,
+        "edges_involving_self": []
+      }
+    },
+    {
+      "step": 160,
+      "condition": "C",
+      "seed": 6,
+      "agent_id": "agent_4",
+      "intent": {
+        "action": "make",
+        "target_project_id": "proj_2",
+        "target_skill_id": null,
+        "target_agent_id": null,
+        "reason": "proj_2 already meets the requirement and I have skill_0=0.998 plus materials"
+      },
+      "modify_history": [
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_0",
+          "delta": 0.15
+        },
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_2",
+          "delta": 0.15
+        }
+      ],
+      "before_attributes": {
+        "attr_0": 0.45,
+        "attr_1": 0.25,
+        "attr_2": 0.4,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_attributes": {
+        "attr_0": 0.6,
+        "attr_2": 0.55
+      },
+      "source_project_id": "proj_2",
+      "applied_modifications": {
+        "attr_0": 0.15,
+        "attr_2": 0.15
+      },
+      "after_attributes": {
+        "attr_0": 0.6,
+        "attr_1": 0.25,
+        "attr_2": 0.55,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_asset": null,
+      "asset_feasible": true,
+      "required_materials": {
+        "mat_1": 1.0,
+        "mat_4": 1.0
+      },
+      "material_feasible": true,
+      "effective_success_probability": 0.576471,
+      "make_success": false,
+      "meets_requirement": true,
+      "supplied_units": 0.0,
+      "proposal_relation": {
+        "self_proposed": "proj_2",
+        "visible_neighbour_proposals": {}
+      },
+      "join_relation": [],
+      "coordination_relation": {
+        "edges_total": 2,
+        "edges_involving_self": []
+      }
+    },
+    {
+      "step": 160,
+      "condition": "C",
+      "seed": 6,
+      "agent_id": "agent_8",
+      "intent": {
+        "action": "make",
+        "target_project_id": "proj_2",
+        "target_skill_id": null,
+        "target_agent_id": null,
+        "reason": "proj_2 already meets the requirement and I have skill_0=0.998 plus many methods"
+      },
+      "modify_history": [
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_0",
+          "delta": 0.15
+        },
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_2",
+          "delta": 0.15
+        },
+        {
+          "step": 159,
+          "project_id": "proj_4",
+          "attr": "attr_2",
+          "delta": 0.15
+        }
+      ],
+      "before_attributes": {
+        "attr_0": 0.45,
+        "attr_1": 0.25,
+        "attr_2": 0.4,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_attributes": {
+        "attr_0": 0.6,
+        "attr_2": 0.55
+      },
+      "source_project_id": "proj_2",
+      "applied_modifications": {
+        "attr_0": 0.15,
+        "attr_2": 0.15
+      },
+      "after_attributes": {
+        "attr_0": 0.6,
+        "attr_1": 0.25,
+        "attr_2": 0.55,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_asset": null,
+      "asset_feasible": true,
+      "required_materials": {
+        "mat_1": 1.0,
+        "mat_4": 1.0
+      },
+      "material_feasible": true,
+      "effective_success_probability": 0.576471,
+      "make_success": false,
+      "meets_requirement": true,
+      "supplied_units": 0.0,
+      "proposal_relation": {
+        "self_proposed": null,
+        "visible_neighbour_proposals": {
+          "agent_10": "proj_2"
+        }
+      },
+      "join_relation": [
+        "agent_10"
+      ],
+      "coordination_relation": {
+        "edges_total": 2,
+        "edges_involving_self": [
+          [
+            "agent_10",
+            "agent_8"
+          ]
+        ]
+      }
+    },
+    {
+      "step": 161,
+      "condition": "C",
+      "seed": 6,
+      "agent_id": "agent_10",
+      "intent": {
+        "action": "make",
+        "target_project_id": "proj_2",
+        "target_skill_id": null,
+        "target_agent_id": null,
+        "reason": "proj_2 already meets the requirement and I have skill_0=0.999 plus many methods"
+      },
+      "modify_history": [
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_0",
+          "delta": 0.15
+        },
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_2",
+          "delta": 0.15
+        }
+      ],
+      "before_attributes": {
+        "attr_0": 0.45,
+        "attr_1": 0.25,
+        "attr_2": 0.4,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_attributes": {
+        "attr_0": 0.6,
+        "attr_2": 0.55
+      },
+      "source_project_id": "proj_2",
+      "applied_modifications": {
+        "attr_0": 0.15,
+        "attr_2": 0.15
+      },
+      "after_attributes": {
+        "attr_0": 0.6,
+        "attr_1": 0.25,
+        "attr_2": 0.55,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_asset": null,
+      "asset_feasible": true,
+      "required_materials": {
+        "mat_1": 1.0,
+        "mat_4": 1.0
+      },
+      "material_feasible": true,
+      "effective_success_probability": 0.576471,
+      "make_success": true,
+      "meets_requirement": true,
+      "supplied_units": 1.0,
+      "proposal_relation": {
+        "self_proposed": "proj_2",
+        "visible_neighbour_proposals": {}
+      },
+      "join_relation": [
+        "agent_13",
+        "agent_8"
+      ],
+      "coordination_relation": {
+        "edges_total": 2,
+        "edges_involving_self": [
+          [
+            "agent_10",
+            "agent_13"
+          ],
+          [
+            "agent_10",
+            "agent_8"
+          ]
+        ]
+      }
+    },
+    {
+      "step": 161,
+      "condition": "C",
+      "seed": 6,
+      "agent_id": "agent_13",
+      "intent": {
+        "action": "make",
+        "target_project_id": "proj_2",
+        "target_skill_id": null,
+        "target_agent_id": null,
+        "reason": "proj_2 meets the requirement and I have skill_0=0.999 plus many methods"
+      },
+      "modify_history": [
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_0",
+          "delta": 0.15
+        },
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_2",
+          "delta": 0.15
+        }
+      ],
+      "before_attributes": {
+        "attr_0": 0.45,
+        "attr_1": 0.25,
+        "attr_2": 0.4,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_attributes": {
+        "attr_0": 0.6,
+        "attr_2": 0.55
+      },
+      "source_project_id": "proj_2",
+      "applied_modifications": {
+        "attr_0": 0.15,
+        "attr_2": 0.15
+      },
+      "after_attributes": {
+        "attr_0": 0.6,
+        "attr_1": 0.25,
+        "attr_2": 0.55,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_asset": null,
+      "asset_feasible": true,
+      "required_materials": {
+        "mat_1": 1.0,
+        "mat_4": 1.0
+      },
+      "material_feasible": true,
+      "effective_success_probability": 0.576471,
+      "make_success": false,
+      "meets_requirement": true,
+      "supplied_units": 0.0,
+      "proposal_relation": {
+        "self_proposed": null,
+        "visible_neighbour_proposals": {
+          "agent_10": "proj_2"
+        }
+      },
+      "join_relation": [
+        "agent_10"
+      ],
+      "coordination_relation": {
+        "edges_total": 2,
+        "edges_involving_self": [
+          [
+            "agent_10",
+            "agent_13"
+          ]
+        ]
+      }
+    },
+    {
+      "step": 161,
+      "condition": "C",
+      "seed": 6,
+      "agent_id": "agent_26",
+      "intent": {
+        "action": "make",
+        "target_project_id": "proj_2",
+        "target_skill_id": null,
+        "target_agent_id": null,
+        "reason": "proj_2 already meets the requirement and my skill_0 is near max"
+      },
+      "modify_history": [
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_0",
+          "delta": 0.15
+        },
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_2",
+          "delta": 0.15
+        }
+      ],
+      "before_attributes": {
+        "attr_0": 0.45,
+        "attr_1": 0.25,
+        "attr_2": 0.4,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_attributes": {
+        "attr_0": 0.6,
+        "attr_2": 0.55
+      },
+      "source_project_id": "proj_2",
+      "applied_modifications": {
+        "attr_0": 0.15,
+        "attr_2": 0.15
+      },
+      "after_attributes": {
+        "attr_0": 0.6,
+        "attr_1": 0.25,
+        "attr_2": 0.55,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_asset": null,
+      "asset_feasible": true,
+      "required_materials": {
+        "mat_1": 1.0,
+        "mat_4": 1.0
+      },
+      "material_feasible": true,
+      "effective_success_probability": 0.576471,
+      "make_success": true,
+      "meets_requirement": true,
+      "supplied_units": 1.0,
+      "proposal_relation": {
+        "self_proposed": "proj_2",
+        "visible_neighbour_proposals": {}
+      },
+      "join_relation": [],
+      "coordination_relation": {
+        "edges_total": 2,
+        "edges_involving_self": []
+      }
+    },
+    {
+      "step": 161,
+      "condition": "C",
+      "seed": 6,
+      "agent_id": "agent_33",
+      "intent": {
+        "action": "make",
+        "target_project_id": "proj_2",
+        "target_skill_id": null,
+        "target_agent_id": null,
+        "reason": "proj_2 already meets the requirement and I have skill_0=0.998 plus many methods"
+      },
+      "modify_history": [
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_0",
+          "delta": 0.15
+        },
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_2",
+          "delta": 0.15
+        }
+      ],
+      "before_attributes": {
+        "attr_0": 0.45,
+        "attr_1": 0.25,
+        "attr_2": 0.4,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_attributes": {
+        "attr_0": 0.6,
+        "attr_2": 0.55
+      },
+      "source_project_id": "proj_2",
+      "applied_modifications": {
+        "attr_0": 0.15,
+        "attr_2": 0.15
+      },
+      "after_attributes": {
+        "attr_0": 0.6,
+        "attr_1": 0.25,
+        "attr_2": 0.55,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_asset": null,
+      "asset_feasible": true,
+      "required_materials": {
+        "mat_1": 1.0,
+        "mat_4": 1.0
+      },
+      "material_feasible": true,
+      "effective_success_probability": 0.576471,
+      "make_success": false,
+      "meets_requirement": true,
+      "supplied_units": 0.0,
+      "proposal_relation": {
+        "self_proposed": "proj_2",
+        "visible_neighbour_proposals": {}
+      },
+      "join_relation": [],
+      "coordination_relation": {
+        "edges_total": 2,
+        "edges_involving_self": []
+      }
+    },
+    {
+      "step": 161,
+      "condition": "C",
+      "seed": 6,
+      "agent_id": "agent_4",
+      "intent": {
+        "action": "make",
+        "target_project_id": "proj_2",
+        "target_skill_id": null,
+        "target_agent_id": null,
+        "reason": "proj_2 meets requirement as-is and I have skill_0=0.998 plus materials"
+      },
+      "modify_history": [
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_0",
+          "delta": 0.15
+        },
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_2",
+          "delta": 0.15
+        }
+      ],
+      "before_attributes": {
+        "attr_0": 0.45,
+        "attr_1": 0.25,
+        "attr_2": 0.4,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_attributes": {
+        "attr_0": 0.6,
+        "attr_2": 0.55
+      },
+      "source_project_id": "proj_2",
+      "applied_modifications": {
+        "attr_0": 0.15,
+        "attr_2": 0.15
+      },
+      "after_attributes": {
+        "attr_0": 0.6,
+        "attr_1": 0.25,
+        "attr_2": 0.55,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_asset": null,
+      "asset_feasible": true,
+      "required_materials": {
+        "mat_1": 1.0,
+        "mat_4": 1.0
+      },
+      "material_feasible": true,
+      "effective_success_probability": 0.576471,
+      "make_success": true,
+      "meets_requirement": true,
+      "supplied_units": 1.0,
+      "proposal_relation": {
+        "self_proposed": "proj_2",
+        "visible_neighbour_proposals": {}
+      },
+      "join_relation": [],
+      "coordination_relation": {
+        "edges_total": 2,
+        "edges_involving_self": []
+      }
+    },
+    {
+      "step": 161,
+      "condition": "C",
+      "seed": 6,
+      "agent_id": "agent_8",
+      "intent": {
+        "action": "make",
+        "target_project_id": "proj_2",
+        "target_skill_id": null,
+        "target_agent_id": null,
+        "reason": "proj_2 already meets the requirement and I have skill_0=0.998 plus many methods"
+      },
+      "modify_history": [
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_0",
+          "delta": 0.15
+        },
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_2",
+          "delta": 0.15
+        },
+        {
+          "step": 159,
+          "project_id": "proj_4",
+          "attr": "attr_2",
+          "delta": 0.15
+        }
+      ],
+      "before_attributes": {
+        "attr_0": 0.45,
+        "attr_1": 0.25,
+        "attr_2": 0.4,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_attributes": {
+        "attr_0": 0.6,
+        "attr_2": 0.55
+      },
+      "source_project_id": "proj_2",
+      "applied_modifications": {
+        "attr_0": 0.15,
+        "attr_2": 0.15
+      },
+      "after_attributes": {
+        "attr_0": 0.6,
+        "attr_1": 0.25,
+        "attr_2": 0.55,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_asset": null,
+      "asset_feasible": true,
+      "required_materials": {
+        "mat_1": 1.0,
+        "mat_4": 1.0
+      },
+      "material_feasible": true,
+      "effective_success_probability": 0.576471,
+      "make_success": true,
+      "meets_requirement": true,
+      "supplied_units": 1.0,
+      "proposal_relation": {
+        "self_proposed": null,
+        "visible_neighbour_proposals": {
+          "agent_10": "proj_2"
+        }
+      },
+      "join_relation": [
+        "agent_10"
+      ],
+      "coordination_relation": {
+        "edges_total": 2,
+        "edges_involving_self": [
+          [
+            "agent_10",
+            "agent_8"
+          ]
+        ]
+      }
+    },
+    {
+      "step": 162,
+      "condition": "C",
+      "seed": 6,
+      "agent_id": "agent_10",
+      "intent": {
+        "action": "make",
+        "target_project_id": "proj_2",
+        "target_skill_id": null,
+        "target_agent_id": null,
+        "reason": "proj_2 already meets the requirement and I have skill_0=0.999 plus materials"
+      },
+      "modify_history": [
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_0",
+          "delta": 0.15
+        },
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_2",
+          "delta": 0.15
+        }
+      ],
+      "before_attributes": {
+        "attr_0": 0.45,
+        "attr_1": 0.25,
+        "attr_2": 0.4,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_attributes": {
+        "attr_0": 0.6,
+        "attr_2": 0.55
+      },
+      "source_project_id": "proj_2",
+      "applied_modifications": {
+        "attr_0": 0.15,
+        "attr_2": 0.15
+      },
+      "after_attributes": {
+        "attr_0": 0.6,
+        "attr_1": 0.25,
+        "attr_2": 0.55,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_asset": null,
+      "asset_feasible": true,
+      "required_materials": {
+        "mat_1": 1.0,
+        "mat_4": 1.0
+      },
+      "material_feasible": true,
+      "effective_success_probability": 0.576471,
+      "make_success": false,
+      "meets_requirement": true,
+      "supplied_units": 0.0,
+      "proposal_relation": {
+        "self_proposed": "proj_2",
+        "visible_neighbour_proposals": {}
+      },
+      "join_relation": [
+        "agent_13",
+        "agent_8"
+      ],
+      "coordination_relation": {
+        "edges_total": 2,
+        "edges_involving_self": [
+          [
+            "agent_10",
+            "agent_13"
+          ],
+          [
+            "agent_10",
+            "agent_8"
+          ]
+        ]
+      }
+    },
+    {
+      "step": 162,
+      "condition": "C",
+      "seed": 6,
+      "agent_id": "agent_13",
+      "intent": {
+        "action": "make",
+        "target_project_id": "proj_2",
+        "target_skill_id": null,
+        "target_agent_id": null,
+        "reason": "proj_2 already meets requirement and my skill_0 is 0.999"
+      },
+      "modify_history": [
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_0",
+          "delta": 0.15
+        },
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_2",
+          "delta": 0.15
+        }
+      ],
+      "before_attributes": {
+        "attr_0": 0.45,
+        "attr_1": 0.25,
+        "attr_2": 0.4,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_attributes": {
+        "attr_0": 0.6,
+        "attr_2": 0.55
+      },
+      "source_project_id": "proj_2",
+      "applied_modifications": {
+        "attr_0": 0.15,
+        "attr_2": 0.15
+      },
+      "after_attributes": {
+        "attr_0": 0.6,
+        "attr_1": 0.25,
+        "attr_2": 0.55,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_asset": null,
+      "asset_feasible": true,
+      "required_materials": {
+        "mat_1": 1.0,
+        "mat_4": 1.0
+      },
+      "material_feasible": true,
+      "effective_success_probability": 0.576471,
+      "make_success": true,
+      "meets_requirement": true,
+      "supplied_units": 1.0,
+      "proposal_relation": {
+        "self_proposed": null,
+        "visible_neighbour_proposals": {
+          "agent_10": "proj_2"
+        }
+      },
+      "join_relation": [
+        "agent_10"
+      ],
+      "coordination_relation": {
+        "edges_total": 2,
+        "edges_involving_self": [
+          [
+            "agent_10",
+            "agent_13"
+          ]
+        ]
+      }
+    },
+    {
+      "step": 162,
+      "condition": "C",
+      "seed": 6,
+      "agent_id": "agent_26",
+      "intent": {
+        "action": "make",
+        "target_project_id": "proj_2",
+        "target_skill_id": null,
+        "target_agent_id": null,
+        "reason": "proj_2 already meets the requirement and uses my strongest skill_0 with materials on hand"
+      },
+      "modify_history": [
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_0",
+          "delta": 0.15
+        },
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_2",
+          "delta": 0.15
+        }
+      ],
+      "before_attributes": {
+        "attr_0": 0.45,
+        "attr_1": 0.25,
+        "attr_2": 0.4,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_attributes": {
+        "attr_0": 0.6,
+        "attr_2": 0.55
+      },
+      "source_project_id": "proj_2",
+      "applied_modifications": {
+        "attr_0": 0.15,
+        "attr_2": 0.15
+      },
+      "after_attributes": {
+        "attr_0": 0.6,
+        "attr_1": 0.25,
+        "attr_2": 0.55,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_asset": null,
+      "asset_feasible": true,
+      "required_materials": {
+        "mat_1": 1.0,
+        "mat_4": 1.0
+      },
+      "material_feasible": true,
+      "effective_success_probability": 0.576471,
+      "make_success": true,
+      "meets_requirement": true,
+      "supplied_units": 1.0,
+      "proposal_relation": {
+        "self_proposed": "proj_2",
+        "visible_neighbour_proposals": {}
+      },
+      "join_relation": [],
+      "coordination_relation": {
+        "edges_total": 2,
+        "edges_involving_self": []
+      }
+    },
+    {
+      "step": 162,
+      "condition": "C",
+      "seed": 6,
+      "agent_id": "agent_33",
+      "intent": {
+        "action": "make",
+        "target_project_id": "proj_2",
+        "target_skill_id": null,
+        "target_agent_id": null,
+        "reason": "proj_2 already meets the requirement and I have skill_0=0.998 plus materials"
+      },
+      "modify_history": [
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_0",
+          "delta": 0.15
+        },
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_2",
+          "delta": 0.15
+        },
+        {
+          "step": 161,
+          "project_id": "proj_4",
+          "attr": "attr_2",
+          "delta": 0.15
+        }
+      ],
+      "before_attributes": {
+        "attr_0": 0.45,
+        "attr_1": 0.25,
+        "attr_2": 0.4,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_attributes": {
+        "attr_0": 0.6,
+        "attr_2": 0.55
+      },
+      "source_project_id": "proj_2",
+      "applied_modifications": {
+        "attr_0": 0.15,
+        "attr_2": 0.15
+      },
+      "after_attributes": {
+        "attr_0": 0.6,
+        "attr_1": 0.25,
+        "attr_2": 0.55,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_asset": null,
+      "asset_feasible": true,
+      "required_materials": {
+        "mat_1": 1.0,
+        "mat_4": 1.0
+      },
+      "material_feasible": true,
+      "effective_success_probability": 0.576471,
+      "make_success": true,
+      "meets_requirement": true,
+      "supplied_units": 1.0,
+      "proposal_relation": {
+        "self_proposed": "proj_2",
+        "visible_neighbour_proposals": {}
+      },
+      "join_relation": [],
+      "coordination_relation": {
+        "edges_total": 2,
+        "edges_involving_self": []
+      }
+    },
+    {
+      "step": 162,
+      "condition": "C",
+      "seed": 6,
+      "agent_id": "agent_33",
+      "intent": {
+        "action": "make",
+        "target_project_id": "proj_4",
+        "target_skill_id": null,
+        "target_agent_id": null,
+        "reason": "strong skill_5 and asset_0 available"
+      },
+      "modify_history": [
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_0",
+          "delta": 0.15
+        },
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_2",
+          "delta": 0.15
+        },
+        {
+          "step": 161,
+          "project_id": "proj_4",
+          "attr": "attr_2",
+          "delta": 0.15
+        },
+        {
+          "step": 162,
+          "project_id": "proj_4",
+          "attr": "attr_0",
+          "delta": 0.15
+        }
+      ],
+      "before_attributes": {
+        "attr_0": 0.35,
+        "attr_1": 0.15,
+        "attr_2": 0.5,
+        "attr_3": 0.25,
+        "attr_4": 0.45,
+        "attr_5": 0.2,
+        "attr_6": 0.1
+      },
+      "required_attributes": {
+        "attr_0": 0.6,
+        "attr_2": 0.55
+      },
+      "source_project_id": "proj_4",
+      "applied_modifications": {
+        "attr_2": 0.15,
+        "attr_0": 0.15
+      },
+      "after_attributes": {
+        "attr_0": 0.5,
+        "attr_1": 0.15,
+        "attr_2": 0.65,
+        "attr_3": 0.25,
+        "attr_4": 0.45,
+        "attr_5": 0.2,
+        "attr_6": 0.1
+      },
+      "required_asset": "asset_0",
+      "asset_feasible": true,
+      "required_materials": {
+        "mat_2": 2.0
+      },
+      "material_feasible": true,
+      "effective_success_probability": 0.576471,
+      "make_success": false,
+      "meets_requirement": false,
+      "supplied_units": 0.0,
+      "proposal_relation": {
+        "self_proposed": "proj_2",
+        "visible_neighbour_proposals": {}
+      },
+      "join_relation": [],
+      "coordination_relation": {
+        "edges_total": 2,
+        "edges_involving_self": []
+      }
+    },
+    {
+      "step": 162,
+      "condition": "C",
+      "seed": 6,
+      "agent_id": "agent_4",
+      "intent": {
+        "action": "make",
+        "target_project_id": "proj_2",
+        "target_skill_id": null,
+        "target_agent_id": null,
+        "reason": "proj_2 already meets requirement and uses my strongest skill_0"
+      },
+      "modify_history": [
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_0",
+          "delta": 0.15
+        },
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_2",
+          "delta": 0.15
+        }
+      ],
+      "before_attributes": {
+        "attr_0": 0.45,
+        "attr_1": 0.25,
+        "attr_2": 0.4,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_attributes": {
+        "attr_0": 0.6,
+        "attr_2": 0.55
+      },
+      "source_project_id": "proj_2",
+      "applied_modifications": {
+        "attr_0": 0.15,
+        "attr_2": 0.15
+      },
+      "after_attributes": {
+        "attr_0": 0.6,
+        "attr_1": 0.25,
+        "attr_2": 0.55,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_asset": null,
+      "asset_feasible": true,
+      "required_materials": {
+        "mat_1": 1.0,
+        "mat_4": 1.0
+      },
+      "material_feasible": true,
+      "effective_success_probability": 0.576471,
+      "make_success": true,
+      "meets_requirement": true,
+      "supplied_units": 1.0,
+      "proposal_relation": {
+        "self_proposed": "proj_2",
+        "visible_neighbour_proposals": {}
+      },
+      "join_relation": [],
+      "coordination_relation": {
+        "edges_total": 2,
+        "edges_involving_self": []
+      }
+    },
+    {
+      "step": 162,
+      "condition": "C",
+      "seed": 6,
+      "agent_id": "agent_4",
+      "intent": {
+        "action": "make",
+        "target_project_id": "proj_2",
+        "target_skill_id": null,
+        "target_agent_id": null,
+        "reason": "build another"
+      },
+      "modify_history": [
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_0",
+          "delta": 0.15
+        },
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_2",
+          "delta": 0.15
+        }
+      ],
+      "before_attributes": {
+        "attr_0": 0.45,
+        "attr_1": 0.25,
+        "attr_2": 0.4,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_attributes": {
+        "attr_0": 0.6,
+        "attr_2": 0.55
+      },
+      "source_project_id": "proj_2",
+      "applied_modifications": {
+        "attr_0": 0.15,
+        "attr_2": 0.15
+      },
+      "after_attributes": {
+        "attr_0": 0.6,
+        "attr_1": 0.25,
+        "attr_2": 0.55,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_asset": null,
+      "asset_feasible": true,
+      "required_materials": {
+        "mat_1": 1.0,
+        "mat_4": 1.0
+      },
+      "material_feasible": false,
+      "effective_success_probability": 0.576471,
+      "make_success": true,
+      "meets_requirement": true,
+      "supplied_units": 1.0,
+      "proposal_relation": {
+        "self_proposed": "proj_2",
+        "visible_neighbour_proposals": {}
+      },
+      "join_relation": [],
+      "coordination_relation": {
+        "edges_total": 2,
+        "edges_involving_self": []
+      }
+    },
+    {
+      "step": 162,
+      "condition": "C",
+      "seed": 6,
+      "agent_id": "agent_8",
+      "intent": {
+        "action": "make",
+        "target_project_id": "proj_2",
+        "target_skill_id": null,
+        "target_agent_id": null,
+        "reason": "proj_2 already meets the requirement and I have skill_0=0.998 plus many methods"
+      },
+      "modify_history": [
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_0",
+          "delta": 0.15
+        },
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_2",
+          "delta": 0.15
+        },
+        {
+          "step": 159,
+          "project_id": "proj_4",
+          "attr": "attr_2",
+          "delta": 0.15
+        },
+        {
+          "step": 161,
+          "project_id": "proj_4",
+          "attr": "attr_0",
+          "delta": 0.15
+        }
+      ],
+      "before_attributes": {
+        "attr_0": 0.45,
+        "attr_1": 0.25,
+        "attr_2": 0.4,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_attributes": {
+        "attr_0": 0.6,
+        "attr_2": 0.55
+      },
+      "source_project_id": "proj_2",
+      "applied_modifications": {
+        "attr_0": 0.15,
+        "attr_2": 0.15
+      },
+      "after_attributes": {
+        "attr_0": 0.6,
+        "attr_1": 0.25,
+        "attr_2": 0.55,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_asset": null,
+      "asset_feasible": true,
+      "required_materials": {
+        "mat_1": 1.0,
+        "mat_4": 1.0
+      },
+      "material_feasible": true,
+      "effective_success_probability": 0.576471,
+      "make_success": false,
+      "meets_requirement": true,
+      "supplied_units": 0.0,
+      "proposal_relation": {
+        "self_proposed": null,
+        "visible_neighbour_proposals": {
+          "agent_10": "proj_2"
+        }
+      },
+      "join_relation": [
+        "agent_10"
+      ],
+      "coordination_relation": {
+        "edges_total": 2,
+        "edges_involving_self": [
+          [
+            "agent_10",
+            "agent_8"
+          ]
+        ]
+      }
+    },
+    {
+      "step": 163,
+      "condition": "C",
+      "seed": 6,
+      "agent_id": "agent_10",
+      "intent": {
+        "action": "make",
+        "target_project_id": "proj_2",
+        "target_skill_id": null,
+        "target_agent_id": null,
+        "reason": "proj_2 already meets the requirement and I have skill_0=0.999 plus materials"
+      },
+      "modify_history": [
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_0",
+          "delta": 0.15
+        },
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_2",
+          "delta": 0.15
+        }
+      ],
+      "before_attributes": {
+        "attr_0": 0.45,
+        "attr_1": 0.25,
+        "attr_2": 0.4,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_attributes": {
+        "attr_0": 0.6,
+        "attr_2": 0.55
+      },
+      "source_project_id": "proj_2",
+      "applied_modifications": {
+        "attr_0": 0.15,
+        "attr_2": 0.15
+      },
+      "after_attributes": {
+        "attr_0": 0.6,
+        "attr_1": 0.25,
+        "attr_2": 0.55,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_asset": null,
+      "asset_feasible": true,
+      "required_materials": {
+        "mat_1": 1.0,
+        "mat_4": 1.0
+      },
+      "material_feasible": true,
+      "effective_success_probability": 0.576471,
+      "make_success": true,
+      "meets_requirement": true,
+      "supplied_units": 1.0,
+      "proposal_relation": {
+        "self_proposed": "proj_2",
+        "visible_neighbour_proposals": {}
+      },
+      "join_relation": [
+        "agent_13",
+        "agent_8"
+      ],
+      "coordination_relation": {
+        "edges_total": 2,
+        "edges_involving_self": [
+          [
+            "agent_10",
+            "agent_13"
+          ],
+          [
+            "agent_10",
+            "agent_8"
+          ]
+        ]
+      }
+    },
+    {
+      "step": 163,
+      "condition": "C",
+      "seed": 6,
+      "agent_id": "agent_13",
+      "intent": {
+        "action": "make",
+        "target_project_id": "proj_2",
+        "target_skill_id": null,
+        "target_agent_id": null,
+        "reason": "proj_2 already meets the requirement and I have skill_0=0.999 plus many methods"
+      },
+      "modify_history": [
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_0",
+          "delta": 0.15
+        },
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_2",
+          "delta": 0.15
+        }
+      ],
+      "before_attributes": {
+        "attr_0": 0.45,
+        "attr_1": 0.25,
+        "attr_2": 0.4,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_attributes": {
+        "attr_0": 0.6,
+        "attr_2": 0.55
+      },
+      "source_project_id": "proj_2",
+      "applied_modifications": {
+        "attr_0": 0.15,
+        "attr_2": 0.15
+      },
+      "after_attributes": {
+        "attr_0": 0.6,
+        "attr_1": 0.25,
+        "attr_2": 0.55,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_asset": null,
+      "asset_feasible": true,
+      "required_materials": {
+        "mat_1": 1.0,
+        "mat_4": 1.0
+      },
+      "material_feasible": true,
+      "effective_success_probability": 0.576471,
+      "make_success": false,
+      "meets_requirement": true,
+      "supplied_units": 0.0,
+      "proposal_relation": {
+        "self_proposed": null,
+        "visible_neighbour_proposals": {
+          "agent_10": "proj_2"
+        }
+      },
+      "join_relation": [
+        "agent_10"
+      ],
+      "coordination_relation": {
+        "edges_total": 2,
+        "edges_involving_self": [
+          [
+            "agent_10",
+            "agent_13"
+          ]
+        ]
+      }
+    },
+    {
+      "step": 163,
+      "condition": "C",
+      "seed": 6,
+      "agent_id": "agent_26",
+      "intent": {
+        "action": "make",
+        "target_project_id": "proj_2",
+        "target_skill_id": null,
+        "target_agent_id": null,
+        "reason": "proj_2 already meets requirement and I have skill_0=0.998 plus materials"
+      },
+      "modify_history": [
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_0",
+          "delta": 0.15
+        },
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_2",
+          "delta": 0.15
+        }
+      ],
+      "before_attributes": {
+        "attr_0": 0.45,
+        "attr_1": 0.25,
+        "attr_2": 0.4,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_attributes": {
+        "attr_0": 0.6,
+        "attr_2": 0.55
+      },
+      "source_project_id": "proj_2",
+      "applied_modifications": {
+        "attr_0": 0.15,
+        "attr_2": 0.15
+      },
+      "after_attributes": {
+        "attr_0": 0.6,
+        "attr_1": 0.25,
+        "attr_2": 0.55,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_asset": null,
+      "asset_feasible": true,
+      "required_materials": {
+        "mat_1": 1.0,
+        "mat_4": 1.0
+      },
+      "material_feasible": true,
+      "effective_success_probability": 0.576471,
+      "make_success": true,
+      "meets_requirement": true,
+      "supplied_units": 1.0,
+      "proposal_relation": {
+        "self_proposed": "proj_2",
+        "visible_neighbour_proposals": {}
+      },
+      "join_relation": [],
+      "coordination_relation": {
+        "edges_total": 2,
+        "edges_involving_self": []
+      }
+    },
+    {
+      "step": 163,
+      "condition": "C",
+      "seed": 6,
+      "agent_id": "agent_33",
+      "intent": {
+        "action": "make",
+        "target_project_id": "proj_2",
+        "target_skill_id": null,
+        "target_agent_id": null,
+        "reason": "proj_2 already meets the requirement and I have skill_0=0.998 plus materials."
+      },
+      "modify_history": [
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_0",
+          "delta": 0.15
+        },
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_2",
+          "delta": 0.15
+        },
+        {
+          "step": 161,
+          "project_id": "proj_4",
+          "attr": "attr_2",
+          "delta": 0.15
+        },
+        {
+          "step": 162,
+          "project_id": "proj_4",
+          "attr": "attr_0",
+          "delta": 0.15
+        }
+      ],
+      "before_attributes": {
+        "attr_0": 0.45,
+        "attr_1": 0.25,
+        "attr_2": 0.4,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_attributes": {
+        "attr_0": 0.6,
+        "attr_2": 0.55
+      },
+      "source_project_id": "proj_2",
+      "applied_modifications": {
+        "attr_0": 0.15,
+        "attr_2": 0.15
+      },
+      "after_attributes": {
+        "attr_0": 0.6,
+        "attr_1": 0.25,
+        "attr_2": 0.55,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_asset": null,
+      "asset_feasible": true,
+      "required_materials": {
+        "mat_1": 1.0,
+        "mat_4": 1.0
+      },
+      "material_feasible": true,
+      "effective_success_probability": 0.576471,
+      "make_success": false,
+      "meets_requirement": true,
+      "supplied_units": 0.0,
+      "proposal_relation": {
+        "self_proposed": "proj_2",
+        "visible_neighbour_proposals": {}
+      },
+      "join_relation": [],
+      "coordination_relation": {
+        "edges_total": 2,
+        "edges_involving_self": []
+      }
+    },
+    {
+      "step": 163,
+      "condition": "C",
+      "seed": 6,
+      "agent_id": "agent_4",
+      "intent": {
+        "action": "make",
+        "target_project_id": "proj_2",
+        "target_skill_id": null,
+        "target_agent_id": null,
+        "reason": "proj_2 already meets the requirement and my skill_0 is near perfect"
+      },
+      "modify_history": [
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_0",
+          "delta": 0.15
+        },
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_2",
+          "delta": 0.15
+        }
+      ],
+      "before_attributes": {
+        "attr_0": 0.45,
+        "attr_1": 0.25,
+        "attr_2": 0.4,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_attributes": {
+        "attr_0": 0.6,
+        "attr_2": 0.55
+      },
+      "source_project_id": "proj_2",
+      "applied_modifications": {
+        "attr_0": 0.15,
+        "attr_2": 0.15
+      },
+      "after_attributes": {
+        "attr_0": 0.6,
+        "attr_1": 0.25,
+        "attr_2": 0.55,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_asset": null,
+      "asset_feasible": true,
+      "required_materials": {
+        "mat_1": 1.0,
+        "mat_4": 1.0
+      },
+      "material_feasible": true,
+      "effective_success_probability": 0.576471,
+      "make_success": false,
+      "meets_requirement": true,
+      "supplied_units": 0.0,
+      "proposal_relation": {
+        "self_proposed": "proj_2",
+        "visible_neighbour_proposals": {}
+      },
+      "join_relation": [],
+      "coordination_relation": {
+        "edges_total": 2,
+        "edges_involving_self": []
+      }
+    },
+    {
+      "step": 163,
+      "condition": "C",
+      "seed": 6,
+      "agent_id": "agent_4",
+      "intent": {
+        "action": "make",
+        "target_project_id": "proj_4",
+        "target_skill_id": null,
+        "target_agent_id": null,
+        "reason": "backup build with good skill_5"
+      },
+      "modify_history": [
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_0",
+          "delta": 0.15
+        },
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_2",
+          "delta": 0.15
+        }
+      ],
+      "before_attributes": {
+        "attr_0": 0.35,
+        "attr_1": 0.15,
+        "attr_2": 0.5,
+        "attr_3": 0.25,
+        "attr_4": 0.45,
+        "attr_5": 0.2,
+        "attr_6": 0.1
+      },
+      "required_attributes": {
+        "attr_0": 0.6,
+        "attr_2": 0.55
+      },
+      "source_project_id": "proj_4",
+      "applied_modifications": {},
+      "after_attributes": {
+        "attr_0": 0.35,
+        "attr_1": 0.15,
+        "attr_2": 0.5,
+        "attr_3": 0.25,
+        "attr_4": 0.45,
+        "attr_5": 0.2,
+        "attr_6": 0.1
+      },
+      "required_asset": "asset_0",
+      "asset_feasible": true,
+      "required_materials": {
+        "mat_2": 2.0
+      },
+      "material_feasible": true,
+      "effective_success_probability": 0.98,
+      "make_success": true,
+      "meets_requirement": false,
+      "supplied_units": 0.0,
+      "proposal_relation": {
+        "self_proposed": "proj_2",
+        "visible_neighbour_proposals": {}
+      },
+      "join_relation": [],
+      "coordination_relation": {
+        "edges_total": 2,
+        "edges_involving_self": []
+      }
+    },
+    {
+      "step": 163,
+      "condition": "C",
+      "seed": 6,
+      "agent_id": "agent_8",
+      "intent": {
+        "action": "make",
+        "target_project_id": "proj_2",
+        "target_skill_id": null,
+        "target_agent_id": null,
+        "reason": "proj_2 meets requirement and I have skill_0=0.998 plus many methods"
+      },
+      "modify_history": [
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_0",
+          "delta": 0.15
+        },
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_2",
+          "delta": 0.15
+        },
+        {
+          "step": 159,
+          "project_id": "proj_4",
+          "attr": "attr_2",
+          "delta": 0.15
+        },
+        {
+          "step": 161,
+          "project_id": "proj_4",
+          "attr": "attr_0",
+          "delta": 0.15
+        },
+        {
+          "step": 162,
+          "project_id": "proj_4",
+          "attr": "attr_0",
+          "delta": 0.15
+        }
+      ],
+      "before_attributes": {
+        "attr_0": 0.45,
+        "attr_1": 0.25,
+        "attr_2": 0.4,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_attributes": {
+        "attr_0": 0.6,
+        "attr_2": 0.55
+      },
+      "source_project_id": "proj_2",
+      "applied_modifications": {
+        "attr_0": 0.15,
+        "attr_2": 0.15
+      },
+      "after_attributes": {
+        "attr_0": 0.6,
+        "attr_1": 0.25,
+        "attr_2": 0.55,
+        "attr_3": 0.2,
+        "attr_4": 0.3,
+        "attr_5": 0.1,
+        "attr_6": 0.35
+      },
+      "required_asset": null,
+      "asset_feasible": true,
+      "required_materials": {
+        "mat_1": 1.0,
+        "mat_4": 1.0
+      },
+      "material_feasible": true,
+      "effective_success_probability": 0.576471,
+      "make_success": true,
+      "meets_requirement": true,
+      "supplied_units": 1.0,
+      "proposal_relation": {
+        "self_proposed": null,
+        "visible_neighbour_proposals": {
+          "agent_10": "proj_2"
+        }
+      },
+      "join_relation": [
+        "agent_10"
+      ],
+      "coordination_relation": {
+        "edges_total": 2,
+        "edges_involving_self": [
+          [
+            "agent_10",
+            "agent_8"
+          ]
+        ]
+      }
+    },
+    {
+      "step": 163,
+      "condition": "C",
+      "seed": 6,
+      "agent_id": "agent_8",
+      "intent": {
+        "action": "make",
+        "target_project_id": "proj_4",
+        "target_skill_id": null,
+        "target_agent_id": null,
+        "reason": "proj_4 also meets requirement; I have asset_0 and skill_5=0.87"
+      },
+      "modify_history": [
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_0",
+          "delta": 0.15
+        },
+        {
+          "step": 156,
+          "project_id": "proj_2",
+          "attr": "attr_2",
+          "delta": 0.15
+        },
+        {
+          "step": 159,
+          "project_id": "proj_4",
+          "attr": "attr_2",
+          "delta": 0.15
+        },
+        {
+          "step": 161,
+          "project_id": "proj_4",
+          "attr": "attr_0",
+          "delta": 0.15
+        },
+        {
+          "step": 162,
+          "project_id": "proj_4",
+          "attr": "attr_0",
+          "delta": 0.15
+        }
+      ],
+      "before_attributes": {
+        "attr_0": 0.35,
+        "attr_1": 0.15,
+        "attr_2": 0.5,
+        "attr_3": 0.25,
+        "attr_4": 0.45,
+        "attr_5": 0.2,
+        "attr_6": 0.1
+      },
+      "required_attributes": {
+        "attr_0": 0.6,
+        "attr_2": 0.55
+      },
+      "source_project_id": "proj_4",
+      "applied_modifications": {
+        "attr_2": 0.15,
+        "attr_0": 0.3
+      },
+      "after_attributes": {
+        "attr_0": 0.65,
+        "attr_1": 0.15,
+        "attr_2": 0.65,
+        "attr_3": 0.25,
+        "attr_4": 0.45,
+        "attr_5": 0.2,
+        "attr_6": 0.1
+      },
+      "required_asset": "asset_0",
+      "asset_feasible": true,
+      "required_materials": {
+        "mat_2": 2.0
+      },
+      "material_feasible": true,
+      "effective_success_probability": 0.576471,
+      "make_success": true,
+      "meets_requirement": true,
+      "supplied_units": 1.0,
+      "proposal_relation": {
+        "self_proposed": null,
+        "visible_neighbour_proposals": {
+          "agent_10": "proj_2"
+        }
+      },
+      "join_relation": [
+        "agent_10"
+      ],
+      "coordination_relation": {
+        "edges_total": 2,
+        "edges_involving_self": [
+          [
+            "agent_10",
+            "agent_8"
+          ]
+        ]
+      }
+    }
+  ],
+  "modify_history": {
+    "agent_10": [
+      {
+        "step": 156,
+        "project_id": "proj_2",
+        "attr": "attr_0",
+        "delta": 0.15
+      },
+      {
+        "step": 156,
+        "project_id": "proj_2",
+        "attr": "attr_2",
+        "delta": 0.15
+      }
+    ],
+    "agent_13": [
+      {
+        "step": 156,
+        "project_id": "proj_2",
+        "attr": "attr_0",
+        "delta": 0.15
+      },
+      {
+        "step": 156,
+        "project_id": "proj_2",
+        "attr": "attr_2",
+        "delta": 0.15
+      }
+    ],
+    "agent_26": [
+      {
+        "step": 156,
+        "project_id": "proj_2",
+        "attr": "attr_0",
+        "delta": 0.15
+      },
+      {
+        "step": 156,
+        "project_id": "proj_2",
+        "attr": "attr_2",
+        "delta": 0.15
+      }
+    ],
+    "agent_33": [
+      {
+        "step": 156,
+        "project_id": "proj_2",
+        "attr": "attr_0",
+        "delta": 0.15
+      },
+      {
+        "step": 156,
+        "project_id": "proj_2",
+        "attr": "attr_2",
+        "delta": 0.15
+      },
+      {
+        "step": 161,
+        "project_id": "proj_4",
+        "attr": "attr_2",
+        "delta": 0.15
+      },
+      {
+        "step": 162,
+        "project_id": "proj_4",
+        "attr": "attr_0",
+        "delta": 0.15
+      },
+      {
+        "step": 163,
+        "project_id": "proj_4",
+        "attr": "attr_0",
+        "delta": 0.15
+      }
+    ],
+    "agent_4": [
+      {
+        "step": 156,
+        "project_id": "proj_2",
+        "attr": "attr_0",
+        "delta": 0.15
+      },
+      {
+        "step": 156,
+        "project_id": "proj_2",
+        "attr": "attr_2",
+        "delta": 0.15
+      }
+    ],
+    "agent_8": [
+      {
+        "step": 156,
+        "project_id": "proj_2",
+        "attr": "attr_0",
+        "delta": 0.15
+      },
+      {
+        "step": 156,
+        "project_id": "proj_2",
+        "attr": "attr_2",
+        "delta": 0.15
+      },
+      {
+        "step": 159,
+        "project_id": "proj_4",
+        "attr": "attr_2",
+        "delta": 0.15
+      },
+      {
+        "step": 161,
+        "project_id": "proj_4",
+        "attr": "attr_0",
+        "delta": 0.15
+      },
+      {
+        "step": 162,
+        "project_id": "proj_4",
+        "attr": "attr_0",
+        "delta": 0.15
+      }
+    ]
+  },
+  "order_index": 8,
+  "cumulative_spend_after_run": 8.378965
+}

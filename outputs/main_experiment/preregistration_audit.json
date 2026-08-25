@@ -1,0 +1,302 @@
+{
+  "purpose": "PREREGISTRATION で固定された値 / 実行 config / run metadata の三者を明示的に突き合わせる。内部整合性（20 run で同一か）だけでは事前登録との同期不良を検出できないため。",
+  "api_calls_made": 0,
+  "n_items": 22,
+  "n_mismatch": 2,
+  "mismatched_items": [
+    "D4_community_supply_share",
+    "D4_supply_duration_steps"
+  ],
+  "known_document_inconsistencies": [
+    {
+      "file": "docs/PREREGISTRATION_H1.md",
+      "section": "main experiment 規模（人間承認待ち）",
+      "problem": "eligible seeds が無効化済み旧 scan の 5,7,11,13,14 のまま",
+      "authoritative": "同ファイル「確定 seed（P0修正後の再スキャン）」表の 2,4,6,7,9",
+      "runtime_impact": "なし。実行は 2,4,6,7,9 を使用している"
+    }
+  ],
+  "rows": [
+    {
+      "item": "conditions",
+      "preregistered": [
+        "A",
+        "B",
+        "C",
+        "D"
+      ],
+      "preregistered_source": "SPEC §19 2×2完全要因計画 / docs/PREREGISTRATION_H1.md 規模表",
+      "runtime_config": [
+        "A",
+        "B",
+        "C",
+        "D"
+      ],
+      "run_metadata": [
+        "A",
+        "B",
+        "C",
+        "D"
+      ],
+      "config_vs_prereg": "MATCH",
+      "metadata_vs_prereg": "MATCH",
+      "verdict": "MATCH"
+    },
+    {
+      "item": "eligible_seeds",
+      "preregistered": [
+        2,
+        4,
+        6,
+        7,
+        9
+      ],
+      "preregistered_source": "docs/PREREGISTRATION_H1.md「確定 seed（P0修正後の再スキャン）」表",
+      "runtime_config": [
+        2,
+        4,
+        6,
+        7,
+        9
+      ],
+      "run_metadata": [
+        2,
+        4,
+        6,
+        7,
+        9
+      ],
+      "config_vs_prereg": "MATCH",
+      "metadata_vs_prereg": "MATCH",
+      "verdict": "MATCH"
+    },
+    {
+      "item": "shock_agent_count",
+      "preregistered": 6,
+      "preregistered_source": "docs/PREREGISTRATION_H1.md 規模表",
+      "runtime_config": 6,
+      "run_metadata": 6,
+      "config_vs_prereg": "MATCH",
+      "metadata_vs_prereg": "MATCH",
+      "verdict": "MATCH"
+    },
+    {
+      "item": "shock_steps",
+      "preregistered": 8,
+      "preregistered_source": "docs/PREREGISTRATION_H1.md 規模表",
+      "runtime_config": 8,
+      "run_metadata": 8,
+      "config_vs_prereg": "MATCH",
+      "metadata_vs_prereg": "MATCH",
+      "verdict": "MATCH"
+    },
+    {
+      "item": "total_runs",
+      "preregistered": 20,
+      "preregistered_source": "docs/PREREGISTRATION_H1.md 規模表",
+      "runtime_config": 20,
+      "run_metadata": 20,
+      "config_vs_prereg": "MATCH",
+      "metadata_vs_prereg": "MATCH",
+      "verdict": "MATCH"
+    },
+    {
+      "item": "calls_per_run",
+      "preregistered": 48,
+      "preregistered_source": "docs/PREREGISTRATION_H1.md 規模表",
+      "runtime_config": "(config になし)",
+      "run_metadata": 48,
+      "config_vs_prereg": "N/A",
+      "metadata_vs_prereg": "MATCH",
+      "verdict": "MATCH"
+    },
+    {
+      "item": "total_calls",
+      "preregistered": 960,
+      "preregistered_source": "docs/PREREGISTRATION_H1.md 規模表",
+      "runtime_config": "(config になし)",
+      "run_metadata": 960,
+      "config_vs_prereg": "N/A",
+      "metadata_vs_prereg": "MATCH",
+      "verdict": "MATCH"
+    },
+    {
+      "item": "D4_community_supply_share",
+      "preregistered": 0.25,
+      "preregistered_source": "docs/PREREGISTRATION_H1.md §D4",
+      "runtime_config": 0.25,
+      "run_metadata": 0.2,
+      "config_vs_prereg": "MATCH",
+      "metadata_vs_prereg": "MISMATCH",
+      "verdict": "MISMATCH"
+    },
+    {
+      "item": "D4_active_supplier_count",
+      "preregistered": 3,
+      "preregistered_source": "docs/PREREGISTRATION_H1.md §D4（ceil(n/2), n=6 → 3）",
+      "runtime_config": 3,
+      "run_metadata": 3,
+      "config_vs_prereg": "MATCH",
+      "metadata_vs_prereg": "MATCH",
+      "verdict": "MATCH"
+    },
+    {
+      "item": "D4_supply_duration_steps",
+      "preregistered": 4,
+      "preregistered_source": "docs/PREREGISTRATION_H1.md §D4（4 step = 24h）",
+      "runtime_config": 4,
+      "run_metadata": 3,
+      "config_vs_prereg": "MATCH",
+      "metadata_vs_prereg": "MISMATCH",
+      "verdict": "MISMATCH"
+    },
+    {
+      "item": "D4_coordination_edges",
+      "preregistered": 2,
+      "preregistered_source": "docs/PREREGISTRATION_H1.md §D4",
+      "runtime_config": 2,
+      "run_metadata": 2,
+      "config_vs_prereg": "MATCH",
+      "metadata_vs_prereg": "MATCH",
+      "verdict": "MATCH"
+    },
+    {
+      "item": "D5_external_reference_supply_per_step",
+      "preregistered": 18.0,
+      "preregistered_source": "docs/PREREGISTRATION_H1.md §D5 External Supply Parity Reference = 3 × n",
+      "runtime_config": "(derived: derived_from_agent_count)",
+      "run_metadata": 18.0,
+      "config_vs_prereg": "N/A",
+      "metadata_vs_prereg": "MATCH",
+      "verdict": "MATCH"
+    },
+    {
+      "item": "unit_demand",
+      "preregistered": 200.0,
+      "preregistered_source": "docs/PREREGISTRATION_H1.md「unit_demand の定義」（stock）",
+      "runtime_config": 200.0,
+      "run_metadata": 200.0,
+      "config_vs_prereg": "MATCH",
+      "metadata_vs_prereg": "MATCH",
+      "verdict": "MATCH"
+    },
+    {
+      "item": "required_item_thresholds",
+      "preregistered": {
+        "attr_0": 0.6,
+        "attr_2": 0.55
+      },
+      "preregistered_source": "configs/base.yaml shock.required_item（M3 設計時に固定、SPEC §18 属性ベクトル）",
+      "runtime_config": {
+        "attr_0": 0.6,
+        "attr_2": 0.55
+      },
+      "run_metadata": "(run metadata に未記録)",
+      "config_vs_prereg": "MATCH",
+      "metadata_vs_prereg": "N/A",
+      "verdict": "MATCH"
+    },
+    {
+      "item": "model",
+      "preregistered": "claude-opus-5",
+      "preregistered_source": "M2 freeze（人間承認 2026-08-16）",
+      "runtime_config": "(config になし)",
+      "run_metadata": "claude-opus-5",
+      "config_vs_prereg": "N/A",
+      "metadata_vs_prereg": "MATCH",
+      "verdict": "MATCH"
+    },
+    {
+      "item": "prompt_version",
+      "preregistered": "m2-minimal-v1",
+      "preregistered_source": "M2 freeze（人間承認 2026-08-16）",
+      "runtime_config": "(config になし)",
+      "run_metadata": "m2-minimal-v1",
+      "config_vs_prereg": "N/A",
+      "metadata_vs_prereg": "MATCH",
+      "verdict": "MATCH"
+    },
+    {
+      "item": "per_run_max_usd",
+      "preregistered": 1.25,
+      "preregistered_source": "人間承認メッセージ: CostGuard per-run $1.25",
+      "runtime_config": 1.25,
+      "run_metadata": "(run metadata に未記録; stopped_by_budget で間接確認)",
+      "config_vs_prereg": "MATCH",
+      "metadata_vs_prereg": "N/A",
+      "verdict": "MATCH"
+    },
+    {
+      "item": "campaign_max_usd",
+      "preregistered": 20.0,
+      "preregistered_source": "人間承認メッセージ: campaign cap $20.00",
+      "runtime_config": 20.0,
+      "run_metadata": "(run metadata に未記録)",
+      "config_vs_prereg": "MATCH",
+      "metadata_vs_prereg": "N/A",
+      "verdict": "MATCH"
+    },
+    {
+      "item": "max_attempts",
+      "preregistered": 3,
+      "preregistered_source": "人間承認メッセージ: run 単体の失敗は最大2回再試行（初回+2）",
+      "runtime_config": "(config になし)",
+      "run_metadata": {
+        "__BOUND__": 2
+      },
+      "config_vs_prereg": "N/A",
+      "metadata_vs_prereg": "MATCH",
+      "verdict": "MATCH"
+    },
+    {
+      "item": "run_order_randomised",
+      "preregistered": true,
+      "preregistered_source": "人間承認メッセージ: 実験順序ランダム化",
+      "runtime_config": "(order_seed=20260816)",
+      "run_metadata": true,
+      "config_vs_prereg": "N/A",
+      "metadata_vs_prereg": "MATCH",
+      "verdict": "MATCH"
+    },
+    {
+      "item": "topology_of_condition",
+      "preregistered": {
+        "A": "structured",
+        "B": "rewired",
+        "C": "structured",
+        "D": "rewired"
+      },
+      "preregistered_source": "SPEC §19",
+      "runtime_config": {
+        "A": "structured",
+        "B": "rewired",
+        "C": "structured",
+        "D": "rewired"
+      },
+      "run_metadata": "(run metadata に未記録)",
+      "config_vs_prereg": "MATCH",
+      "metadata_vs_prereg": "N/A",
+      "verdict": "MATCH"
+    },
+    {
+      "item": "peer_learning_of_condition",
+      "preregistered": {
+        "A": true,
+        "B": true,
+        "C": false,
+        "D": false
+      },
+      "preregistered_source": "SPEC §19",
+      "runtime_config": {
+        "A": true,
+        "B": true,
+        "C": false,
+        "D": false
+      },
+      "run_metadata": "(run metadata に未記録)",
+      "config_vs_prereg": "MATCH",
+      "metadata_vs_prereg": "N/A",
+      "verdict": "MATCH"
+    }
+  ]
+}

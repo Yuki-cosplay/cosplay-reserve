@@ -110,9 +110,22 @@ if ($env:ANTHROPIC_API_KEY) { "設定済み" } else { "未設定" }
 
 ## 費用に関する警告
 
-> **M3 main experiment の再実行には約 $18.5 かかる。**
-> 実測値: 20 run / 960 calls / **$18.503645**（`claude-opus-5`、1 run あたり平均 $0.9252）。
-> live run 2本は追加で $1.808630。
+**API を呼ぶスクリプトは 2 つだけである。以下の 2 つ以外は実行しても課金されない。**
+
+| スクリプト | LLM calls | 費用 | 状態 |
+|---|---|---|---|
+| `experiments/m3_main.py` | 960 | **$18.503645** | 実行済み。結果は `outputs/main_experiment/` にある |
+| `experiments/live_penalty_zero.py` | **96** | **$1.808630** | 実行済み。結果は `outputs/live_penalty_zero/` にある |
+
+> **どちらも既に実行済みであり、再実行する必要はない。**
+> 生ログはこのリポジトリに収録してあるため、**主結果の検証は API を一度も呼ばずに行える**（§LLM を使わずに検証できる範囲）。
+> 再実行する場合は合計 **約 $20.3** が必要になる（`claude-opus-5`、main experiment は 1 run あたり平均 $0.9252）。
+
+> **`experiments/live_penalty_zero.py` は名前から費用が推測しにくいので注意。**
+> このスクリプトは `experiments.m3_main` を経由して間接的に Anthropic API を呼ぶ。
+> 1 本あたり 48 calls / 約 $0.90、2 本で **96 calls / $1.808630** を消費する。
+> 目的は「penalty=0 の replay 結果が実際の挙動と一致するか」の検証であり、
+> **その検証は既に完了している**（RESULTS.md §9、±2sd 以内）。
 
 ### LLM を使わずに検証できる範囲
 
@@ -125,9 +138,11 @@ if ($env:ANTHROPIC_API_KEY) { "設定済み" } else { "未設定" }
 | **corrected adjudication**（事前登録 D4 による転化の再判定 = **主結果**） | $0 |
 | **事前登録監査**（事前登録 / config / run metadata の三者突合） | $0 |
 | **seed の構造的 eligibility scan** | $0 |
-| **全テスト（202 件）** | $0 |
+| **全テスト（216 件）** | $0 |
 
-LLM が必要なのは **M3 main experiment（$18.5）** と **live run（$1.8）** だけである。
+LLM が必要なのは **`experiments/m3_main.py`（$18.5）** と
+**`experiments/live_penalty_zero.py`（$1.8）** の 2 本だけである。
+どちらも実行済みで、生ログを収録してあるため再実行は不要。
 
 ### CostGuard の設定
 
@@ -231,6 +246,33 @@ python -m experiments.seed_eligibility --need 5 --max-seed 40 --agents 6
 **出力**: `outputs/seed_eligibility.json`
 LLM の出力も Agent の行動結果も参照しない、測定可能性に基づく事前選定である。
 
+### 7. live run による部分均衡検証 — **LLM 使用、96 calls / $1.808630**
+
+> **警告: このスクリプトは Anthropic API を呼び、課金される。**
+> `experiments/live_penalty_zero.py` は `experiments.m3_main` を経由して
+> 間接的に API を呼ぶ。名前に `penalty_zero` とあるが、費用はゼロではない。
+> **1 本あたり 48 calls / 約 $0.90、2 本で 96 calls / $1.808630。**
+
+**通常は実行する必要がない。** 実行済みの結果が
+`outputs/live_penalty_zero/A_seed{2,4}_penalty0.json` に収録してあり、
+RESULTS.md §9 の結論はそのファイルから検証できる。
+
+```bash
+# 実行済み結果を読むだけなら API 0 call
+python -c "import json;d=json.load(open('outputs/live_penalty_zero/A_seed2_penalty0.json'));print(d['community_supply_total'], d['llm_calls'], d['spent_usd'])"
+```
+
+あえて再実行する場合:
+
+```bash
+python -m experiments.live_penalty_zero --seeds 2,4     # 課金される
+```
+
+**目的**: §4 の感度分析 replay は「意思決定を固定したまま production layer だけ
+再計算する」部分均衡仮定に依存している。この仮定が成り立つかを、penalty=0 で
+実際に LLM を走らせて確認する。結果は replay の予測の **±2sd 以内**であった
+（RESULTS.md §9、`docs/PREREGISTRATION_SENSITIVITY.md` に予測を実行前に記録済み）。
+
 ---
 
 ## config の二層構造（重要）
@@ -299,7 +341,7 @@ python -m pytest tests/test_preregistration_sync.py -v   # 単一ファイル
 python -m pytest tests/x.py::test_y               # 単一テスト
 ```
 
-**202 passed**（API を呼ばない）。主な検証内容:
+**216 passed**（API を呼ばない）。主な検証内容:
 
 - 決定論的再現性（同一 seed で同一結果）
 - **A/C・B/D のネットワーク同一性**と pre-network 初期状態の4条件一致
@@ -328,23 +370,118 @@ python -m pytest tests/x.py::test_y               # 単一テスト
 
 ### 出力の地図
 
+> **GitHub は `outputs/` の中身を英数字順に並べる。** そのため `20260816T…` で
+> 始まる 80 個のディレクトリが先頭に来て、主結果より前に表示される。
+> **まず `outputs/main_experiment/` を開くこと。** 下表は重要度順に並べてある。
+
 | パス | 内容 |
 |---|---|
-| `outputs/main_experiment/{A..D}_seed{...}.json` | main experiment の run（**副次的記録**の転化判定を含む） |
-| `outputs/main_experiment/transition_recomputed_preregistered.json` | **主結果**（事前登録 D4 による再判定） |
-| `outputs/main_experiment/preregistration_audit.json` | 三者突合監査 |
-| `outputs/sensitivity_replay/penalty_sensitivity.json` | penalty 感度分析 |
-| `outputs/live_penalty_zero/A_seed{2,4}_penalty0.json` | live run 2本（replay 手法の妥当性検証） |
+| **`outputs/main_experiment/transition_recomputed_preregistered.json`** | **主結果**（事前登録 D4 による再判定、Transition 0/20） |
+| `outputs/main_experiment/{A..D}_seed{2,4,6,7,9}.json` | main experiment の run 20本（**副次的記録**の転化判定を含む）。再取得に $18.5 |
+| `outputs/main_experiment/preregistration_audit.json` | 三者突合監査（22 項目） |
+| `outputs/main_experiment/campaign.json` | 実行計画（`order_seed` からの決定論的な実行順と費用上限） |
+| `outputs/sensitivity_replay/penalty_sensitivity.json` | penalty 感度分析（P\* = 0.042573） |
+| `outputs/live_penalty_zero/A_seed{2,4}_penalty0.json` | live run 2本（replay 手法の妥当性検証）。再取得に $1.8 |
+| `outputs/seed_eligibility.json` | seed の事前選定（構造のみに基づく） |
 | `outputs/seed_eligibility_INVALIDATED_prescan.json` | 無効化した旧 scan（**削除せず保存**、使用禁止） |
+| `outputs/m1_main_summary.csv` / `m1_holdout_summary.csv` | M1 160 run の `final_state_sha256` 一覧（決定論の照合表） |
+| `outputs/holdout/` | M1 holdout（seed 21–40）の per-run 出力。§11 の H1 非支持所見の一次証拠 |
+| `outputs/20260816T*_{A..D}_seed*/` | **M1 蓄積相の per-run 出力（読み飛ばして可）。** 80 ディレクトリ。集計は上の summary CSV にある |
+| `outputs/m1_smoke_summary.csv` | 開発時 smoke（4条件 × 5 seed）。**研究結果ではない。** `m1_main_summary.csv` の真部分集合で同一スキーマ |
 
-`outputs/` は `.gitignore` されている。
+### `outputs/` の収録方針
+
+`.gitignore` は **許可リスト方式**である（`outputs/*` で全除外し、公開対象だけを
+`!` で戻す）。既定が除外なので、**今後の run は名指しで許可しない限り追跡されない**。
+
+意図的に収録していないもの:
+
+| ファイル | 除外理由 |
+|---|---|
+| `outputs/m3_shock.json` | `run_type: PIPELINE_VALIDATION` / `excluded_from_main_experiment: true`。**暫定 D4/D5 での結果**であり、主結果と取り違えられる危険がある |
+| `outputs/m2_smoke.json` | M2 疎通確認の中間生成物 |
+| `outputs/demo_m1_recording.csv` | デモ収録用。研究上の主張を支えない |
+| `figures/demo_video/data/**` | 可視化専用の trace 約 880MB。`python -m experiments.m1_trace_and_verify --seeds 20` で $0 再生成できる |
+
+### 「モデルに答えを教えていない」ことの検証手順
+
+本研究の中心的な主張は、**PPE への転化が指令ではなく創発として起きた**という点にある
+（SPEC §8）。これは「Agent に答えを教えていない」ことが前提であり、
+主張する側が「信じてください」と言うだけでは足りない。
+以下の 3 段で、**読者が自分で検証できる**ようにしてある。
+
+#### 1. プロンプト本文はリポジトリに入っている
+
+`src/llm/prompts.py` に原文がある（`SHOCK_SYSTEM_PROMPT`、1507 文字）。
+sha256 だけを記録して本文を隠しているのではない。読んで確認できる。
+
+#### 2. その本文が実際に使われたことを sha256 で照合できる
+
+各 run ファイルの `prompt_sha256` は、`experiments/m3_main.py` の
+`_prompt_hash()` が `PROMPT_VERSION + SHOCK_SYSTEM_PROMPT` から計算した値である。
+手元で再計算すると記録と一致する:
+
+```bash
+python -c "import hashlib, json, glob; from src.llm.prompts import PROMPT_VERSION, SHOCK_SYSTEM_PROMPT; h = hashlib.sha256((PROMPT_VERSION + SHOCK_SYSTEM_PROMPT).encode('utf-8')).hexdigest(); logged = {json.load(open(f, encoding='utf-8'))['prompt_sha256'] for f in glob.glob('outputs/main_experiment/[ABCD]_seed*.json') + glob.glob('outputs/live_penalty_zero/*.json')}; print('recomputed:', h); print('logged    :', logged); print('MATCH' if logged == {h} else 'MISMATCH')"
+```
+
+```
+recomputed: 6cf3be8a88f218f5f43d09dfe2884dffc65f69e0f3c698d9e92c1a6c419c51ff
+logged    : {'6cf3be8a88f218f5f43d09dfe2884dffc65f69e0f3c698d9e92c1a6c419c51ff'}
+MATCH
+```
+
+つまり **`src/llm/prompts.py` にある本文が、そのまま 22 本すべての run を動かした**
+ことが確認できる。あとから差し替えることはできない。
+
+#### 3. そのプロンプトで動いた Agent の理由文を、同じ matcher で検査できる
+
+`provenance[].intent.reason` には **LLM が生成した意思決定の理由文**が平文で入っている
+（22 本で 1229 件、ユニーク 276 種、最長 94 文字、非 ASCII 0）。
+禁止語の判定は `tests/forbidden.py` の `find_forbidden()` が正典であり、
+テストと同じ実装を読者も呼び出せる:
+
+```bash
+python -c "import json, glob; from tests.forbidden import find_forbidden, ASCII_TERMS, JA_TERMS; rs = [p['intent']['reason'] for f in glob.glob('outputs/main_experiment/[ABCD]_seed*.json') + glob.glob('outputs/live_penalty_zero/*.json') for p in json.load(open(f, encoding='utf-8'))['provenance'] if isinstance(p.get('intent', {}).get('reason'), str)]; hits = [(r, find_forbidden(r)) for r in rs if find_forbidden(r)]; print(f'terms={len(ASCII_TERMS)+len(JA_TERMS)} strings={len(rs)} hits={len(hits)}')"
+```
+
+```
+terms=17 strings=1229 hits=0
+```
+
+run ファイルの**全文字列値 17,672 件**（キー名 161 種を含む）に広げても
+**ヒット 0 件**である。理由文の語彙はすべて一般英単語と中立識別子
+（`proj_2` / `skill_0` / `asset_0` / `mat_2` / `attr_2`）で構成されている。
+
+`find_forbidden()` の検出力そのものは `tests/test_forbidden_matcher.py` の
+陽性コントロールが保証している（「ヒット 0 件」が matcher の故障によるものでないこと）。
+
+> **注意: これらの文章を「創発の証拠」として読まないこと**（SPEC §30 Anti-Goals）。
+> 転化判定は SPEC §21 の閾値化された条件のみで行っており、LLM の文章は判定に
+> 一切使っていない。理由文を収録しているのは、**その事実を第三者が確認できるように
+> するため**であって、文章の説得力を成果として提示するためではない。
 
 ---
 
 ## ライセンスと、本研究が現実について主張していないこと
 
-ライセンス: 未定（`LICENSE` ファイルは未作成）。研究用途での参照は自由だが、
-再配布・商用利用については著者に確認すること。
+### ライセンス: 未定
+
+**このリポジトリにはまだ `LICENSE` ファイルがない。** これは意図的な保留であり、
+記載漏れではない。
+
+ライセンスが明示されていない場合、著作権法上の既定として
+**著作者がすべての権利を留保している状態**になる。したがって現時点では:
+
+- **閲覧・研究上の参照・引用は自由。** 審査・レビュー目的での利用を想定している。
+- **複製・改変・再配布・商用利用には著者の許諾が必要。** フォークや取り込みを
+  検討している場合は、事前に連絡してほしい。
+
+許諾の相談・ライセンス指定の要望は、**このリポジトリの GitHub Issues** に
+投稿すること。それ以外の連絡先が必要な場合も Issues で知らせてもらえれば対応する。
+
+> 公開後、速やかにライセンスを確定する予定である。
+> 参照する側が不利益を被らないよう、確定した時点で本節と `LICENSE` を更新する。
 
 > **本研究はモデル内実験であり、実データによるキャリブレーションを行っていない。
 > 現実のコスプレイヤーが危機時に供給できることを証明したものではなく、

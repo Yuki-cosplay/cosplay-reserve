@@ -70,10 +70,10 @@ matplotlib.rcParams["font.sans-serif"] = ["Meiryo", "Yu Gothic", "MS Gothic", "D
 # P1-5(a): クローズアップ対象は select_closeup() が決定論的に選ぶ。
 # 固定値は持たない（下の main() で解決し、選定結果をログ出力する）。
 ZOOM_SPAN = 5             # クローズアップで見せる週数
-# DEMO_VIDEO_FIX_SPEC v1.0 §5 に沿った再配分。
-#   P0-2: RESULT 46s -> 28s
-#   P0-3: タイトル 12s -> 8s（格子と文字を分離したので長く見せる必要がない）
-#   P1-5(b): 蓄積相グリッド 51s -> 40s、クローズアップ 5s -> 8s（P1-5(a) と対）
+# レビュー後の尺の再配分。静止して見える区間を削り、変化のある区間へ回した。
+#   RESULT 46s -> 28s（結論の静止画を長く見せない）
+#   タイトル 12s -> 8s（格子と文字を分離したので長く見せる必要がない）
+#   蓄積相グリッド 51s -> 40s、クローズアップ 5s -> 8s（下の select_closeup と対）
 #   余剰はショック相へ戻す（1 step 7.0s -> 8.5s）
 SHOCK_ZOOM_AGENT = "agent_1"   # P1-4(d) 挿入カットの対象（仕様の推奨）
 SHOCK_ZOOM_AFTER = 4           # 何 step 目の後に挿入するか
@@ -177,9 +177,9 @@ def visual_only_ease(t: float) -> float:
 
 def select_closeup(acts: dict[int, list[dict]], parts: list[str],
                    span: int = 5, window: tuple[int, int] = (55, 90)) -> tuple[str, int]:
-    """P1-5(a): クローズアップ対象を**決定論的な規則**で選ぶ（cherry-pick ではない）。
+    """クローズアップ対象を**決定論的な規則**で選ぶ（cherry-pick ではない）。
 
-    優先順位（DEMO_VIDEO_FIX_SPEC §P1-5(a)）:
+    優先順位:
       ① `ask` があり、**翌週に make 成功**がある agent/week（peer learning が効いた瞬間）
       ② `make -> completed` を含む週
       ③ `practice` が連続する週

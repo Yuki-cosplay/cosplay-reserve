@@ -482,23 +482,39 @@ run ファイルの**全文字列値 17,672 件**（キー名 161 種を含む�
 
 ## ライセンスと、本研究が現実について主張していないこと
 
-### ライセンス: 未定
+### ライセンス: Apache License 2.0
 
-**このリポジトリにはまだ `LICENSE` ファイルがない。** これは意図的な保留であり、
-記載漏れではない。
+本リポジトリは **Apache License 2.0** で提供する。全文は [`LICENSE`](LICENSE) にある
+（帰属表示は [`NOTICE`](NOTICE)）。
 
-ライセンスが明示されていない場合、著作権法上の既定として
-**著作者がすべての権利を留保している状態**になる。したがって現時点では:
+```
+Copyright 2026 Igari
 
-- **閲覧・研究上の参照・引用は自由。** 審査・レビュー目的での利用を想定している。
-- **複製・改変・再配布・商用利用には著者の許諾が必要。** フォークや取り込みを
-  検討している場合は、事前に連絡してほしい。
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
 
-許諾の相談・ライセンス指定の要望は、**このリポジトリの GitHub Issues** に
-投稿すること。それ以外の連絡先が必要な場合も Issues で知らせてもらえれば対応する。
+    http://www.apache.org/licenses/LICENSE-2.0
 
-> 公開後、速やかにライセンスを確定する予定である。
-> 参照する側が不利益を被らないよう、確定した時点で本節と `LICENSE` を更新する。
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+```
+
+**`outputs/` 配下の実験ログと解析結果も、コード・ドキュメントと同じ
+Apache License 2.0 の下にある。** 別ライセンスを適用している部分はない。
+生ログ（`outputs/main_experiment/` 等）、解析後データ
+（`transition_recomputed_preregistered.json` 等）、図（`figures/`）、
+デモ動画（`figures/demo_video/cosplay_reserve_demo.mp4`）、スライド
+（`slides/`）を含め、リポジトリ全体が同一条件である。
+
+再利用にあたっては、Apache-2.0 §4 に従い `LICENSE` と `NOTICE` を保持すること。
+学術的な引用の際は、実行時 config が `configs/as_executed/` に固定されているので、
+どの時点の結果を参照したかを commit hash とあわせて示せる。
+
+問い合わせは**このリポジトリの GitHub Issues** へ。
 
 > **本研究はモデル内実験であり、実データによるキャリブレーションを行っていない。
 > 現実のコスプレイヤーが危機時に供給できることを証明したものではなく、

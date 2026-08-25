@@ -13,11 +13,12 @@
 
 | 種別 | ファイル |
 |---|---|
-| **デモ動画（提出版）** | **`figures/demo_video/cosplay_reserve_demo.mp4`** — 167.5秒 / 1920×1080 / 30fps / 音声なし |
-| 研究結果 | `RESULTS.md` |
-| 発表スライド | `slides/cosplay_reserve_final.pptx` |
-| 図 | `figures/F1`–`F5_*.png` |
-| 主結果の生データ | `outputs/main_experiment/transition_recomputed_preregistered.json` |
+| **デモ動画（提出版）** | **[`figures/demo_video/cosplay_reserve_demo.mp4`](figures/demo_video/cosplay_reserve_demo.mp4)** — 167.5秒 / 1920×1080 / 30fps / 音声なし |
+| 研究結果 | [`RESULTS.md`](RESULTS.md) |
+| 発表スライド | [`slides/cosplay_reserve_final.pptx`](slides/cosplay_reserve_final.pptx) |
+| 図 | [`figures/F1`–`F5_*.png`](figures/) |
+| 実験結果・解析データ | [`outputs/main_experiment/`](outputs/main_experiment/) |
+| 主結果の生データ | [`outputs/main_experiment/transition_recomputed_preregistered.json`](outputs/main_experiment/transition_recomputed_preregistered.json) |
 
 > **デモ動画は `cosplay_reserve_demo.mp4` の 1 本のみである。**
 > ナレーションはなく、実ログに基づく Agent の状態遷移を連続して可視化している。

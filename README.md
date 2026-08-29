@@ -128,12 +128,23 @@ if ($env:ANTHROPIC_API_KEY) { "設定済み" } else { "未設定" }
 
 ## 費用に関する警告
 
-**API を呼ぶスクリプトは 2 つだけである。以下の 2 つ以外は実行しても課金されない。**
+**API を呼ぶスクリプトは 4 つある。研究結果の再現に必要なのは
+`m3_main.py` と `live_penalty_zero.py` の 2 つで、どちらも実行済みである。
+`m2_smoke.py` と `m3_shock.py` は開発時の疎通・pipeline 確認用であり、
+提出結果の再現には不要である。**
 
 | スクリプト | LLM calls | 費用 | 状態 |
 |---|---|---|---|
 | `experiments/m3_main.py` | 960 | **$18.503645** | 実行済み。結果は `outputs/main_experiment/` にある |
 | `experiments/live_penalty_zero.py` | **96** | **$1.808630** | 実行済み。結果は `outputs/live_penalty_zero/` にある |
+| `experiments/m2_smoke.py` | 実行時に決まる | 上限は `configs/base.yaml` の `llm.max_usd`（現行 **$1.00**） | 開発時の疎通確認用。**実行不要。dry-run なし** |
+| `experiments/m3_shock.py` | 実行時に決まる | `--max-usd` 既定 **$0.50** | 開発時の pipeline 確認用。**実行不要。`--dry-run` あり** |
+
+> **`m2_smoke.py` / `m3_shock.py` は提出結果の再現に一切使わない。**
+> 上の 2 つと違って実行済みの成果物をリポジトリに収録していないので、
+> 実行しても再現の役には立たない。とくに `m2_smoke.py` は dry-run を持たず、
+> 起動するとそのまま API を呼ぶ。**`ANTHROPIC_API_KEY` を設定した状態で
+> 実行しないこと。**
 
 > **どちらも既に実行済みであり、再実行する必要はない。**
 > 生ログはこのリポジトリに収録してあるため、**主結果の検証は API を一度も呼ばずに行える**（§LLM を使わずに検証できる範囲）。
@@ -158,9 +169,12 @@ if ($env:ANTHROPIC_API_KEY) { "設定済み" } else { "未設定" }
 | **seed の構造的 eligibility scan** | $0 |
 | **全テスト（216 件）** | $0 |
 
-LLM が必要なのは **`experiments/m3_main.py`（$18.5）** と
-**`experiments/live_penalty_zero.py`（$1.8）** の 2 本だけである。
+**研究結果の再現に LLM が必要なのは、`experiments/m3_main.py`（$18.5）と
+`experiments/live_penalty_zero.py`（$1.8）の 2 本である。**
 どちらも実行済みで、生ログを収録してあるため再実行は不要。
+
+`experiments/m2_smoke.py` と `experiments/m3_shock.py` も API を呼ぶが、
+開発時の疎通・pipeline 確認用であり、**提出結果の再現には不要**である（上の費用表を参照）。
 
 ### CostGuard の設定
 
@@ -280,11 +294,22 @@ RESULTS.md §9 の結論はそのファイルから検証できる。
 python -c "import json;d=json.load(open('outputs/live_penalty_zero/A_seed2_penalty0.json'));print(d['community_supply_total'], d['llm_calls'], d['spent_usd'])"
 ```
 
-あえて再実行する場合:
+あえて再実行する場合は、**必ず dry-run で計画と費用を確認してから**にすること。
 
 ```bash
-python -m experiments.live_penalty_zero --seeds 2,4     # 課金される
+# 1. API を呼ばず、計画と費用だけ確認する
+python -m experiments.live_penalty_zero --dry-run
+
+# 2. 本実行。API を使用する（seed 2,4 はスクリプト内で固定。指定する引数はない）
+python -m experiments.live_penalty_zero
 ```
+
+**seed は `--seeds` 等の引数では指定できない。** スクリプト内の定数
+`SEEDS = (2, 4)` で固定されている。
+
+なお **2 本とも実行済み**なので、dry-run は `2/2 完了済み / 残り 0` を返す。
+この状態では本実行しても新しい run を開始せず、**API を呼ばずに終了する**
+（結果は各 run ファイルから復元される）。**通常は再実行不要である。**
 
 **目的**: §4 の感度分析 replay は「意思決定を固定したまま production layer だけ
 再計算する」部分均衡仮定に依存している。この仮定が成り立つかを、penalty=0 で

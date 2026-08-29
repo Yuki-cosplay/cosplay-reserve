@@ -13,19 +13,21 @@
 
 | 種別 | ファイル |
 |---|---|
-| **デモ動画（提出版）** | **[`figures/demo_video/cosplay_reserve_demo.mp4`](figures/demo_video/cosplay_reserve_demo.mp4)** — 167.5秒 / 1920×1080 / 30fps / 音声なし |
+| **デモ動画（提出版）** | **[COSPLAY RESERVE — Demo（YouTube 限定公開）](https://www.youtube.com/watch?v=uP1aFrGw-rE)** — 167.5秒 / 1920×1080 / 30fps / 音声なし |
 | 研究結果 | [`RESULTS.md`](RESULTS.md) |
-| 発表スライド | [`slides/cosplay_reserve_final.pptx`](slides/cosplay_reserve_final.pptx) |
+| 発表スライド | [`0148_IgariTakayuki_CosplayReserve_Slides.pptx`（Google Drive）](https://docs.google.com/presentation/d/1V47F3JU7cCCbueFiaivplOZdovHcvi4E/edit?slide=id.p1#slide=id.p1) |
 | 図 | [`figures/F1`–`F5_*.png`](figures/) |
 | 実験結果・解析データ | [`outputs/main_experiment/`](outputs/main_experiment/) |
 | 主結果の生データ | [`outputs/main_experiment/transition_recomputed_preregistered.json`](outputs/main_experiment/transition_recomputed_preregistered.json) |
 
-> **デモ動画は `cosplay_reserve_demo.mp4` の 1 本のみである。**
+> **上の YouTube 提出版と、リポジトリ内の
+> [`figures/demo_video/cosplay_reserve_demo.mp4`](figures/demo_video/cosplay_reserve_demo.mp4)
+> は同一の提出版デモ動画である。** 制作過程で生成した旧版・プロトタイプは
+> リポジトリに含めていない。
 > ナレーションはなく、実ログに基づく Agent の状態遷移を連続して可視化している。
 > 表示される数値はすべて `outputs/` と M1 trace の実測値で、
 > 見栄えのための丸めや強調は行っていない（`figures/demo_video/README.md` §4 に
 > データと視覚補間の境界を列挙してある）。
-> 制作過程で生成した旧版・プロトタイプはリポジトリに含めていない。
 
 ---
 

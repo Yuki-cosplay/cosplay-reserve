@@ -15,7 +15,7 @@
 |---|---|
 | **デモ動画（提出版）** | **[COSPLAY RESERVE — Demo（YouTube 限定公開）](https://www.youtube.com/watch?v=uP1aFrGw-rE)** — 167.5秒 / 1920×1080 / 30fps / 音声なし |
 | 研究結果 | [`RESULTS.md`](RESULTS.md) |
-| 発表スライド | [`0148_IgariTakayuki_CosplayReserve_Slides.pptx`（Google Drive）](https://docs.google.com/presentation/d/1V47F3JU7cCCbueFiaivplOZdovHcvi4E/edit?slide=id.p1#slide=id.p1) |
+| 発表スライド | [`0148_IgariTakayuki_CosplayReserve_Slides.pptx`（Google Drive）](https://docs.google.com/presentation/d/1BsjJAoqge5rqYxqBSjHxOzmyt1ohiQSC/edit?slide=id.p1#slide=id.p1) |
 | 図 | [`figures/F1`–`F5_*.png`](figures/) |
 | 実験結果・解析データ | [`outputs/main_experiment/`](outputs/main_experiment/) |
 | 主結果の生データ | [`outputs/main_experiment/transition_recomputed_preregistered.json`](outputs/main_experiment/transition_recomputed_preregistered.json) |
